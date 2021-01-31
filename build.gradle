@@ -39,6 +39,7 @@ dependencies {
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:mysql'
 //	testImplementation 'org.testcontainers:r2dbc'
+	compile 'org.twitter4j:twitter4j-core:4.0.7'
 }
 
 dependencyManagement {
