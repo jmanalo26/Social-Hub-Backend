@@ -17,4 +17,4 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`twitter_secure`
             REFERENCES `socialhub`.`user_table` (`user_id`)
 )
     ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8
+    DEFAULT CHARACTER SET = utf8mb4

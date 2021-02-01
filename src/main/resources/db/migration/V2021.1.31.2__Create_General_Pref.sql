@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS `socialhub`.`general_preferences`
 (
     `general_preferences_id` INT        NOT NULL AUTO_INCREMENT,
@@ -8,4 +7,4 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`general_preferences`
     PRIMARY KEY (`general_preferences_id`)
 )
     ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8
+    DEFAULT CHARACTER SET = utf8mb4
