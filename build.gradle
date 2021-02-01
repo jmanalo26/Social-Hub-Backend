@@ -40,19 +40,7 @@ dependencies {
 	testImplementation 'org.testcontainers:mysql'
 //	testImplementation 'org.testcontainers:r2dbc'
 	compile 'org.twitter4j:twitter4j-core:4.0.7'
-	compile 'com.google.api-client:google-api-client:1.23.0'
-	compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
-	compile 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
-	implementation 'org.json:json:20200518'
 
-
-	testImplementation 'org.apache.httpcomponents:httpclient'
-//	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
-//	com.jayway.jsonpath:json-path:2.2.0
-//	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
-
-
-	testImplementation 'org.apache.httpcomponents:httpclient'
 //	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
 //	com.jayway.jsonpath:json-path:2.2.0
 //	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
