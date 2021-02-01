@@ -50,6 +50,10 @@ dependencies {
 //	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
 //	com.jayway.jsonpath:json-path:2.2.0
 //	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
+
+//	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
+//	com.jayway.jsonpath:json-path:2.2.0
+//	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
 }
 
 dependencyManagement {
