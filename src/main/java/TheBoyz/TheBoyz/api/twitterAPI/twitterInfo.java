@@ -1,13 +1,8 @@
 package TheBoyz.TheBoyz.api.twitterAPI;
 
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.conf.ConfigurationBuilder;
-
 public class twitterInfo {
 //    ConfigurationBuilder cb;
-    configurationBuilder cb = new configurationBuilder();
+    TwitterApiConnection cb = new TwitterApiConnection();
     public static void main(String[] args) {
 
 
