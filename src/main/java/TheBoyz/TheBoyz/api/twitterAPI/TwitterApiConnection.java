@@ -29,6 +29,14 @@ public class TwitterApiConnection {
 
     public static void main(String[] args) throws TwitterException {
 
+        TwitterMethods twitterMethods = new TwitterMethods();
+//        twitterMethods.getTimeline();
+//        twitterMethods.getFavorites();
+        twitterMethods.getId();
+        System.out.println("********************");
+        twitterMethods.showUser();
+        twitterMethods.getFollowerCount();
+
 //        ConfigurationBuilder cb = new ConfigurationBuilder();
 //        cb.setDebugEnabled(true)
 //                .setOAuthConsumerKey("eIU7C0LHUKJQvjVdXDwA9jHZs")
@@ -68,13 +76,13 @@ public class TwitterApiConnection {
 //        System.out.println(("this is the status message"));
 //        System.out.println(statusMessage);
 
-        TwitterMethods twitterMethods = new TwitterMethods();
-//        twitterMethods.getTimeline();
-//        twitterMethods.getFavorites();
-        twitterMethods.getId();
-        System.out.println("********************");
-        twitterMethods.showUser();
-        twitterMethods.getFollowerCount();
+//        TwitterMethods twitterMethods = new TwitterMethods();
+////        twitterMethods.getTimeline();
+////        twitterMethods.getFavorites();
+//        twitterMethods.getId();
+//        System.out.println("********************");
+//        twitterMethods.showUser();
+//        twitterMethods.getFollowerCount();
     }
 
 
