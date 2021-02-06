@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+         <link rel="stylesheet" href="feedbackform.css">
+    </head>
+<body class="feedback-body">
+<div class="feedback-wrapper">
+  <div class="Title">
+    <h1 class="header">Feedback Form</h1>
+    <p class="sub-header">We would like your feedback to improve our website</p>
+    <br>
+    <hr>
+  </div>
+  <div class="feedback-form">
+    <form action=''>
+      <label for="name">Your Name</label>
+      <input required type="text" id="name" name="name" placeholder="John Doe">
+
+      <label for="email">Email</label>
+      <input type="text" id="email" name="email" placeholder="edgelordjohn@domain.com">
+      <br>
+      <hr>
+
+      <div class="opinion">
+        <label for="opinions"> What is your opinion of this website?</label>
+        <select name="opinions" id="opinions">
+          <option value="satisfied">Satisfied</option>
+          <option value="mostly-satisfied">Mostly Satisfied</option>
+          <option value="neutral">Neutral</option>
+          <option value="mostly-dissatisfied">Mostly Dissatisfied</option>
+          <option value="dissatisfied">Dissatisfied</option>
+        </select>
+        <br>
+        <hr>
+      </div>
+
+      <div class="feedback-category">
+        <p class="feedback-head">Please select your feedback category below.</p>
+        <button id="suggestion" (click)="suggestionOn()">Suggestion</button>
+        <button id="issue" (click)="issueOn()">Issue</button>
+        <button id="compliment" (click)="complimentOn()">Compliment</button>
+        <br>
+        <hr>
+      </div>
+
+      <label for="comment">Please leave your feedback below:</label>
+      <br>
+      <input type="text" id="comment" name="comment" placeholder="...">
+      <br>
+      <!--      <input type="submit" id="submit" value="Submit">-->
+      <button id="submit" (click)="submitForm()"> Submit</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>
