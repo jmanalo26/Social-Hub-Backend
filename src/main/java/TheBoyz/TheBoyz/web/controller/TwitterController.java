@@ -20,7 +20,7 @@ public class TwitterController {
     }
     @GetMapping(value = "/api/twitter/followers")
     public ResponseEntity<Integer> getFollowerCount() throws TwitterException {
-       return ResponseEntity<>(twitterService.getFollowerCount(), HttpStatus.OK);
+       return new ResponseEntity<>(twitterService.getFollowerCount(), HttpStatus.OK);
 
     }
 
