@@ -4,6 +4,7 @@ import TheBoyz.TheBoyz.web.service.TwitterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import twitter4j.TwitterException;
@@ -18,8 +19,10 @@ public class TwitterController {
     public TwitterController(final TwitterService twitterService){
         this.twitterService = twitterService;
     }
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/api/twitter/followers")
     public ResponseEntity<Integer> getFollowerCount() throws TwitterException {
+        System.out.println("in the tiwtter controller for get followers");
        return new ResponseEntity<>(twitterService.getFollowerCount(), HttpStatus.OK);
 
     }
