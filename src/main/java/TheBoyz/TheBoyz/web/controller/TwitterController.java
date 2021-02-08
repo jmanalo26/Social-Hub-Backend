@@ -22,6 +22,7 @@ public class TwitterController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/api/twitter/followers")
     public ResponseEntity<Integer> getFollowerCount() throws TwitterException {
+        System.out.println("in the tiwtter controller for get followers");
        return new ResponseEntity<>(twitterService.getFollowerCount(), HttpStatus.OK);
 
     }
