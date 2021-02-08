@@ -32,12 +32,14 @@ public class TwitterService {
         System.out.println("This is the follower count: " + user.getFollowersCount());
         System.out.println("This is the favorites count: " + user.getFavouritesCount());
         System.out.println("This is the URL: " + user.getURL());
-        if (user.getStatus() != null) {
-            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
-        } else {
-            // the user is protected
-            System.out.println("@" + user.getScreenName());
-        }
-        return -1;
+        int followerCount = user.getFollowersCount();
+        return followerCount;
+//        if (user.getStatus() != null) {
+//            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+//        } else {
+//            // the user is protected
+//            System.out.println("@" + user.getScreenName());
+//        }
+//        return -1;
     }
 }
