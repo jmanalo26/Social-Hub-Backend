@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User, Long> {
    public Page<User> findByUserIdContainingOrderByUserId(Long userId, Pageable pageable);
 
+   public User findUserByUsername(String username);
 }

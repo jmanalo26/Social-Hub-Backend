@@ -1,12 +1,13 @@
 package TheBoyz.TheBoyz.web.service;
 
+import TheBoyz.TheBoyz.data.model.Tweet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.User;
+import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -14,7 +15,8 @@ public class TwitterService {
 
     TwitterFactory tf;
     Twitter twitter;
-    public TwitterService(){
+
+    public TwitterService() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey("eIU7C0LHUKJQvjVdXDwA9jHZs")
@@ -25,6 +27,7 @@ public class TwitterService {
         tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
     }
+
     public Integer getFollowerCount() throws TwitterException {
         System.out.println("In teh get follower count method");
 //            Twitter twitter = new TwitterFactory().getInstance();
@@ -42,4 +45,68 @@ public class TwitterService {
 //        }
 //        return -1;
     }
+
+    public Tweet getTimeline() throws TwitterException {
+
+        Tweet tweet = new Tweet();
+//        List<Status> status = twitter.getHomeTimeline();
+        List<String> timelineList = twitter.getHomeTimeline().stream()
+                .map(item -> item.getText())
+                .collect(Collectors.toList());
+        System.out.println(timelineList.size());
+        List<String> timelineListCreator = twitter.getHomeTimeline().stream()
+                .map(item -> item.getUser().getName())
+//                .map(item -> item.getMediaEntities())
+                .collect(Collectors.toList());
+        System.out.println(timelineList.size());
+        for (int i = 0; i < timelineList.size(); i++) {
+            System.out.println(timelineList.get(i));
+            System.out.println(timelineListCreator.get(i));
+            tweet.setTweetText(timelineList.get(i));
+            tweet.setTweetCreatedBy(timelineListCreator.get(i));
+        }
+    return tweet;
+    }
+    public Status getStatus() throws TwitterException {
+        System.out.println("In the get tweets method");
+//            Twitter twitter = new TwitterFactory().getInstance();
+        User user = twitter.showUser("SocialHubClub");
+        String twitterStatus = "";
+        System.out.println(user.getStatus());
+        if (user.getStatus() != null) {
+            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+            twitterStatus = user.getStatus().getText();
+        } else {
+            // the user is protected
+            System.out.println("@" + user.getScreenName());
+        }
+        System.out.println("************");
+        System.out.println("returning: " + twitterStatus);
+        Tweet statusTweet = new Tweet();
+        statusTweet.setTweetText(user.getStatus().getText());
+        statusTweet.setTweetCreatedBy(user.getName());
+        return user.getStatus();
+    }
+
+    public Tweet getStatusAsTweet() throws TwitterException {
+        System.out.println("In the get tweets method");
+//            Twitter twitter = new TwitterFactory().getInstance();
+        User user = twitter.showUser("SocialHubClub");
+        String twitterStatus = "";
+        System.out.println(user.getStatus());
+        if (user.getStatus() != null) {
+            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+            twitterStatus = user.getStatus().getText();
+        } else {
+            // the user is protected
+            System.out.println("@" + user.getScreenName());
+        }
+        System.out.println("************");
+        System.out.println("returning: " + twitterStatus);
+        Tweet statusTweet = new Tweet();
+        statusTweet.setTweetText(user.getStatus().getText());
+        statusTweet.setTweetCreatedBy(user.getName());
+        return statusTweet;
+    }
+
 }
