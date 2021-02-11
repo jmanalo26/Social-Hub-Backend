@@ -1,5 +1,6 @@
 package TheBoyz.TheBoyz;
 
+import TheBoyz.TheBoyz.api.SpotifyAPI.SpotifyApiConnection;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,6 +10,7 @@ public class TheBoyzApplication {
 	public static void main(String[] args) {
 		System.out.println("yo Momma!");
 		SpringApplication.run(TheBoyzApplication.class, args);
+//		SpotifyApiConnection.authorizationCodeUri_Sync();
 	}
 
 }
