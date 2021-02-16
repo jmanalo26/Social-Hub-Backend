@@ -1,13 +1,12 @@
 package TheBoyz.TheBoyz.web.controller;
 
 import TheBoyz.TheBoyz.data.model.Tweet;
+import TheBoyz.TheBoyz.data.model.User;
 import TheBoyz.TheBoyz.web.service.TwitterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
@@ -50,5 +49,12 @@ public class TwitterController {
         System.out.println("*************");
         System.out.println(twitterService.getStatusAsTweet());
         return new ResponseEntity<>(twitterService.getStatusAsTweet(), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "/api/twitter/post-status")
+    public ResponseEntity<Status> postStatus(@RequestBody Tweet tweet) throws TwitterException {
+        return new ResponseEntity<>(twitterService.postStatus(tweet.getTweetText()), HttpStatus.OK);
+
     }
 }
