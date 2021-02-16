@@ -53,7 +53,6 @@ public class UserService {
         System.out.println("In the get user method");
         System.out.println("************");
         System.out.println(username);
-        System.out.println("this is the username: " + username);
         user =  userRepository.findUserByUsername(username);
         System.out.println("USERNAME: " + user.getUsername());
         return user;
