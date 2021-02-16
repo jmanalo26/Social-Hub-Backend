@@ -16,6 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -40,6 +41,8 @@ dependencies {
 	testImplementation 'org.testcontainers:mysql'
 //	testImplementation 'org.testcontainers:r2dbc'
 	compile 'org.twitter4j:twitter4j-core:4.0.7'
+
+	compile 'org.brunocvcunha.instagram4j:instagram4j:1.14'
 }
 
 dependencyManagement {
