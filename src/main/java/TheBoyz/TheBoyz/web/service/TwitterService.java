@@ -45,6 +45,16 @@ public class TwitterService {
 //        }
 //        return -1;
     }
+    public Integer getFollowerCountByScreenName() throws TwitterException {
+        System.out.println("In teh get follower count method");
+        User user = twitter.showUser("SocialHubClub");
+        System.out.println("This is the follower count: " + user.getFollowersCount());
+        System.out.println("This is the favorites count: " + user.getFavouritesCount());
+        System.out.println("This is the URL: " + user.getURL());
+        int followerCount = user.getFollowersCount();
+        return followerCount;
+
+    }
 
     public Tweet getTimeline() throws TwitterException {
 
@@ -108,5 +118,25 @@ public class TwitterService {
         statusTweet.setTweetCreatedBy(user.getName());
         return statusTweet;
     }
+
+    public Status postStatus(String textStatus) throws TwitterException {
+
+        Status newStatus = twitter.updateStatus(textStatus);
+        System.out.println(newStatus.getText());
+        System.out.println(newStatus.getUser());
+        System.out.println(newStatus.getFavoriteCount());
+        return newStatus;
+    }
+
+    public Status postStatusWithContent(Status content) throws TwitterException {
+
+        Status newStatus = twitter.updateStatus(String.valueOf(content.getQuotedStatus()));
+        System.out.println(newStatus.getText());
+        System.out.println(newStatus.getUser());
+        System.out.println(newStatus.getFavoriteCount());
+        return newStatus;
+    }
+
+
 
 }
