@@ -1,6 +1,7 @@
 package TheBoyz.TheBoyz.api.SpotifyAPI;
 
 import TheBoyz.TheBoyz.data.model.SpotifyArtist;
+import TheBoyz.TheBoyz.data.model.SpotifyPlaylist;
 import TheBoyz.TheBoyz.data.model.SpotifyTrack;
 import TheBoyz.TheBoyz.data.model.SpotifyUser;
 import TheBoyz.TheBoyz.data.service.SpotifyService;
@@ -37,10 +38,9 @@ public class SpotifyController {
     }
 
     @GetMapping("playlist")
-    public void displayPlaylists() {
+    public ResponseEntity<SpotifyPlaylist[]> displayPlaylists() {
         authorizationCodeRefresh_Sync();
-        getListOfCurrentUsersPlaylists_Sync(getSpotifyApi().getAccessToken());
-
+        return new ResponseEntity<>(getListOfCurrentUsersPlaylists_Sync(getSpotifyApi().getAccessToken()), HttpStatus.OK);
     }
 
     @GetMapping("playlist/create/{name}")
@@ -101,7 +101,7 @@ public class SpotifyController {
         log.info("Inside the searchByArtistMethod: " + artistName);
         authorizationCodeRefresh_Sync();
         System.out.println("In The Controller: called searchByArtist: " + artistName);
-        return new ResponseEntity<>( searchByArtist(artistName), HttpStatus.OK);
+        return new ResponseEntity<>(searchByArtist(artistName), HttpStatus.OK);
     }
 
     @GetMapping("/search/track/{trackName}")
@@ -110,7 +110,7 @@ public class SpotifyController {
         log.info("Inside the searchByTrack: " + trackName);
         authorizationCodeRefresh_Sync();
         System.out.println("In The Controller: called searchByTrack: " + trackName);
-        return new ResponseEntity<>( searchByTrack(trackName), HttpStatus.OK);
+        return new ResponseEntity<>(searchByTrack(trackName), HttpStatus.OK);
     }
 
 

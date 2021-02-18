@@ -1,6 +1,7 @@
 package TheBoyz.TheBoyz.api.SpotifyAPI;
 
 import TheBoyz.TheBoyz.data.model.SpotifyArtist;
+import TheBoyz.TheBoyz.data.model.SpotifyPlaylist;
 import TheBoyz.TheBoyz.data.model.SpotifyTrack;
 import TheBoyz.TheBoyz.data.model.SpotifyUser;
 import com.google.gson.JsonArray;
@@ -91,23 +92,60 @@ public class SpotifyApiConnection {
         }
     }
 
-    public static void getListOfCurrentUsersPlaylists_Sync(String accessToken) {
+    public static SpotifyPlaylist[] getListOfCurrentUsersPlaylists_Sync(String accessToken) {
         final GetListOfCurrentUsersPlaylistsRequest getListOfCurrentUsersPlaylistsRequest = spotifyApi
                 .getListOfCurrentUsersPlaylists()
                 .build();
         try {
-            final Paging<PlaylistSimplified> playlistSimplifiedPaging = getListOfCurrentUsersPlaylistsRequest.execute();
+            final var playlistSimplifiedPaging = getListOfCurrentUsersPlaylistsRequest.execute();
             var playlistSimplifiedPagingItems = playlistSimplifiedPaging.getItems();
+            var playListArray = new ArrayList<SpotifyPlaylist>();
             for (var playlist : playlistSimplifiedPagingItems) {
-                System.out.println("External url: " + playlist.getExternalUrls());
-                System.out.println("Spotify ID: " + playlist.getId());
-                System.out.println("Playlist Name: " + playlist.getName());
-                var tracksInformation = playlist.getTracks();
-            }
+                System.out.println(playlist);
+                var trackArray = getTracksFromPlaylistById(playlist.getId());
+                if (playlist.getImages().length > 0) {
+                    playListArray.add(new SpotifyPlaylist(playlist.getName(), trackArray, playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), playlist.getImages()[0].getUrl(), playlist.getUri()));
+                } else {
+                    playListArray.add(new SpotifyPlaylist(playlist.getName(), trackArray, playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri()));
+                }
 
+            }
+            return playListArray.toArray(SpotifyPlaylist[]::new);
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
+            return null;
         }
+    }
+
+    public static SpotifyTrack[] getTracksFromPlaylistById(String id) {
+        var getItemsRequest = spotifyApi.getPlaylistsItems(id).build();
+        try {
+            var resultSet = getItemsRequest.execute();
+            List<SpotifyTrack> trackList = new ArrayList<>();
+            for (var track : resultSet.getItems()) {
+                trackList.add(getTrackById(track.getTrack().getId()));
+            }
+            System.out.println(trackList.toString());
+            return trackList.toArray(SpotifyTrack[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+        return null;
+    }
+
+    public static SpotifyTrack getTrackById(String id) {
+        var getItemsRequest = spotifyApi.getTrack(id).build();
+        try {
+            var resultSet = getItemsRequest.execute();
+            var artistList = new ArrayList<String>();
+            for (var artist : resultSet.getArtists()) {
+                artistList.add(artist.getName());
+            }
+            return new SpotifyTrack(resultSet.getName(), artistList.toArray(String[]::new), resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getDiscNumber(), resultSet.getDurationMs(), resultSet.getIsExplicit(), resultSet.getPopularity());
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            return null;
+        }
+
     }
 
     public static SpotifyUser getCurrentUsersProfile_Sync(String accessToken) {
