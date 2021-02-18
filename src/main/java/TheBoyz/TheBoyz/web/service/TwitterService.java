@@ -32,6 +32,7 @@ public class TwitterService {
         System.out.println("This is the follower count: " + user.getFollowersCount());
         System.out.println("This is the favorites count: " + user.getFavouritesCount());
         System.out.println("This is the URL: " + user.getURL());
+        System.out.println("This is in the service!");
         if (user.getStatus() != null) {
             System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
         } else {
