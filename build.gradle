@@ -28,6 +28,7 @@ dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.flywaydb:flyway-core'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -46,6 +47,7 @@ dependencies {
 //	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
 //	com.jayway.jsonpath:json-path:2.2.0
 //	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
+	compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.1'
 }
 
 dependencyManagement {
