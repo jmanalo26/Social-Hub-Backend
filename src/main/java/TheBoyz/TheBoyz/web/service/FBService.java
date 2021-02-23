@@ -24,10 +24,12 @@ public class FBService {
     public static FacebookUser getUser() {
         FacebookUser f = new FacebookUser();
         f.setFacebookName(user.getName());
+        //Will have to make new ID variable
         f.setFacebookID(1);
         f.setFacebookToken(accessToken);
         f.setFacebookDOB(user.getBirthday());
-        f.setFacebookEmail(user.getEmail());
+        User email = facebookClient.fetchObject(user.getId(), User.class, Parameter.with("fields", "email"));
+        f.setFacebookEmail(email.getEmail());
         return f;
     }
 
