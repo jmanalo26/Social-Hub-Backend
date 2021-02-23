@@ -1,20 +1,30 @@
 package TheBoyz.TheBoyz.web.service;
 
+import TheBoyz.TheBoyz.data.model.BriefStatus;
+import TheBoyz.TheBoyz.data.model.Tweet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.User;
+import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * The class that makes calls to the database and to the api.
+ */
 @Slf4j
 @Service
 public class TwitterService {
 
     TwitterFactory tf;
     Twitter twitter;
-    public TwitterService(){
+
+    /**
+     * The twitter service constructor.
+     */
+    public TwitterService() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey("eIU7C0LHUKJQvjVdXDwA9jHZs")
@@ -25,19 +35,218 @@ public class TwitterService {
         tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
     }
+
+    /**
+     * Makes the API call the twitter api to get the number of followers the user has.
+     * @return returns the number of followers the user has
+     * @throws TwitterException
+     */
     public Integer getFollowerCount() throws TwitterException {
         System.out.println("In teh get follower count method");
-//            Twitter twitter = new TwitterFactory().getInstance();
         User user = twitter.showUser("SocialHubClub");
         System.out.println("This is the follower count: " + user.getFollowersCount());
         System.out.println("This is the favorites count: " + user.getFavouritesCount());
         System.out.println("This is the URL: " + user.getURL());
+        int followerCount = user.getFollowersCount();
+        return followerCount;
+    }
+
+    /**
+     * Makes the API call the twitter api to get the number of followers the user has by their screen name.
+     * @return returns the number of followers the user has
+     * @throws TwitterException
+     */
+    public Integer getFollowerCountByScreenName() throws TwitterException {
+        System.out.println("In teh get follower count method");
+        User user = twitter.showUser("SocialHubClub");
+        System.out.println("This is the follower count: " + user.getFollowersCount());
+        System.out.println("This is the favorites count: " + user.getFavouritesCount());
+        System.out.println("This is the URL: " + user.getURL());
+        int followerCount = user.getFollowersCount();
+        return followerCount;
+
+    }
+
+    /**
+     * Makes the api call to get the user's timeline from their twitter.
+     * @return returns a list of tweet objects.
+     * @throws TwitterException
+     */
+    public List<Tweet> getFullTimeline() throws TwitterException {
+
+//        List<Status> status = twitter.getHomeTimeline();
+        List<String> timelineList = twitter.getHomeTimeline().stream()
+                .map(item -> item.getText())
+                .collect(Collectors.toList());
+        System.out.println(timelineList.size());
+        List<String> timelineListCreator = twitter.getHomeTimeline().stream()
+                .map(item -> item.getUser().getName())
+//                .map(item -> item.getMediaEntities())
+                .collect(Collectors.toList());
+        System.out.println(timelineList.size());
+        List<Tweet> timelineListArray = new ArrayList<>();
+        for (int i = 0; i < timelineList.size(); i++) {
+            Tweet newTweet = new Tweet();
+            System.out.println(timelineList.get(i));
+            System.out.println(timelineListCreator.get(i));
+            newTweet.setTweetText(timelineList.get(i));
+            newTweet.setTweetCreatedBy(timelineListCreator.get(i));
+            timelineListArray.add(newTweet);
+        }
+        return timelineListArray;
+    }
+
+    /**
+     * Makes the twitter api call tandGets the user's latest timeline post..
+     * @return returns the user's timeline
+     * @throws TwitterException
+     */
+    public Tweet getTimeline() throws TwitterException {
+
+        Tweet tweet = new Tweet();
+//        List<Status> status = twitter.getHomeTimeline();
+        List<String> timelineList = twitter.getHomeTimeline().stream()
+                .map(item -> item.getText())
+                .collect(Collectors.toList());
+        System.out.println(timelineList.size());
+        List<String> timelineListCreator = twitter.getHomeTimeline().stream()
+                .map(item -> item.getUser().getName())
+//                .map(item -> item.getMediaEntities())
+                .collect(Collectors.toList());
+        System.out.println(timelineList.size());
+        for (int i = 0; i < timelineList.size(); i++) {
+            System.out.println(timelineList.get(i));
+            System.out.println(timelineListCreator.get(i));
+            tweet.setTweetText(timelineList.get(i));
+            tweet.setTweetCreatedBy(timelineListCreator.get(i));
+        }
+    return tweet;
+    }
+
+    /**
+     * Get's the users latest status.
+     * @return returns a Status object for the contents of the tweet.
+     * @throws TwitterException
+     */
+    public Status getStatus() throws TwitterException {
+        System.out.println("In the get tweets method");
+//            Twitter twitter = new TwitterFactory().getInstance();
+        User user = twitter.showUser("SocialHubClub");
+        String twitterStatus = "";
+        System.out.println(user.getStatus());
         if (user.getStatus() != null) {
             System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+            twitterStatus = user.getStatus().getText();
         } else {
             // the user is protected
             System.out.println("@" + user.getScreenName());
         }
-        return -1;
+        System.out.println("************");
+        System.out.println("returning: " + twitterStatus);
+        Tweet statusTweet = new Tweet();
+        statusTweet.setTweetText(user.getStatus().getText());
+        statusTweet.setTweetCreatedBy(user.getName());
+        return user.getStatus();
     }
+
+    /**
+     * Get's the users latest status.
+     * @return returns a Tweet object for the contents of the tweet.
+     * @throws TwitterException
+     */
+    public Tweet getStatusAsTweet() throws TwitterException {
+        System.out.println("In the get tweets method");
+//            Twitter twitter = new TwitterFactory().getInstance();
+        User user = twitter.showUser("SocialHubClub");
+        String twitterStatus = "";
+        System.out.println(user.getStatus());
+        if (user.getStatus() != null) {
+            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+            twitterStatus = user.getStatus().getText();
+        } else {
+            // the user is protected
+            System.out.println("@" + user.getScreenName());
+        }
+        System.out.println("************");
+        System.out.println("returning: " + twitterStatus);
+        Tweet statusTweet = new Tweet();
+        statusTweet.setTweetText(user.getStatus().getText());
+        statusTweet.setTweetCreatedBy(user.getName());
+        return statusTweet;
+    }
+
+    /**
+     * Makes the api call to post a tweet to the user's twitter page.
+     * @param textStatus is the content (text) of the tweet to be posted.
+     * @return returns the status of that tweet.
+     * @throws TwitterException
+     */
+    public Status postStatus(String textStatus) throws TwitterException {
+
+        Status newStatus = twitter.updateStatus(textStatus);
+        System.out.println(newStatus.getText());
+        return newStatus;
+    }
+
+    /**
+     * Makes the api call to post a tweet to the user's twitter page.
+     * @param textStatus is the content (text) of the tweet to be posted.
+     * @return
+     * @throws TwitterException
+     */
+    public Tweet postUserStatus(String textStatus) throws TwitterException {
+
+        Status newStatus = twitter.updateStatus(textStatus);
+        Tweet newTweet = new Tweet();
+        newTweet.setTweetCreatedBy(newStatus.getUser().getScreenName());
+        newTweet.setTweetText(textStatus);
+        System.out.println(newStatus.getText());
+        return newTweet;
+    }
+
+    /**
+     * Makes the api call to post a tweet to the user's twitter page.
+     * @param content is the content (text) of the tweet to be posted.
+     * @throws TwitterException
+     */
+    public Status postStatusWithContent(Status content) throws TwitterException {
+
+        Status newStatus = twitter.updateStatus(String.valueOf(content.getQuotedStatus()));
+        System.out.println(newStatus.getText());
+        System.out.println(newStatus.getUser());
+        System.out.println(newStatus.getFavoriteCount());
+        return newStatus;
+    }
+
+    /**
+     * Get the user's status as a breif object of only the important attributes.
+     * @return
+     * @throws TwitterException
+     */
+    public BriefStatus getBriefStatus() throws TwitterException {
+        User user = twitter.showUser("SocialHubClub");
+        String twitterStatus = "";
+        System.out.println(user.getStatus());
+        if (user.getStatus() != null) {
+            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+            twitterStatus = user.getStatus().getText();
+        } else {
+            System.out.println("@" + user.getScreenName());
+        }
+        System.out.println("************");
+        System.out.println("returning: " + twitterStatus);
+        user.get400x400ProfileImageURL();
+        Tweet statusTweet = new Tweet();
+        BriefStatus briefStatusTweet = new BriefStatus();
+        briefStatusTweet.setCreatedAt(user.getStatus().getCreatedAt());
+        briefStatusTweet.setFavoriteCount(user.getStatus().getFavoriteCount());
+        briefStatusTweet.setHandle(user.getName());
+        briefStatusTweet.setScreenName(user.getScreenName());
+        briefStatusTweet.setRetweetCount(user.getStatus().getRetweetCount());
+        briefStatusTweet.setText(user.getStatus().getText());
+        statusTweet.setTweetText(user.getStatus().getText());
+        statusTweet.setTweetCreatedBy(user.getName());
+        return briefStatusTweet;
+    }
+
 }

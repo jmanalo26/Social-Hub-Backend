@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`user_table`
     PRIMARY KEY (`user_id`),
     UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
     UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
-    UNIQUE INDEX `password_UNIQUE` (`password` ASC) VISIBLE,
     UNIQUE INDEX `phone_number_UNIQUE` (`phone_number` ASC) VISIBLE
 )
     ENGINE = InnoDB

@@ -1,5 +1,6 @@
 package TheBoyz.TheBoyz.api.twitterAPI;
 
+import TheBoyz.TheBoyz.data.model.Tweet;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -31,13 +32,20 @@ public class TwitterMethods {
 
     public void getTimeline() throws TwitterException {
 
+        Tweet tweet = new Tweet();
 //        List<Status> status = twitter.getHomeTimeline();
         List<String> timelineList = twitter.getHomeTimeline().stream()
                 .map(item -> item.getText())
                 .collect(Collectors.toList());
         System.out.println(timelineList.size());
+        List<String> timelineListCreator = twitter.getHomeTimeline().stream()
+                .map(item -> item.getUser().getName())
+//                .map(item -> item.getMediaEntities())
+                .collect(Collectors.toList());
+        System.out.println(timelineList.size());
         for (int i = 0; i < timelineList.size(); i++) {
             System.out.println(timelineList.get(i));
+            System.out.println(timelineListCreator.get(i));
         }
 
     }
@@ -66,6 +74,19 @@ public class TwitterMethods {
                 System.out.println("@" + user.getScreenName());
             }
     }
+    public void getTweets() throws TwitterException {
+        System.out.println("In the get tweets method");
+//            Twitter twitter = new TwitterFactory().getInstance();
+        User user = twitter.showUser("SocialHubClub");
+        System.out.println(user.getStatus());
+        if (user.getStatus() != null) {
+            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+        } else {
+            // the user is protected
+            System.out.println("@" + user.getScreenName());
+        }
+    }
+
     public void getId() throws TwitterException {
         long Id = twitter.getId();
         System.out.println("this is the ID: " + Id);
