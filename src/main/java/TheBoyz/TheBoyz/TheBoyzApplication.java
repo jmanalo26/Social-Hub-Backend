@@ -1,6 +1,5 @@
 package TheBoyz.TheBoyz;
 
-import TheBoyz.TheBoyz.api.SpotifyAPI.SpotifyApiConnection;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

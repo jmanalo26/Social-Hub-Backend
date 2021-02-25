@@ -1,4 +1,4 @@
-package TheBoyz.TheBoyz.data.model;
+package TheBoyz.TheBoyz.data.model.spotify;
 
 import lombok.*;
 
@@ -9,14 +9,12 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class SpotifyArtist {
+public class SpotifyAlbum {
+
     private String name;
-    private String spotifyUrl;
-    private Integer followers;
-    private String[] genres;
     private String id;
     private String imageUrl;
-    private Integer popularity;
+    private String [] artistNames;
+    private String spotifyUrl;
     private String spotifyUri;
-
 }

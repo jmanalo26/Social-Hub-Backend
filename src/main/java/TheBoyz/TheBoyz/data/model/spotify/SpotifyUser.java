@@ -1,4 +1,4 @@
-package TheBoyz.TheBoyz.data.model;
+package TheBoyz.TheBoyz.data.model.spotify;
 
 import lombok.*;
 

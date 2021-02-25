@@ -1,4 +1,4 @@
-package TheBoyz.TheBoyz.data.model;
+package TheBoyz.TheBoyz.data.model.spotify;
 
 import lombok.*;
 
@@ -16,5 +16,8 @@ public class SpotifyTrack {
     private Integer duration;
     private Boolean explicit;
     private Integer popularity;
+    private SpotifyAlbum album;
+
+    // add album name, and album image
 
 }

@@ -27,9 +27,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/**").permitAll()
-
-        ;
+                .anyRequest().permitAll();
+//                .antMatchers(HttpMethod.GET, "/**").permitAll()
+//                .antMatchers(HttpMethod.POST, "/**").permitAll()
+//                .antMatchers(HttpMethod.PUT, "/**").permitAll();
     }
 
     @Bean

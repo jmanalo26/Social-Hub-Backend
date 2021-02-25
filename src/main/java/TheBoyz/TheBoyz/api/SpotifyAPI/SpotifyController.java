@@ -1,23 +1,15 @@
 package TheBoyz.TheBoyz.api.SpotifyAPI;
 
-import TheBoyz.TheBoyz.data.model.SpotifyArtist;
-import TheBoyz.TheBoyz.data.model.SpotifyPlaylist;
-import TheBoyz.TheBoyz.data.model.SpotifyTrack;
-import TheBoyz.TheBoyz.data.model.SpotifyUser;
+import TheBoyz.TheBoyz.data.model.spotify.*;
 import TheBoyz.TheBoyz.data.service.SpotifyService;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import twitter4j.JSONObject;
 
-import static TheBoyz.TheBoyz.api.SpotifyAPI.SpotifyApiConnection.*;
+
+import static TheBoyz.TheBoyz.data.service.SpotifyService.*;
 
 
 @RestController
@@ -37,6 +29,12 @@ public class SpotifyController {
 //        SpotifyApiConnection.authorizationCodeUri_Sync();
     }
 
+    @GetMapping("playlist/{playlist_id}")
+    public ResponseEntity<SpotifyPlaylist> getPlaylistById(@PathVariable String playlist_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getPlaylistById(playlist_id), HttpStatus.OK);
+    }
+
     @GetMapping("playlist")
     public ResponseEntity<SpotifyPlaylist[]> displayPlaylists() {
         authorizationCodeRefresh_Sync();
@@ -50,13 +48,13 @@ public class SpotifyController {
 
     }
 
-    @GetMapping("playlist/addtoplaylist/{playlist_id}/{track_id}")
-    public void addTrackToPlaylist(@PathVariable String playlist_id, @PathVariable String... track_id) {
+    @GetMapping("playlist/addtoplaylist/{playlist_id}/{track_uri}")
+    public void addTrackToPlaylist(@PathVariable String playlist_id, @PathVariable String... track_uri) {
         // "spotify:track:6rqhFgbbKwnb9MLmUQDhG6";
         // spotify:track:3lPr8ghNDBLc2uZovNyLs9
         // spotify:artist:12Chz98pHFMPJEknJQMWvI
         authorizationCodeRefresh_Sync();
-        addToPlaylist(playlist_id, track_id);
+        addToPlaylist(playlist_id, track_uri);
     }
 
     @GetMapping("playlist/remove/playlist/{playlist_id}")
@@ -111,6 +109,15 @@ public class SpotifyController {
         authorizationCodeRefresh_Sync();
         System.out.println("In The Controller: called searchByTrack: " + trackName);
         return new ResponseEntity<>(searchByTrack(trackName), HttpStatus.OK);
+    }
+
+    @GetMapping("/album/{album_id}")
+    @ResponseBody
+    public ResponseEntity<SpotifyAlbum> getAlbumById(@PathVariable String album_id) {
+        log.info("Inside the searchByTrack: " + album_id);
+        authorizationCodeRefresh_Sync();
+        System.out.println("In The Controller: called searchByTrack: " + album_id);
+        return new ResponseEntity<>(SpotifyService.getAlbumById(album_id), HttpStatus.OK);
     }
 
 
