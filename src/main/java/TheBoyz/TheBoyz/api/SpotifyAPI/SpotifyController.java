@@ -2,7 +2,9 @@ package TheBoyz.TheBoyz.api.SpotifyAPI;
 
 import TheBoyz.TheBoyz.data.model.spotify.*;
 import TheBoyz.TheBoyz.data.service.SpotifyService;
+import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +21,8 @@ public class SpotifyController {
 
     @GetMapping("/")
     public ResponseEntity<String> generateURL() {
-        log.info("inside generate url!");
-        log.info(authorizationCodeUri_Sync());
+//        log.info("inside generate url!");
+//        log.info(authorizationCodeUri_Sync());
         return new ResponseEntity<>(authorizationCodeUri_Sync(), HttpStatus.OK);
     }
 
@@ -41,11 +43,16 @@ public class SpotifyController {
         return new ResponseEntity<>(getListOfCurrentUsersPlaylists_Sync(getSpotifyApi().getAccessToken()), HttpStatus.OK);
     }
 
-    @GetMapping("playlist/create/{name}")
-    public void addPlaylist(@PathVariable String name) {
+    @PostMapping("playlist/create/{name}/{description}")
+    public ResponseEntity<SpotifyPlaylist> addPlaylist(@PathVariable String name, @PathVariable String description) {
+//        log.info("Create Playlist Method Called!");
         authorizationCodeRefresh_Sync();
-        createNewPlaylist(name);
+//        createNewPlaylist(name, description);
+        return new ResponseEntity<>(createNewPlaylist(name, description), HttpStatus.OK);
 
+//        RedirectView redirectView = new RedirectView();
+//        redirectView.setUrl("http://localhost:4200/spotify");
+//        return redirectView;
     }
 
     @GetMapping("playlist/addtoplaylist/{playlist_id}/{track_uri}")
@@ -58,20 +65,40 @@ public class SpotifyController {
     }
 
     @GetMapping("playlist/remove/playlist/{playlist_id}")
-    public void removeUserPlaylist(@PathVariable String playlist_id) {
+    public RedirectView removeUserPlaylist(@PathVariable String playlist_id) {
         authorizationCodeRefresh_Sync();
         removePlaylist(playlist_id);
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:4200/spotify");
+        return redirectView;
     }
 
-//    @GetMapping("playlist/remove/track/{playlist_id}/{track_array}")
-//    public void removeTrackFromPlaylist(@PathVariable String playlist_id, @PathVariable String track_array) {
-//        JsonParser parser = new JsonParser();
-//        JsonElement elem = parser.parse(track_array);
-//        JsonArray elemArr = elem.getAsJsonArray();
-//
-//        authorizationCodeRefresh_Sync();
-//        removeTracksFromPlaylist(playlist_id, elemArr);
-//    }
+    @PutMapping("playlist/remove/track/{playlist_id}/{track_array}")
+    public ResponseEntity<SpotifyPlaylist> removeTrackFromPlaylist(@PathVariable String playlist_id, @PathVariable String track_array) {
+        //7aCuS3JmM9PdKXTBxg5tl8
+        //
+        // {
+        //  "tracks": [
+        //    {
+        //      "uri": "spotify:track:7eJMfftS33KTjuF7lTsMCx",
+        //      "positions": [
+        //        0
+        //      ]
+        //    }
+        //  ]
+        //}
+
+        // I need to pass in this string:
+        // { "uri": "spotify:track:4iV5W9uYEdYUVa79Axb7Rh" }
+        // turn the above into a json array and pass that to the service
+
+        String spotifyURI = "{\"uri\": \"" + track_array + "\"}";
+        JsonArray js = new JsonArray();
+        js.add(new Gson().fromJson(spotifyURI, JsonObject.class));
+
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(removeTracksFromPlaylist(playlist_id, js), HttpStatus.OK);
+    }
 
     @GetMapping("userinfo")
     public ResponseEntity<SpotifyUser> getUserProfile() {
@@ -96,28 +123,33 @@ public class SpotifyController {
     @GetMapping("/search/artist/{artistName}")
     @ResponseBody
     public ResponseEntity<SpotifyArtist[]> queryArtist(@PathVariable String artistName) {
-        log.info("Inside the searchByArtistMethod: " + artistName);
+//        log.info("Inside the searchByArtistMethod: " + artistName);
         authorizationCodeRefresh_Sync();
-        System.out.println("In The Controller: called searchByArtist: " + artistName);
+//        System.out.println("In The Controller: called searchByArtist: " + artistName);
         return new ResponseEntity<>(searchByArtist(artistName), HttpStatus.OK);
     }
 
     @GetMapping("/search/track/{trackName}")
     @ResponseBody
     public ResponseEntity<SpotifyTrack[]> queryTrack(@PathVariable String trackName) {
-        log.info("Inside the searchByTrack: " + trackName);
+//        log.info("Inside the searchByTrack: " + trackName);
         authorizationCodeRefresh_Sync();
-        System.out.println("In The Controller: called searchByTrack: " + trackName);
+//        System.out.println("In The Controller: called searchByTrack: " + trackName);
         return new ResponseEntity<>(searchByTrack(trackName), HttpStatus.OK);
     }
 
     @GetMapping("/album/{album_id}")
     @ResponseBody
     public ResponseEntity<SpotifyAlbum> getAlbumById(@PathVariable String album_id) {
-        log.info("Inside the searchByTrack: " + album_id);
+//        log.info("Inside the searchByTrack: " + album_id);
         authorizationCodeRefresh_Sync();
-        System.out.println("In The Controller: called searchByTrack: " + album_id);
+//        System.out.println("In The Controller: called searchByTrack: " + album_id);
         return new ResponseEntity<>(SpotifyService.getAlbumById(album_id), HttpStatus.OK);
+    }
+
+    @PutMapping("/playlist/reorder/{playlist_id}/{range_start}/{insert_before}")
+    public ResponseEntity<SpotifyPlaylist> reorderPlaylist(@PathVariable String playlist_id, @PathVariable Integer range_start, @PathVariable Integer insert_before) {
+        return new ResponseEntity<>(reorderPlaylistItems(playlist_id, range_start, insert_before), HttpStatus.OK);
     }
 
 

@@ -9,6 +9,7 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class SpotifyTrack {
+    private String id;
     private String name;
     private String[] artistNames;
     private String spotifyUrl;
@@ -17,6 +18,7 @@ public class SpotifyTrack {
     private Boolean explicit;
     private Integer popularity;
     private SpotifyAlbum album;
+    private String spotifyUri;
 
     // add album name, and album image
 
