@@ -46,10 +46,13 @@ public class InstagramService {
         instagramUser.setProfilePicUrl(usernameResult.getUser().profile_pic_url);
         instagramUser.setInstaBio(usernameResult.getUser().biography);
 
+
+
         InstagramFeedResult postList = instagram.sendRequest(new InstagramUserFeedRequest(usernameResult.getUser().getPk()));
         ArrayList<String> imageFeed = new ArrayList<String>();
+        System.out.println(postList.getItems().size());
         for(InstagramFeedItem post : postList.getItems()) {
-//            System.out.println(post.getImage_versions2().candidates);
+            System.out.println(post.caption);
             imageFeed.add(post.getImage_versions2().candidates.toString());
         }
 

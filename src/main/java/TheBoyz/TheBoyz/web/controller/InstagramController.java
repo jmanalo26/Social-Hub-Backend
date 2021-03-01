@@ -32,9 +32,9 @@ public class InstagramController {
     public ResponseEntity<InstagramUserInfo> getUser() throws IOException {
         InstaUser user =  new InstaUser();
 
-        user.setInstaId(1);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
+        user.setInstaId(2);
+        user.setUsername("hbb_disposable");
+        user.setPassword("yaga186");
         InstagramUserInfo insta = instagramService.getUserAccount(user);
         return new ResponseEntity<InstagramUserInfo>(insta, HttpStatus.OK);
     }
