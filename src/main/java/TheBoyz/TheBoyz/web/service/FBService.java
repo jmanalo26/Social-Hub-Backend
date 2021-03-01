@@ -1,4 +1,5 @@
 package TheBoyz.TheBoyz.web.service;
+import TheBoyz.TheBoyz.data.model.FacebookPosts;
 import TheBoyz.TheBoyz.data.model.FacebookUser;
 import com.restfb.*;
 import com.restfb.types.Post;
@@ -12,7 +13,9 @@ import java.util.ArrayList;
 @Service
 public class FBService {
 
-    private static String accessToken = "EAAqDduci0a0BAJKvZCWBWqOconyjrg1m8iaY5gVDUc6Gqo1vSS1xpu4a5DlnRYHd2UIYdGaMMbgxT6UmZA1G78Pm7MM9Jk2dB01ZA6ZAviYTi82wI3TJjNeXrf3jKDwrzDL6FfoZCZCZCYZBzaO6QQpZBIcTpZApj8ZCbVsokgx7zpuQkiDuZBmYzHRidUmRAMbiJmvrnN0gV8SNutloKkbBQZAMmDoTHxVW72rB7RYMkZAL4QkQZDZD";
+    //Because we dont have the OAuth setup yet, we'll have to pull this token from Facebook Graph API explorer
+    //using the Jorge account
+    private static String accessToken = "EAAqDduci0a0BAO9NadkjaUboH3VlK3eXsTZCaVWtYuLZB8jZCSabSzK15wpj2at8OgjFRDoBkOk3sbNK0gOOGIYaeMkUnoE2thdBSNXyi5KFHS3D70nHetncgksdZAW10quCKmqPpgAE607nm2kR8r6CalfA8BZB7hYmQIGrjSUVm1VuBtBQE468wSH48X8wuonAWLBPDB1xAvw9XjyVmPmRIlPl4ZARpqg03blLSd3gZDZD";
     private static final DefaultFacebookClient facebookClient = new DefaultFacebookClient(accessToken, Version.LATEST);;
     private static final User user = facebookClient.fetchObject("me", User.class);
 
@@ -29,7 +32,10 @@ public class FBService {
         f.setFacebookToken(accessToken);
         f.setFacebookDOB(user.getBirthday());
         User email = facebookClient.fetchObject(user.getId(), User.class, Parameter.with("fields", "email"));
+        User pic = facebookClient.fetchObject(user.getId(), User.class, Parameter.with("fields", "picture"));
         f.setFacebookEmail(email.getEmail());
+        f.setPhotoURL(pic.getPicture().getUrl());
+        System.out.println(f.getPhotoURL());
         return f;
     }
 
@@ -45,15 +51,18 @@ public class FBService {
         return user.getEmail();
     }
 
-    public static ArrayList<String> getPosts(){
+    public static FacebookPosts getPosts(){
         ArrayList<String> posts = new ArrayList<>();
         Connection<Post> myPost = facebookClient.fetchConnection("me/feed", Post.class);
         for (Post post: myPost.getData()){
             if (post.getMessage() != null) {
                 posts.add(post.getMessage());
+                posts.add(post.getCreatedTime().toString());
             }
         }
-        return posts;
+        FacebookPosts feed = new FacebookPosts();
+        feed.setPosts(posts);
+        return feed;
     }
 
 }

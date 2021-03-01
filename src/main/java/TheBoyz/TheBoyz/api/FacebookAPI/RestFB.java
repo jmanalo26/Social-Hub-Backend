@@ -1,6 +1,4 @@
 package TheBoyz.TheBoyz.api.FacebookAPI;
-import TheBoyz.TheBoyz.data.service.FacebookService;
-import TheBoyz.TheBoyz.web.service.FBService;
 import com.restfb.*;
 import com.restfb.scope.FacebookPermissions;
 import com.restfb.scope.ScopeBuilder;
@@ -20,11 +18,19 @@ public class RestFB {
      * @param args Args
      */
     public static void main(String[] args){
-        String accessToken = "EAAqDduci0a0BANuTAZCCDVTkMfe70kYCfV0gtBeKl6TJcJzZBIzGbeCGemUS4qc7VErSqmZC2RW05xPapn8pZALvAtlp2LZBd2utzbadQQkmwrZAZCxdFZCuwTkZChMl1pYohUE44YVdgGDZAjIGj7ZCqq7RvpfIoOkkhmeHbyZC9U2LXNk9uibSM91G7wj2EOwqy75nZBnZBLPzVMTZB8UnlTaGIJvxWYsLVRPz42whISsVdEQiQZDZD";
+        String accessToken = "EAAqDduci0a0BAO9NadkjaUboH3VlK3eXsTZCaVWtYuLZB8jZCSabSzK15wpj2at8OgjFRDoBkOk3sbNK0gOOGIYaeMkUnoE2thdBSNXyi5KFHS3D70nHetncgksdZAW10quCKmqPpgAE607nm2kR8r6CalfA8BZB7hYmQIGrjSUVm1VuBtBQE468wSH48X8wuonAWLBPDB1xAvw9XjyVmPmRIlPl4ZARpqg03blLSd3gZDZD";
         getUser();
+        FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
+        getProfilePicture(fb);
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
     }
+
+    public static void getProfilePicture(FacebookClient fb){
+        User user = fb.fetchObject("me", User.class);
+        User pic = fb.fetchObject(user.getId(), User.class, Parameter.with("fields", "picture"));
+        System.out.println(pic.getPicture().getUrl());
+}
 
     public static void logIn(String redirectURI, String appID, String appSecret, FacebookClient f) {
 
