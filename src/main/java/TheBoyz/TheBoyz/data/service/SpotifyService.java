@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class SpotifyService {
 
@@ -152,6 +153,8 @@ public class SpotifyService {
         final GetCurrentUsersProfileRequest getCurrentUsersProfileRequest = spotifyApi.getCurrentUsersProfile()
                 .build();
         SpotifyUser spotify_user = null;
+
+
         try {
             final User user = getCurrentUsersProfileRequest.execute();
 //            System.out.println(user);
@@ -169,7 +172,9 @@ public class SpotifyService {
     }
 
     public static SpotifyPlaylist createNewPlaylist(String name, String description) {
-        spotifyApi.changePlaylistsDetails("").description("").build();
+        if (description != null) {
+            spotifyApi.changePlaylistsDetails("").description("").build();
+        }
         CreatePlaylistRequest createPlaylistRequest = spotifyApi.createPlaylist(userId, name)
                 .build();
         try {
