@@ -35,4 +35,6 @@ public class FacebookUser {
     @NotNull
     @Column(name = "facebook_birthday")
     private String facebookDOB;
+
+    private String photoURL;
 }
