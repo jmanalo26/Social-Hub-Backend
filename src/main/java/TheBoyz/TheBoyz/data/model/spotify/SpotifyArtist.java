@@ -1,19 +1,22 @@
-package TheBoyz.TheBoyz.data.model;
+package TheBoyz.TheBoyz.data.model.spotify;
 
 import lombok.*;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class SpotifyPlaylist {
+public class SpotifyArtist {
     private String name;
-    private SpotifyTrack[] tracks;
     private String spotifyUrl;
+    private Integer followers;
+    private String[] genres;
     private String id;
     private String imageUrl;
+    private Integer popularity;
     private String spotifyUri;
 
 }
