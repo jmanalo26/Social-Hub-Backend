@@ -57,7 +57,6 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/api/user/get-user")
     public ResponseEntity<User> getUser()  {
-        System.out.println("in the tiwtter controller for get followers");
         return new ResponseEntity<>(userService.getUser("user1"), HttpStatus.OK);
     }
 
@@ -84,7 +83,7 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/api/user/newUser")
     public User save(@RequestBody User user, BindingResult bindingResult) throws ValidationException {
-        System.out.println("****");
+        System.out.println("In the save method in the user controller...");
         if (bindingResult.hasErrors()) {
             throw new ValidationException("exception thrown in the backend");
         }
@@ -92,23 +91,26 @@ public class UserController {
         System.out.println(user.getEmail());
         System.out.println(user.getPassword());
         System.out.println(user.getPhoneNumber());
-        user.getUserId();
+        System.out.println(user.getUserId());
 //        Optional<User> check = userRepository.findByStudentId(user.getStudentId());
         User newUser = new User();
         newUser.setEmail(user.getEmail());
         newUser.setPassword(user.getPassword());
         newUser.setPhoneNumber(user.getPhoneNumber());
         newUser.setUsername((user.getUsername()));
-        System.out.println(user.getUsername());
+        System.out.println(user.getUserId());
         // save note instance to db
         User pushedUser = this.userService.saveUser(newUser);
-        if(pushedUser.getUsername() == null){
-            System.out.println("null user");
+        if(pushedUser.getUsername().equals("**") || pushedUser.getEmail().equals("**") || pushedUser.getPhoneNumber().equals("**")){
+            System.out.println(" user not saved ");
         } else {
             System.out.println(pushedUser.getUsername());
+            System.out.println("the user id: " + pushedUser.getUserId());
         }
         System.out.println();
         return pushedUser;
+//        return new ResponseEntity<>(userService.getUser("user1"), HttpStatus.OK);
+
     }
 
 }

@@ -1,12 +1,19 @@
 package TheBoyz.TheBoyz.web.service;
 
 import TheBoyz.TheBoyz.data.model.BriefStatus;
+import TheBoyz.TheBoyz.data.model.SecureTwitter;
 import TheBoyz.TheBoyz.data.model.Tweet;
+import TheBoyz.TheBoyz.data.repository.TwitterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,16 +22,23 @@ import java.util.stream.Collectors;
  * The class that makes calls to the database and to the api.
  */
 @Slf4j
-@Service
+@RestController
 public class TwitterService {
 
     TwitterFactory tf;
     Twitter twitter;
 
-    /**
-     * The twitter service constructor.
-     */
-    public TwitterService() {
+    private final TwitterRepository twitterRepository;
+
+    private String consumerKey;
+    private String consumerSecret;
+    private String accessToken;
+    private String accessTokenSecret;
+    private String twitterHandle;
+
+
+    public TwitterService(TwitterRepository twitterRepository) {
+        this.twitterRepository = twitterRepository;
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey("eIU7C0LHUKJQvjVdXDwA9jHZs")
@@ -35,6 +49,18 @@ public class TwitterService {
         tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
     }
+//    public TwitterService(String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret, TwitterRepository twitterRepository) {
+//        this.twitterRepository = twitterRepository;
+//        ConfigurationBuilder cb = new ConfigurationBuilder();
+//        cb.setDebugEnabled(true)
+//                .setOAuthConsumerKey(consumerKey)
+//                .setOAuthConsumerSecret(consumerSecret)
+//                .setOAuthAccessToken(accessToken)
+//                .setOAuthAccessTokenSecret(accessTokenSecret);
+//
+//        tf = new TwitterFactory(cb.build());
+//        twitter = tf.getInstance();
+//    }
 
     /**
      * Makes the API call the twitter api to get the number of followers the user has.
@@ -129,6 +155,7 @@ public class TwitterService {
      * @throws TwitterException
      */
     public Status getStatus() throws TwitterException {
+        //
         System.out.println("In the get tweets method");
 //            Twitter twitter = new TwitterFactory().getInstance();
         User user = twitter.showUser("SocialHubClub");
@@ -249,4 +276,95 @@ public class TwitterService {
         return briefStatusTweet;
     }
 
+    public void captureTokens(String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret){
+
+    }
+
+    public SecureTwitter captureTokensByObject(SecureTwitter secureTwitter) throws NoSuchAlgorithmException {
+
+        System.out.println(secureTwitter.getConsumerKey());
+        System.out.println(secureTwitter.getConsumerSecret());
+        System.out.println(secureTwitter.getAccessToken());
+        System.out.println(secureTwitter.getAccessTokenSecret());
+        System.out.println(secureTwitter.getUserId());
+        System.out.println(secureTwitter.getTwitterHandle());
+        SecureTwitter searchedSecure = twitterRepository.findSecureTwitterByUserId(Integer.valueOf(secureTwitter.getUserId()));
+        if(searchedSecure == null){
+            System.out.println("the user id does not exist in the db, saving secure infromation");
+            setTwitterTokens(secureTwitter);
+            twitterRepository.save(secureTwitter);
+            return secureTwitter;
+        } else {
+            hashObject(secureTwitter);
+            return searchedSecure;
+        }
+    }
+
+    public Integer checkTwitterRegistered(String userId){
+        SecureTwitter searchedSecure = twitterRepository.findSecureTwitterByUserId(Integer.valueOf(userId));
+        if(searchedSecure != null){
+            return searchedSecure.getUserId();
+        }
+        return -1;
+    }
+
+    public void setTwitterTokens(SecureTwitter secureTwitter){
+        System.out.println("Setting the twitter tokens");
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+                .setOAuthConsumerKey(secureTwitter.getConsumerKey())
+                .setOAuthConsumerSecret(secureTwitter.getConsumerSecret())
+                .setOAuthAccessToken(secureTwitter.getAccessToken())
+                .setOAuthAccessTokenSecret(secureTwitter.getAccessTokenSecret());
+
+        tf = new TwitterFactory(cb.build());
+        twitter = tf.getInstance();
+    }
+
+    public String hash(String input) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+        md.update(input.getBytes(StandardCharsets.UTF_8));
+        byte[] digest = md.digest();
+
+        String hex = String.format("%064x", new BigInteger(1, digest));
+        System.out.println(hex);
+        return hex;
+    }
+
+    public SecureTwitter hashObject(SecureTwitter secureTwitter) throws NoSuchAlgorithmException {
+
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+        String input = secureTwitter.getConsumerKey();
+        md.update(input.getBytes(StandardCharsets.UTF_8));
+        byte[] digest = md.digest();
+        String hex = String.format("%064x", new BigInteger(1, digest));
+        System.out.println(hex);
+        secureTwitter.setConsumerKey(hex);
+
+        input = secureTwitter.getConsumerSecret();
+        md.update(input.getBytes(StandardCharsets.UTF_8));
+        digest = md.digest();
+        hex = String.format("%064x", new BigInteger(1, digest));
+        System.out.println(hex);
+        secureTwitter.setConsumerSecret(hex);
+
+        input = secureTwitter.getAccessToken();
+        md.update(input.getBytes(StandardCharsets.UTF_8));
+        digest = md.digest();
+        hex = String.format("%064x", new BigInteger(1, digest));
+        System.out.println(hex);
+        secureTwitter.setAccessToken(hex);
+
+        input = secureTwitter.getAccessTokenSecret();
+        md.update(input.getBytes(StandardCharsets.UTF_8));
+        digest = md.digest();
+        hex = String.format("%064x", new BigInteger(1, digest));
+        System.out.println(hex);
+        secureTwitter.setAccessTokenSecret(hex);
+        System.out.println(hex.length());
+
+        return secureTwitter;
+    }
 }
