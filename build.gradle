@@ -40,6 +40,8 @@ dependencies {
 	testImplementation 'org.testcontainers:mysql'
 //	testImplementation 'org.testcontainers:r2dbc'
 	compile 'org.twitter4j:twitter4j-core:4.0.7'
+
+	compile 'org.brunocvcunha.instagram4j:instagram4j:1.14'
 	// https://mvnrepository.com/artifact/com.restfb/restfb
 	implementation group: 'com.restfb', name: 'restfb', version: '3.14.0'
     implementation 'org.springframework.boot:spring-boot-starter-security'

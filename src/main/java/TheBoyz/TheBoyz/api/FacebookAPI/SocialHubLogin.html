@@ -56,7 +56,7 @@
         color: white;
     }
 
-    #centerTitle {
+    .centerTitle {
         position: absolute;
         top: 48%;
         left: 49%;
@@ -67,7 +67,7 @@
         text-decoration: underline ;
     }
 
-    #centerSubTitle{
+    .centerSubTitle{
         position: absolute;
         top: 62%;
         left: 49%;
@@ -75,30 +75,6 @@
         font-size: 50px;
         font-family: Khand;
         text-shadow: 5px 5px #1c1c1c;
-    }
-
-    #feed{
-        position: absolute;
-        top: 48%;
-        left: 80%;
-        transform: translate(-50%, -50%);
-        font-size: 30px;
-        font-family: Khand;
-        text-shadow: 5px 5px #1c1c1c;
-    }
-
-    #profile{
-        position: absolute;
-        top: 48%;
-        left: 30%;
-        transform: translate(-50%, -50%);
-        font-size: 30px;
-        font-family: Khand;
-        text-shadow: 5px 5px #1c1c1c;
-    }
-
-    #logout{
-        display:none
     }
 
 
@@ -148,60 +124,21 @@
     }
 
     function testAPI(){
-        FB.api('/me?fields=name,email, birthday, location', function(response) {
+        FB.api('/me?fields=name,email', function(response) {
             if (response && !response.error) {
                 console.log("Name: " + response.name);
                 console.log("Email: " + response.email)
-                buildProfile(response)
             }
-            FB.api('/me/feed', function(response) {
-                if (response && !response.error) {
-                    buildFeed(response);
-                }
-            });
         })
-    }
-
-    function buildProfile(user){
-        let profile = `
-          <h3>${user.name}</h3>
-          <ul class="list-group">
-            <li class="list-group-item">User ID: ${user.id}</li>
-            <li class="list-group-item">Email: ${user.email}</li>
-          </ul>
-        `;
-        document.getElementById('profile').innerHTML = profile;
-    }
-
-    function buildFeed(feed){
-        let output = '<h3>Latest Posts</h3>';
-        for(let i in feed.data){
-            if(feed.data[i].message){
-                output += `
-              <div class="well">
-                ${feed.data[i].message} <span>${feed.data[i].created_time}</span>
-              </div>
-            `;
-            }
-        }
-        document.getElementById('feed').innerHTML = output;
     }
 
     function setElements(isLoggedIn){
         if(isLoggedIn){
             document.getElementById('logout').style.display = 'block';
-            document.getElementById('profile').style.display = 'block';
-            document.getElementById('feed').style.display = 'block';
             document.getElementById('fb-btn').style.display = 'none';
-            document.getElementById('centerTitle').style.display = 'none';
-            document.getElementById('centerSubTitle').style.display = 'none';
         } else {
             document.getElementById('logout').style.display = 'none';
-            document.getElementById('profile').style.display = 'none';
-            document.getElementById('feed').style.display = 'none';
             document.getElementById('fb-btn').style.display = 'block';
-            document.getElementById('centerTitle').style.display = 'block';
-            document.getElementById('centerSubTitle').style.display = 'block';
         }
     }
 
@@ -216,23 +153,21 @@
 
 
 <div class = "topnav">
-    <a class = "active">Log in</a>
-    <a>Create an Account</a>
+    <a class = "active" href="SocialHubLogin.html">Log in</a>
+    <a href = "">Create an Account</a>
     <div style="float: right">
-    <fb:login-button
-            id = "fb-btn"
-            scope="public_profile,email,user_birthday,user_location,user_posts"
-            onlogin="checkLoginState();">
-    </fb:login-button>
+<!--    <fb:login-button-->
+<!--            id = "fb-btn"-->
+<!--            scope="public_profile,email"-->
+<!--            onlogin="checkLoginState();">-->
+<!--    </fb:login-button>-->
         <li><a id="logout" href="#" onclick="logout()">Logout</a></li>
     </div>
 </div>
 <div class="container">
-    <img src="lofi.gif" style="width:100%; opacity: 75%">
-    <div id="profile"></div>
-    <div id="feed"></div>
-    <div id="centerTitle">SocialHub</div>
-    <div id="centerSubTitle">The Place of Social Media Networking</div>
+    <img src="background.png" style="width:100%; opacity: 65%">
+    <div class="centerTitle">SocialHub</div>
+    <div class="centerSubTitle">The Place of Social Media Networking</div>
 </div>
 </body>
 </html>
