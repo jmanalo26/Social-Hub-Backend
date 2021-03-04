@@ -3,9 +3,10 @@ package TheBoyz.TheBoyz.web.service;
 import TheBoyz.TheBoyz.data.model.BriefStatus;
 import TheBoyz.TheBoyz.data.model.SecureTwitter;
 import TheBoyz.TheBoyz.data.model.Tweet;
+import TheBoyz.TheBoyz.data.model.TwitterData;
+import TheBoyz.TheBoyz.data.repository.TwitterDataRepository;
 import TheBoyz.TheBoyz.data.repository.TwitterRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
@@ -29,6 +30,8 @@ public class TwitterService {
     Twitter twitter;
 
     private final TwitterRepository twitterRepository;
+    private final TwitterDataRepository twitterDataRepository;
+
 
     private String consumerKey;
     private String consumerSecret;
@@ -37,8 +40,9 @@ public class TwitterService {
     private String twitterHandle;
 
 
-    public TwitterService(TwitterRepository twitterRepository) {
+    public TwitterService(TwitterRepository twitterRepository, TwitterDataRepository twitterDataRepository) {
         this.twitterRepository = twitterRepository;
+        this.twitterDataRepository = twitterDataRepository;
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey("eIU7C0LHUKJQvjVdXDwA9jHZs")
@@ -366,5 +370,52 @@ public class TwitterService {
         System.out.println(hex.length());
 
         return secureTwitter;
+    }
+
+    public TwitterData captureTwitterData(TwitterData twitterData) throws NoSuchAlgorithmException, TwitterException {
+        System.out.println("hit the capture twitter data in the service");
+
+        System.out.println(twitterData.getUserId());
+        System.out.println(twitterData.getTwitterHandle());
+        User user = twitter.showUser(twitterData.getTwitterHandle());
+        if(user == null){
+            System.out.println("the twitter user wasnt found by the handle given");
+            return null;
+        }
+        int followerCount = twitter.showUser(twitterData.getTwitterHandle()).getFollowersCount();
+        System.out.println("follower count: " + followerCount);
+        twitterData.setFollowerCount(followerCount);
+
+        if (user.getStatus() != null) {
+
+            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+            System.out.println("found the twitter data from the api");
+            System.out.println(twitter.showUser(twitterData.getTwitterHandle()).getStatus().getText());
+
+        } else {
+            System.out.println("@" + user.getScreenName());
+        }
+        TwitterData searchedTwitterData = twitterDataRepository.findByUserId(twitterData.getUserId());
+        if(searchedTwitterData == null){
+            System.out.println("the twitter searched is null");
+            twitterDataRepository.save(twitterData);
+
+        } else {
+            System.out.println("found existing twitter data for the user... deleting...");
+            twitterDataRepository.delete(searchedTwitterData);
+            twitterDataRepository.save(twitterData);
+        }
+        System.out.println("this is the follower count for twitter data object: " + twitterData.getFollowerCount());
+        return twitterData;
+
+
+    }
+
+    public TwitterData getTwitterData(String userId) {
+       TwitterData searchData = twitterDataRepository.findByUserId(Integer.valueOf(userId));
+       if(searchData == null){
+           return null;
+       }
+       return searchData;
     }
 }

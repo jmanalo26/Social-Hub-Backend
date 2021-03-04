@@ -113,4 +113,43 @@ public class UserController {
 
     }
 
+    /**
+     * Saves a user to the database.
+     * @param bindingResult
+     * @return returns the saved user.
+     * @throws ValidationException
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping(value = "/api/user/put")
+    public User update(@RequestBody User updatedUser, BindingResult bindingResult) throws ValidationException {
+        System.out.println("In the UPDATE method in the user controller...");
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException("exception thrown in the backend");
+        }
+//        System.out.println(user.getUsername());
+//        System.out.println(user.getEmail());
+//        System.out.println(user.getPassword());
+//        System.out.println(user.getPhoneNumber());
+        System.out.println(updatedUser.getUserId());
+        
+        User existingUser = this.userService.findUserByUserId(updatedUser.getUserId());
+        if(!updatedUser.getUsername().equals("")) {
+            //check if username is taken
+            existingUser.setUsername(updatedUser.getUsername());
+        }
+        if(!updatedUser.getEmail().equals("")){
+            System.out.println("setting email..");
+            System.out.println(updatedUser.getEmail());
+            existingUser.setEmail(updatedUser.getEmail());
+        }
+        if(!updatedUser.getPassword().equals("")){
+            existingUser.setPassword(updatedUser.getPassword());
+        }
+        if(!updatedUser.getPhoneNumber().equals("")){
+            existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
+        }
+        return this.userService.save(existingUser);
+
+    }
+
 }

@@ -1,9 +1,6 @@
 package TheBoyz.TheBoyz.web.controller;
 
-import TheBoyz.TheBoyz.data.model.BriefStatus;
-import TheBoyz.TheBoyz.data.model.SecureTwitter;
-import TheBoyz.TheBoyz.data.model.Tweet;
-import TheBoyz.TheBoyz.data.model.User;
+import TheBoyz.TheBoyz.data.model.*;
 import TheBoyz.TheBoyz.web.service.TwitterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -150,5 +147,20 @@ public class TwitterController {
         System.out.println("*************");
 //        System.out.println(twitterService.getStatusAsTweet());
         return new ResponseEntity<>(twitterService.checkTwitterRegistered(userId), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping(value = "/api/twitter/send/twitter-data")
+    public ResponseEntity<TwitterData> saveTwitterData(@RequestBody TwitterData twitterData) throws NoSuchAlgorithmException, TwitterException {
+        System.out.println("hit hte controller for twitter data");
+        return new ResponseEntity<>(twitterService.captureTwitterData(twitterData), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/twitter/get/twitter-data/{userId}")
+    public ResponseEntity<TwitterData> getTwitterData(@PathVariable String userId) throws TwitterException {
+        System.out.println("*************");
+        System.out.println(userId);
+        return new ResponseEntity<>(twitterService.getTwitterData(userId), HttpStatus.OK);
     }
 }

@@ -18,8 +18,10 @@ public class PreferencesService {
 
     public GeneralPreferences getPreferences(String userId){
         System.out.println("in the get preferences in the preferences service");
+        System.out.println("userID'");
        GeneralPreferences generalPreferences = preferencesRepository.findByUserId(Integer.valueOf(userId));
        if(generalPreferences == null){
+           System.out.println("null preferences");
            return null;
        }
         return generalPreferences;

@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InstagramRepository extends JpaRepository<InstaUser, Long> {
-    public Page<InstaUser> findInstaUserByInstaId(int instaId, Pageable pageable);
+//    public Page<InstaUser> findInstaUserByInstaId(int instaId, Pageable pageable);
 
 }

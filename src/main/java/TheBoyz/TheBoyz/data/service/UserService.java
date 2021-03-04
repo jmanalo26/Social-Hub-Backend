@@ -5,8 +5,6 @@ import TheBoyz.TheBoyz.data.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.xml.bind.ValidationException;
@@ -38,6 +36,17 @@ public class UserService {
     @Transactional(readOnly = true)
     public void findByUserId(final Long userId, final Integer page, final Integer limit) {
         userRepository.findByUserIdContainingOrderByUserId(userId, PageRequest.of(page, limit));
+//        return this.userRepository.findByUserId(getUser().getUserId())
+    }
+
+    /**
+     * Finds the user by an id.
+     * @param userId the user's unique id.
+     */
+    @Transactional(readOnly = true)
+    public User findUserByUserId(int userId) {
+//        userRepository.findByUserIdContainingOrderByUserId(userId, PageRequest.of(page, limit));
+        return this.userRepository.findByUserId(userId);
     }
 
     /**
@@ -69,15 +78,17 @@ public class UserService {
 //        System.out.println(searchedPhoneNumber.getPhoneNumber());
         User searchedEmail = userRepository.findUserByEmail(user.getEmail());
         User nullUser = new User();
-        nullUser.setUserId(0);
         nullUser.setUsername("");
         nullUser.setEmail("");
         nullUser.setPhoneNumber("");
 
         if(searchedUsername == null && searchedEmail == null && searchedPhoneNumber == null) {
             System.out.println("This user does not exist, saving to the db");
+            System.out.println(user.getUserId());
             userRepository.save(user);
-            return user;
+            User addedUser = userRepository.findUserByUsername(user.getUsername());
+            System.out.println(addedUser.getUserId());
+            return addedUser;
 
         } else {
             System.out.println("the user exists");
@@ -99,26 +110,51 @@ public class UserService {
 
     }
 
-    /**
-     * Saves a user to the database.
-     *
-     * @param user the user being saved
-     * @param bindingResult the result from the call
-     * @return returns the user that was saved
-     * @throws ValidationException
-     */
-    public User save(@RequestBody User user, BindingResult bindingResult) throws ValidationException {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException("exception thrown in the backend");
+    public User checkUserExists(User user) {
+        User searchedUsername  = userRepository.findUserByUsername(user.getUsername());
+        User searchedPhoneNumber = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
+//        System.out.println(searchedPhoneNumber.getPhoneNumber());
+        User searchedEmail = userRepository.findUserByEmail(user.getEmail());
+        if (searchedUsername != null) {
+            System.out.println("the user name already exists, not saving to the db");
         }
-        user.getUserId();
-        User newUser = new User();
-        newUser.setEmail(user.getEmail());
-        newUser.setPassword(user.getPassword());
-        newUser.setPhoneNumber(user.getPhoneNumber());
-        newUser.setUsername((user.getUsername()));
-        System.out.println(user.getUsername());
-        return newUser;
+        if (searchedEmail != null) {
+            System.out.println("the email already exists, not saving to the db");
+        }
+        if (searchedPhoneNumber != null) {
+            System.out.println("the phone number already exists, not saving to the db");
+        }
+        return null;
+    }
+
+    public User checkUsernameTaken(User existingUser, User updatedUser){
+        User searchedUsername  = userRepository.findUserByUsername(updatedUser.getUsername());
+        if (searchedUsername != null) {
+            System.out.println("the user name already exists, cannot update");
+            return existingUser;
+        }
+        return updatedUser;
+    }
+
+
+        /**
+         * Saves a user to the database.
+         *
+         * @param user the user being saved
+         * @return returns the user that was saved
+         * @throws ValidationException
+         */
+//    public User save(@RequestBody User user, BindingResult bindingResult) throws ValidationException {
+//        if (bindingResult.hasErrors()) {
+//            throw new ValidationException("exception thrown in the backend");
+//        }
+//        userRepository.save(user);
+//        return user;
+//    }
+    public User save(User user) throws ValidationException {
+        System.out.println("in the save user service...");
+        userRepository.save(user);
+        return user;
     }
 
     /**

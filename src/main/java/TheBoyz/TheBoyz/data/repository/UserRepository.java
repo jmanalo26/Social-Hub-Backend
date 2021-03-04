@@ -24,6 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     */
    public Page<User> findByUserIdContainingOrderByUserId(Long userId, Pageable pageable);
 
+   public User findByUserId(int userId);
    /**
     * Find the User by username
     * @param username the username created by the user
