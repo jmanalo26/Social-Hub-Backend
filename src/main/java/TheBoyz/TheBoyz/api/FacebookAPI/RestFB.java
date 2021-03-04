@@ -1,38 +1,50 @@
 package TheBoyz.TheBoyz.api.FacebookAPI;
+import TheBoyz.TheBoyz.data.model.FacebookPosts;
 import com.restfb.*;
 import com.restfb.scope.FacebookPermissions;
 import com.restfb.scope.ScopeBuilder;
-import com.restfb.types.Post;
-import com.restfb.types.User;
+import com.restfb.types.*;
+import static com.restfb.logging.RestFBLogger.CLIENT_LOGGER;
+
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.*;
+import java.util.ArrayList;
 
 /**
  * IGNORE THIS CLASS, THIS IS FOR TESTING PURPOSES ONLY
  */
-public class RestFB {
+public class RestFB extends DefaultFacebookClient{
 
     private static String appID = "2959296474304941";
     private static String appSecret = "7195fbe6d20da5b6ad187dbd14c83784";
-    private static String redirectURI = "https://www.facebook.com/connect/login_success.html#";
+    private static String redirectURI = "http://localhost:4200/facebook";
     /**
      * Main application
      * @param args Args
      */
-    public static void main(String[] args){
-        String accessToken = "EAAqDduci0a0BAO9NadkjaUboH3VlK3eXsTZCaVWtYuLZB8jZCSabSzK15wpj2at8OgjFRDoBkOk3sbNK0gOOGIYaeMkUnoE2thdBSNXyi5KFHS3D70nHetncgksdZAW10quCKmqPpgAE607nm2kR8r6CalfA8BZB7hYmQIGrjSUVm1VuBtBQE468wSH48X8wuonAWLBPDB1xAvw9XjyVmPmRIlPl4ZARpqg03blLSd3gZDZD";
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        String accessToken = "EAAqDduci0a0BAGwuC28w5DzSI4MlEsuJfEQZALOndMdOZBOAzCcg1DuZCwNOZBUxCM0HJ0r4rArZCKVc3swHXEOtNIhMNdyKE4YgyrEeRE7VvqnCifv0d5Ht2ixErPYyE3jnz8muX3BjreoIZBAYx9hfZAhNIAPa6OfsmqJA7NTyZA7Y0qwODndAUPsexBwmz4EoAeisaPZA7FoLgkDV92BDemtd2SPuISgaswD1kK3j1kgZDZD";
         getUser();
-        FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
-        getProfilePicture(fb);
+        //FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
+        //getAlbum(fb);
+        //start();
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
     }
 
-    public static void getProfilePicture(FacebookClient fb){
-        User user = fb.fetchObject("me", User.class);
-        User pic = fb.fetchObject(user.getId(), User.class, Parameter.with("fields", "picture"));
-        System.out.println(pic.getPicture().getUrl());
-}
 
-    public static void logIn(String redirectURI, String appID, String appSecret, FacebookClient f) {
+    public static void getAlbum(FacebookClient fb){
+        Connection<Photo> myPhotos = fb.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "picture"), Parameter.with("type", "uploaded"));
+        for (Photo p: myPhotos.getData()){
+            System.out.println(p.getPicture());
+        }
+    }
+
+    public static void logIn(String redirectURI, String appID, String appSecret, FacebookClient f) throws IOException {
 
         ScopeBuilder scopeBuilder = new ScopeBuilder();
         scopeBuilder.addPermission(FacebookPermissions.PUBLIC_PROFILE);
@@ -43,7 +55,13 @@ public class RestFB {
 
         String loginDialogURLString = f.getLoginDialogUrl(appID,
                 redirectURI, scopeBuilder);
-        //FacebookClient.AccessToken at = f.obtainUserAccessToken(appID, appSecret, redirectURI, <verification-code>);
+        URL url = new URL(loginDialogURLString);
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.connect();
+
+        int code = connection.getResponseCode();
+        System.out.println(code);
     }
 
 
@@ -60,7 +78,7 @@ public class RestFB {
      * Given the access token, retrieve logged in user's information
      * NEED TO LOOK INTO GETTING USER ACCESS TOKEN
      */
-    public static void getUser(){
+    public static void getUser() throws IOException, URISyntaxException {
         DefaultFacebookClient facebookClient = new DefaultFacebookClient(Version.LATEST);
         ScopeBuilder scope = new ScopeBuilder();
         scope.addPermission(FacebookPermissions.PUBLIC_PROFILE);
@@ -68,6 +86,14 @@ public class RestFB {
         String login = facebookClient.getLoginDialogUrl(appID, redirectURI, scope, Parameter.with("fields", "name"));
         System.out.println("This is the loginURI");
         System.out.println(login);
+        URL url = new URL(login);
+        URLConnection con = url.openConnection();
+        System.out.println( "orignal url: " + con.getURL() );
+        con.connect();
+        System.out.println( "connected url: " + con.getURL() );
+        InputStream is = con.getInputStream();
+        System.out.println( "redirected url: " + con.getURL() );
+        is.close();
 
         /**
         facebookClient.obtainUserAccessToken(appID, appSecret, redirectURI, 0);
