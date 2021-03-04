@@ -45,6 +45,8 @@ public class InstagramService {
         instagramUser.setMediaCount(usernameResult.getUser().media_count);
         instagramUser.setProfilePicUrl(usernameResult.getUser().profile_pic_url);
         instagramUser.setInstaBio(usernameResult.getUser().biography);
+        instagramUser.setDisplayName(usernameResult.getUser().full_name);
+        instagramUser.setUserName(usernameResult.getUser().username);
 
 
 
