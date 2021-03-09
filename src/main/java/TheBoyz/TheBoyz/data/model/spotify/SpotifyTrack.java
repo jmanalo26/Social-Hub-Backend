@@ -2,6 +2,8 @@ package TheBoyz.TheBoyz.data.model.spotify;
 
 import lombok.*;
 
+import java.util.HashMap;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -11,7 +13,7 @@ import lombok.*;
 public class SpotifyTrack {
     private String id;
     private String name;
-    private String[] artistNames;
+    private HashMap<String, String> artistInfo;
     private String spotifyUrl;
     private Integer diskNumber;
     private Integer duration;
@@ -19,7 +21,4 @@ public class SpotifyTrack {
     private Integer popularity;
     private SpotifyAlbum album;
     private String spotifyUri;
-
-    // add album name, and album image
-
 }

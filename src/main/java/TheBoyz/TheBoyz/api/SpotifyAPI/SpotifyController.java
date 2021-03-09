@@ -19,16 +19,21 @@ import static TheBoyz.TheBoyz.data.service.SpotifyService.*;
 @Slf4j
 public class SpotifyController {
 
+    // Try to order these methods
+
+    // Authentication
+    // User specific
+    // Playlist/ add/ remove/ update/ reorder
+    // Track
+    // Artist
+    // Album
+    // Recommendations?
+    // Search/ Query
+
+
     @GetMapping("/")
     public ResponseEntity<String> generateURL() {
-//        log.info("inside generate url!");
-//        log.info(authorizationCodeUri_Sync());
         return new ResponseEntity<>(authorizationCodeUri_Sync(), HttpStatus.OK);
-    }
-
-    @GetMapping("home")
-    public void displayHomePage() {
-//        SpotifyApiConnection.authorizationCodeUri_Sync();
     }
 
     @GetMapping("playlist/{playlist_id}")
@@ -55,6 +60,7 @@ public class SpotifyController {
 //        return redirectView;
     }
 
+    // change the mapping to a PUT mapping and return a response entity of type playlist
     @GetMapping("playlist/addtoplaylist/{playlist_id}/{track_uri}")
     public void addTrackToPlaylist(@PathVariable String playlist_id, @PathVariable String... track_uri) {
         // "spotify:track:6rqhFgbbKwnb9MLmUQDhG6";
@@ -109,9 +115,6 @@ public class SpotifyController {
     @GetMapping("authentication/")
     @ResponseBody
     public RedirectView generateAuthenticationToken(@RequestParam String code) {
-//        log.info(code);
-//        System.out.println(code + "\n");
-//        log.info(code);
         authorizationCode_Sync(code);
         authorizationCodeRefresh_Sync();
         RedirectView redirectView = new RedirectView();
@@ -150,6 +153,32 @@ public class SpotifyController {
     @PutMapping("/playlist/reorder/{playlist_id}/{range_start}/{insert_before}")
     public ResponseEntity<SpotifyPlaylist> reorderPlaylist(@PathVariable String playlist_id, @PathVariable Integer range_start, @PathVariable Integer insert_before) {
         return new ResponseEntity<>(reorderPlaylistItems(playlist_id, range_start, insert_before), HttpStatus.OK);
+    }
+
+    // Create mappings for updating playlist, getting artist by ID, getting top tracks of an artist, getting albums of an artist
+   // Artist id for Ariana: 66CXWjxzNUsdJxJ2JdwvnR
+
+    @GetMapping("/artist/id/{artistId}")
+    public ResponseEntity<SpotifyArtist> getArtistById(@PathVariable String artistId) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getArtistById(artistId), HttpStatus.OK);
+    }
+
+    @GetMapping("/artist/tracks/{artistId}")
+    public ResponseEntity<SpotifyTrack[]> getArtistTopTracksById(@PathVariable String artistId) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getArtistTopTracks(artistId), HttpStatus.OK);
+    }
+
+    @GetMapping("/artist/albums/{artistId}")
+    public ResponseEntity<SpotifyAlbum[]> getArtistAlbumsById(@PathVariable String artistId) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getArtistAlbums(artistId), HttpStatus.OK);
+    }
+
+    @PutMapping("/playlist/update/{playlist_id}/{playlist_name}/{playlist_description}")
+    public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name, @PathVariable String playlist_description) {
+        return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, playlist_description), HttpStatus.OK);
     }
 
 

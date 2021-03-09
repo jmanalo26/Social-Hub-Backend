@@ -2,6 +2,7 @@ package TheBoyz.TheBoyz.data.service;
 
 import TheBoyz.TheBoyz.data.model.spotify.*;
 import com.google.gson.JsonArray;
+import com.neovisionaries.i18n.CountryCode;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
@@ -18,8 +19,8 @@ import org.apache.hc.core5.http.ParseException;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SpotifyService {
@@ -133,16 +134,19 @@ public class SpotifyService {
         return null;
     }
 
+    // Modify Track to hold a Spotify Artist Object
+    // Modify Front-end Model
+    // Make appropriate changes to other back-end methods
+
     public static SpotifyTrack getTrackById(String id) {
         var getItemsRequest = spotifyApi.getTrack(id).build();
         try {
             var resultSet = getItemsRequest.execute();
-            var artistList = new ArrayList<String>();
+            var artistMap = new HashMap<String, String>();
             for (var artist : resultSet.getArtists()) {
-                artistList.add(artist.getName());
+                artistMap.put(artist.getId(), artist.getName());
             }
-
-            return new SpotifyTrack(resultSet.getId(), resultSet.getName(), artistList.toArray(String[]::new), resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getDiscNumber(), resultSet.getDurationMs(), resultSet.getIsExplicit(), resultSet.getPopularity(), getAlbumById(resultSet.getAlbum().getId()), resultSet.getUri());
+            return new SpotifyTrack(resultSet.getId(), resultSet.getName(), artistMap, resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getDiscNumber(), resultSet.getDurationMs(), resultSet.getIsExplicit(), resultSet.getPopularity(), getAlbumById(resultSet.getAlbum().getId()), resultSet.getUri());
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             return null;
         }
@@ -193,6 +197,8 @@ public class SpotifyService {
         }
     }
 
+    // Return a playlist object -> update the front-end playlist object?
+    // PUT mapping
     public static void addToPlaylist(String playlistid, String... uri) {
 //spotifyApi.unfollowPlaylist();
         AddItemsToPlaylistRequest addToPlaylistRequest = spotifyApi.addItemsToPlaylist(playlistid, uri).build();
@@ -282,6 +288,21 @@ public class SpotifyService {
 
     }
 
+    public static SpotifyArtist getArtistById(String id) {
+        var searchFromApiRequest = spotifyApi.getArtist(id).build();
+        try {
+            var result = searchFromApiRequest.execute();
+            if (result.getImages().length < 1) {
+                return new SpotifyArtist(result.getName(), result.getExternalUrls().getExternalUrls().get("spotify"), result.getFollowers().getTotal(), result.getGenres(), result.getId(), null, result.getPopularity(), result.getUri());
+
+            } else {
+                return new SpotifyArtist(result.getName(), result.getExternalUrls().getExternalUrls().get("spotify"), result.getFollowers().getTotal(), result.getGenres(), result.getId(), result.getImages()[0].getUrl(), result.getPopularity(), result.getUri());
+            }
+        } catch (ParseException | SpotifyWebApiException | IOException e) {
+            return null;
+        }
+    }
+
 
     public static SpotifyTrack[] searchByTrack(String query) {
 
@@ -292,13 +313,13 @@ public class SpotifyService {
             var tempArray = result.getItems();
             List<SpotifyTrack> trackList = new ArrayList<>();
             for (var track : tempArray) {
-                var tempList = new ArrayList<String>();
+                var artistHashMap = new HashMap<String, String>();
                 var artists = track.getArtists();
                 for (var artist : artists) {
-                    tempList.add(artist.getName());
+                    artistHashMap.put(artist.getId(), artist.getName());
                 }
 
-                trackList.add(new SpotifyTrack(track.getId(), track.getName(), tempList.toArray(String[]::new), track.getExternalUrls().getExternalUrls().get("spotify"), track.getDiscNumber(), track.getDurationMs(), track.getIsExplicit(), track.getPopularity(), getAlbumById(track.getAlbum().getId()), track.getUri()));
+                trackList.add(new SpotifyTrack(track.getId(), track.getName(), artistHashMap, track.getExternalUrls().getExternalUrls().get("spotify"), track.getDiscNumber(), track.getDurationMs(), track.getIsExplicit(), track.getPopularity(), getAlbumById(track.getAlbum().getId()), track.getUri()));
 //                artistList.add(new SpotifyArtist(artist.getName(), artist.getExternalUrls().getExternalUrls().get("spotify"), artist.getFollowers().getTotal(), artist.getGenres(), artist.getId(), artist.getImages()[0].getUrl(), artist.getPopularity(), artist.getUri()));
             }
 //            System.out.println("In Connection: Got result from API!");
@@ -319,5 +340,62 @@ public class SpotifyService {
         return getPlaylistById(playlist_id);
     }
 
+    public static SpotifyTrack[] getArtistTopTracks(String artistId) {
+
+        var getArtistTopTracksRequest = spotifyApi.getArtistsTopTracks(artistId, CountryCode.getByLocale(Locale.US)).build();
+        var spotifyTracksArray = new ArrayList<SpotifyTrack>();
+
+        try {
+            var result = getArtistTopTracksRequest.execute();
+            var topTracks = Arrays.stream(result).limit(10).collect(Collectors.toList());
+
+            for (var track : topTracks) {
+                spotifyTracksArray.add(getTrackById(track.getId()));
+            }
+            return spotifyTracksArray.toArray(SpotifyTrack[]::new);
+
+
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error in reorder playlist!");
+            return null;
+        }
+    }
+
+    // create the call to get albums of an artist
+
+    public static SpotifyAlbum[] getArtistAlbums(String artistId) {
+        var getArtistTopTracksRequest = spotifyApi.getArtistsAlbums(artistId).build();
+//        var spotifyTracksArray = new ArrayList<SpotifyAlbum>();
+
+        try {
+            var result = getArtistTopTracksRequest.execute();
+            return Arrays.stream(result.getItems())
+                    .map((a) -> getAlbumById(a.getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyAlbum[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error in reorder playlist!");
+            return null;
+        }
+    }
+
+    public static SpotifyPlaylist updatePlaylistDetails(String playlist_id, String playlist_name, String playlist_description) {
+// need some check for the description? prolly not tbh
+        // gonna have front-end checks for the name, so we should be gucci
+
+        var modifyPlaylistNameRequest = spotifyApi.changePlaylistsDetails(playlist_id).name(playlist_name).build();
+        try {
+            modifyPlaylistNameRequest.execute();
+            if (playlist_description != null) {
+                spotifyApi.changePlaylistsDetails(playlist_id).description(playlist_description).build().execute();
+            }
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error in reorder playlist!");
+        }
+        return getPlaylistById(playlist_id);
+    }
+
 
 }
+
+
