@@ -61,13 +61,13 @@ public class SpotifyController {
     }
 
     // change the mapping to a PUT mapping and return a response entity of type playlist
-    @GetMapping("playlist/addtoplaylist/{playlist_id}/{track_uri}")
-    public void addTrackToPlaylist(@PathVariable String playlist_id, @PathVariable String... track_uri) {
+    @PutMapping("playlist/add/track/{playlist_id}/{track_uri}")
+    public ResponseEntity<SpotifyPlaylist> addTrackToPlaylist(@PathVariable String playlist_id, @PathVariable String... track_uri) {
         // "spotify:track:6rqhFgbbKwnb9MLmUQDhG6";
         // spotify:track:3lPr8ghNDBLc2uZovNyLs9
         // spotify:artist:12Chz98pHFMPJEknJQMWvI
         authorizationCodeRefresh_Sync();
-        addToPlaylist(playlist_id, track_uri);
+        return new ResponseEntity<>(addToPlaylist(playlist_id, track_uri), HttpStatus.OK);
     }
 
     @GetMapping("playlist/remove/playlist/{playlist_id}")
@@ -156,7 +156,7 @@ public class SpotifyController {
     }
 
     // Create mappings for updating playlist, getting artist by ID, getting top tracks of an artist, getting albums of an artist
-   // Artist id for Ariana: 66CXWjxzNUsdJxJ2JdwvnR
+    // Artist id for Ariana: 66CXWjxzNUsdJxJ2JdwvnR
 
     @GetMapping("/artist/id/{artistId}")
     public ResponseEntity<SpotifyArtist> getArtistById(@PathVariable String artistId) {

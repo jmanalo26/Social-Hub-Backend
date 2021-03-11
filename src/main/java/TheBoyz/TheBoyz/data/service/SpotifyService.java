@@ -199,17 +199,15 @@ public class SpotifyService {
 
     // Return a playlist object -> update the front-end playlist object?
     // PUT mapping
-    public static void addToPlaylist(String playlistid, String... uri) {
+    public static SpotifyPlaylist addToPlaylist(String playlistid, String... uri) {
 //spotifyApi.unfollowPlaylist();
         AddItemsToPlaylistRequest addToPlaylistRequest = spotifyApi.addItemsToPlaylist(playlistid, uri).build();
         try {
             var playlist = addToPlaylistRequest.execute();
-//            System.out.println("Added to playlist!");
-//            System.out.println("Playlist with name: " + playlist.getName() + " has been created!");
-//            System.out.println("Playlist id is: " + playlist.getId());
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
+        return getPlaylistById(playlistid);
     }
 
     public static void removePlaylist(String playlistid) {
@@ -270,16 +268,17 @@ public class SpotifyService {
         var searchFromApiRequest = spotifyApi.getAlbum(albumId).build();
         try {
             var result = searchFromApiRequest.execute();
+
             var tempList = new ArrayList<String>();
             var artists = result.getArtists();
             for (var artist : artists) {
                 tempList.add(artist.getName());
             }
             if (result.getImages().length > 0) {
-                return new SpotifyAlbum(result.getName(), result.getId(), result.getImages()[0].getUrl(), tempList.toArray(String[]::new), result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri());
+                return new SpotifyAlbum(result.getName(), result.getId(), result.getImages()[0].getUrl(), tempList.toArray(String[]::new), result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri(), result.getReleaseDate(), result.getLabel(), result.getGenres());
 
             } else {
-                return new SpotifyAlbum(result.getName(), result.getId(), null, tempList.toArray(String[]::new), result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri());
+                return new SpotifyAlbum(result.getName(), result.getId(), null, tempList.toArray(String[]::new), result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri(), result.getReleaseDate(), result.getLabel(), result.getGenres());
 
             }
         } catch (IOException | SpotifyWebApiException | ParseException e) {
@@ -292,6 +291,7 @@ public class SpotifyService {
         var searchFromApiRequest = spotifyApi.getArtist(id).build();
         try {
             var result = searchFromApiRequest.execute();
+
             if (result.getImages().length < 1) {
                 return new SpotifyArtist(result.getName(), result.getExternalUrls().getExternalUrls().get("spotify"), result.getFollowers().getTotal(), result.getGenres(), result.getId(), null, result.getPopularity(), result.getUri());
 
