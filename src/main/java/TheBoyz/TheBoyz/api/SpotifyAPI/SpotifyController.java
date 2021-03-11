@@ -181,5 +181,10 @@ public class SpotifyController {
         return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, playlist_description), HttpStatus.OK);
     }
 
+    @PutMapping("/playlist/update/{playlist_id}/{playlist_name}")
+    public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name) {
+        return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, null), HttpStatus.OK);
+    }
+
 
 }

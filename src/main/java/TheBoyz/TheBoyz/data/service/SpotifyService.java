@@ -382,16 +382,22 @@ public class SpotifyService {
     public static SpotifyPlaylist updatePlaylistDetails(String playlist_id, String playlist_name, String playlist_description) {
 // need some check for the description? prolly not tbh
         // gonna have front-end checks for the name, so we should be gucci
-
-        var modifyPlaylistNameRequest = spotifyApi.changePlaylistsDetails(playlist_id).name(playlist_name).build();
-        try {
-            modifyPlaylistNameRequest.execute();
-            if (playlist_description != null) {
-                spotifyApi.changePlaylistsDetails(playlist_id).description(playlist_description).build().execute();
+        if (playlist_name != null) {
+            var modifyPlaylistNameRequest = spotifyApi.changePlaylistsDetails(playlist_id).name(playlist_name).build();
+            try {
+                var a = modifyPlaylistNameRequest.execute();
+                System.out.println("Modified the playlist name: " + a);
+                if (playlist_description != null) {
+                    System.out.println("In the Yes check: " + playlist_description);
+                    spotifyApi.changePlaylistsDetails(playlist_id).description(playlist_description).build().execute();
+                } else {
+//                spotifyApi.changePlaylistsDetails(playlist_id).description(" ").build().execute();
+                }
+            } catch (IOException | SpotifyWebApiException | ParseException e) {
+                System.out.println("Error in update playlist!");
             }
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
-            System.out.println("Error in reorder playlist!");
         }
+
         return getPlaylistById(playlist_id);
     }
 
