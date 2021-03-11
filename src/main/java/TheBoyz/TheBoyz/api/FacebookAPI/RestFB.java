@@ -27,20 +27,27 @@ public class RestFB extends DefaultFacebookClient{
      * @param args Args
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String accessToken = "EAAqDduci0a0BAGwuC28w5DzSI4MlEsuJfEQZALOndMdOZBOAzCcg1DuZCwNOZBUxCM0HJ0r4rArZCKVc3swHXEOtNIhMNdyKE4YgyrEeRE7VvqnCifv0d5Ht2ixErPYyE3jnz8muX3BjreoIZBAYx9hfZAhNIAPa6OfsmqJA7NTyZA7Y0qwODndAUPsexBwmz4EoAeisaPZA7FoLgkDV92BDemtd2SPuISgaswD1kK3j1kgZDZD";
-        getUser();
+        String accessToken = "EAAqDduci0a0BACZBcyzyGIxgu9dz1mqZBdGsVEtuA2MgbPrTxP86Ypcp08f6jjcXd5H6qg90o3nhxWzci9ZAdjFZAdVZCHxKZBtdKl0oHuQkODlKnEvNh52Kftk0xuVqu5bbPL4826pNQHvMwQv9ahI1c9O9HAzwMZBYerZCxl4w1okhqbAFa3gRmJKAyZA5ksDyAWjUZAacHDTYhvBAKuZAjE8QbVO7tD93zMfdWI0H7oq7AZDZD";
+        //getUser();
         //FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
-        //getAlbum(fb);
+        //getPages(fb);
         //start();
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
     }
 
+    public static void getPages(FacebookClient fb){
+        Connection<Account> myPhotos = fb.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"), Parameter.with("fields", "link"));
+        for (Account p: myPhotos.getData()){
+            System.out.println(p.getName());
+            System.out.println(p.getLink());
+        }
+    }
 
     public static void getAlbum(FacebookClient fb){
-        Connection<Photo> myPhotos = fb.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "picture"), Parameter.with("type", "uploaded"));
+        Connection<Photo> myPhotos = fb.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "link"), Parameter.with("type", "uploaded"));
         for (Photo p: myPhotos.getData()){
-            System.out.println(p.getPicture());
+            System.out.println(p.getLink());
         }
     }
 

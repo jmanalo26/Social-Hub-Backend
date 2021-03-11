@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class FacebookPhotos {
-    private ArrayList<String> photos;
-    private ArrayList<String> photoURLs;
+public class FacebookPages {
+    private ArrayList<String> pageNames;
+    private ArrayList<String> pageURLs;
 }
