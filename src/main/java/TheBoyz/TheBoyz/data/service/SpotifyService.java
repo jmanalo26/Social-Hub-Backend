@@ -222,6 +222,7 @@ public class SpotifyService {
     }
 
     public static SpotifyPlaylist removeTracksFromPlaylist(String playlist_id, JsonArray tracksArray) {
+
         var removeFromPlaylistRequest = spotifyApi.removeItemsFromPlaylist(playlist_id, tracksArray).build();
         try {
             var playlist = removeFromPlaylistRequest.execute();
@@ -231,6 +232,8 @@ public class SpotifyService {
         }
         return getPlaylistById(playlist_id);
     }
+    
+
 
     public static SpotifyArtist[] searchByArtist(String query) {
         var searchFromApiRequest = spotifyApi.searchArtists(query).build();
@@ -386,9 +389,7 @@ public class SpotifyService {
             var modifyPlaylistNameRequest = spotifyApi.changePlaylistsDetails(playlist_id).name(playlist_name).build();
             try {
                 var a = modifyPlaylistNameRequest.execute();
-                System.out.println("Modified the playlist name: " + a);
                 if (playlist_description != null) {
-                    System.out.println("In the Yes check: " + playlist_description);
                     spotifyApi.changePlaylistsDetails(playlist_id).description(playlist_description).build().execute();
                 } else {
 //                spotifyApi.changePlaylistsDetails(playlist_id).description(" ").build().execute();
