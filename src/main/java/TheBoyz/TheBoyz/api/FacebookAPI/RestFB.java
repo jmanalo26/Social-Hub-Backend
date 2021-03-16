@@ -21,19 +21,37 @@ public class RestFB extends DefaultFacebookClient{
 
     private static String appID = "2959296474304941";
     private static String appSecret = "7195fbe6d20da5b6ad187dbd14c83784";
-    private static String redirectURI = "http://localhost:4200/facebook";
+    private static String redirectURI = "http://localhost:4200";
     /**
      * Main application
      * @param args Args
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
         String accessToken = "EAAqDduci0a0BACZBcyzyGIxgu9dz1mqZBdGsVEtuA2MgbPrTxP86Ypcp08f6jjcXd5H6qg90o3nhxWzci9ZAdjFZAdVZCHxKZBtdKl0oHuQkODlKnEvNh52Kftk0xuVqu5bbPL4826pNQHvMwQv9ahI1c9O9HAzwMZBYerZCxl4w1okhqbAFa3gRmJKAyZA5ksDyAWjUZAacHDTYhvBAKuZAjE8QbVO7tD93zMfdWI0H7oq7AZDZD";
+        logout();
         //getUser();
         //FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
         //getPages(fb);
         //start();
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
+    }
+
+    public static void logout(){
+        DefaultFacebookClient facebookClient = new DefaultFacebookClient(Version.LATEST);
+        ScopeBuilder scope = new ScopeBuilder();
+        scope.addPermission(FacebookPermissions.PUBLIC_PROFILE);
+        scope.addPermission(FacebookPermissions.USER_FRIENDS);
+        scope.addPermission(FacebookPermissions.USER_BIRTHDAY);
+        scope.addPermission(FacebookPermissions.EMAIL);
+        scope.addPermission(FacebookPermissions.USER_POSTS);
+        scope.addPermission(FacebookPermissions.PAGES_SHOW_LIST);
+        scope.addPermission(FacebookPermissions.USER_MANAGED_GROUPS);
+        scope.addPermission(FacebookPermissions.USER_PHOTOS);
+        String login = facebookClient.getLoginDialogUrl(appID, redirectURI, scope, Parameter.with("fields", "name"));
+        String logout = facebookClient.getLogoutUrl("https://www.google.com/");
+        System.out.println(login);
+        System.out.println(logout);
     }
 
     public static void getPages(FacebookClient fb){

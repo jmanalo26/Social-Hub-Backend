@@ -46,8 +46,10 @@ public class FBService {
         scope.addPermission(FacebookPermissions.USER_MANAGED_GROUPS);
         scope.addPermission(FacebookPermissions.USER_PHOTOS);
         String login = facebookClient.getLoginDialogUrl(appID, redirectURL, scope, Parameter.with("fields", "name"));
+        String logout = facebookClient.getLogoutUrl(redirectURL);
         FacebookLogin l = new FacebookLogin();
         l.setLoginDialogURL(login);
+        l.setLogoutDialogURL(logout);
         return l;
     }
 
