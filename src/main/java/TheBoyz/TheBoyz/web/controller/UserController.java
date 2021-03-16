@@ -3,25 +3,111 @@ package TheBoyz.TheBoyz.web.controller;
 import TheBoyz.TheBoyz.data.model.User;
 import TheBoyz.TheBoyz.data.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.ValidationException;
+
+/**
+ *
+ */
 @Slf4j
 @RestController
+/**
+ * The class that calls all api and database calls from the user service.
+ */
 public class UserController {
 
     private final UserService userService;
 
-
+    /**
+     *The constructor for the user controller.
+     * @param userService the service that makes api and database calls.
+     */
     public UserController(final UserService userService){
         this.userService = userService;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/user/retrieve/{email}/{password}")
+    public ResponseEntity<User> getUserByLogIn(@PathVariable String email, @PathVariable String password) {
+        System.out.println("getting the user by their login info");
+        return new ResponseEntity<>(userService.getUserByLogin(email, password), HttpStatus.OK);
+    }
+    /**
+     * Posts the user to the database.
+     * @param user the user passed in
+     * @return the posted user.
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/api/user")
     public ResponseEntity<User> createUser(@RequestBody User user)  {
-       return null;
+        return null;
+    }
+
+    /**
+     * gets the user from the database.
+     * @return returns the user
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/user/get-user")
+    public ResponseEntity<User> getUser()  {
+        return new ResponseEntity<>(userService.getUser("user1"), HttpStatus.OK);
+    }
+
+    /**
+     * gets a user from the database by a username.
+     * @param username the username passed in from the front end.
+     * @return returns a user from the database.
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/user/retrieve/{username}")
+    public ResponseEntity<User> getUserByUserName(@PathVariable String username)  {
+        System.out.println("in the user controller to get a user by username");
+        System.out.println(username);
+        return new ResponseEntity<>(userService.getUser(username), HttpStatus.OK);
+    }
+
+    /**
+     * Saves a user to the database.
+     * @param user the user being saved to the database.
+     * @param bindingResult
+     * @return returns the saved user.
+     * @throws ValidationException
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "/api/user/newUser", method = { RequestMethod.GET, RequestMethod.POST })
+    public User save(@RequestBody User user, BindingResult bindingResult) throws ValidationException {
+        System.out.println("In the save method in the user controller...");
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException("exception thrown in the backend");
+        }
+        System.out.println(user.getUsername());
+        System.out.println(user.getEmail());
+        System.out.println(user.getPassword());
+        System.out.println(user.getPhoneNumber());
+        System.out.println(user.getUserId());
+//        Optional<User> check = userRepository.findByStudentId(user.getStudentId());
+        User newUser = new User();
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword(user.getPassword());
+        newUser.setPhoneNumber(user.getPhoneNumber());
+        newUser.setUsername((user.getUsername()));
+        System.out.println(user.getUserId());
+        // save note instance to db
+        User pushedUser = this.userService.saveUser(newUser);
+        if(pushedUser.getUsername().equals("**") || pushedUser.getEmail().equals("**") || pushedUser.getPhoneNumber().equals("**")){
+            System.out.println(" user not saved ");
+        } else {
+            System.out.println(pushedUser.getUsername());
+            System.out.println("the user id: " + pushedUser.getUserId());
+        }
+        System.out.println();
+        return pushedUser;
+//        return new ResponseEntity<>(userService.getUser("user1"), HttpStatus.OK);
+
     }
 
 }
