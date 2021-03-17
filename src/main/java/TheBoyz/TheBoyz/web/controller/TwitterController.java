@@ -5,7 +5,6 @@ import TheBoyz.TheBoyz.web.service.TwitterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import twitter4j.Status;
 import twitter4j.TwitterException;
@@ -36,10 +35,10 @@ public class TwitterController {
      * @throws TwitterException
      */
     @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping(value = "/api/twitter/followers")
-    public ResponseEntity<Integer> getFollowerCount() throws TwitterException {
+    @GetMapping(value = "/api/twitter/followers/{handle}")
+    public ResponseEntity<Integer> getFollowerCount(@PathVariable String handle) throws TwitterException {
         System.out.println("in the tiwtter controller for get followers");
-       return new ResponseEntity<>(twitterService.getFollowerCount(), HttpStatus.OK);
+       return new ResponseEntity<>(twitterService.getFollowerCount(handle), HttpStatus.OK);
     }
 
     /**
@@ -162,5 +161,24 @@ public class TwitterController {
         System.out.println("*************");
         System.out.println(userId);
         return new ResponseEntity<>(twitterService.getTwitterData(userId), HttpStatus.OK);
+    }
+
+    /**
+     * Gets the user's current status tweet.
+     * @return returns the Status
+     * @throws TwitterException
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/twitter/user-timeline/{twitterHandle}")
+    public List<BriefStatus> getUserTimeline(@PathVariable String twitterHandle) throws TwitterException {
+        System.out.println("XXXXXXXXXXX");
+        System.out.println("GETTING TIMELINE FROM TWITTER CONTROLLER");
+        System.out.println("*************");
+        System.out.println("000000");
+        System.out.println(twitterHandle);
+//        System.out.println(twitterService.getStatus());
+//        return this.twitterService.getUserTimeline(twitterHandle);
+
+        return this.twitterService.getUserTimeline(twitterHandle);
     }
 }

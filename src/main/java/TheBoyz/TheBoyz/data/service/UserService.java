@@ -74,7 +74,7 @@ public class UserService {
         System.out.println("username: " + user.getUsername());
         User searchedUser = userRepository.findUserByUsername(user.getUsername());
         User searchedUsername  = userRepository.findUserByUsername(user.getUsername());
-        User searchedPhoneNumber = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
+//        User searchedPhoneNumber = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
 //        System.out.println(searchedPhoneNumber.getPhoneNumber());
         User searchedEmail = userRepository.findUserByEmail(user.getEmail());
         User nullUser = new User();
@@ -82,7 +82,9 @@ public class UserService {
         nullUser.setEmail("");
         nullUser.setPhoneNumber("");
 
-        if(searchedUsername == null && searchedEmail == null && searchedPhoneNumber == null) {
+//        if(searchedUsername == null && searchedEmail == null && searchedPhoneNumber == null) {
+        if(searchedUsername == null && searchedEmail == null) {
+
             System.out.println("This user does not exist, saving to the db");
             System.out.println(user.getUserId());
             userRepository.save(user);
@@ -101,10 +103,10 @@ public class UserService {
                 System.out.println("the email already exists, not saving to the db");
                 nullUser.setEmail("**");
             }
-            if (searchedPhoneNumber != null) {
-                System.out.println("the phone number already exists, not saving to the db");
-               nullUser.setPhoneNumber("**");
-            }
+//            if (searchedPhoneNumber != null) {
+//                System.out.println("the phone number already exists, not saving to the db");
+//               nullUser.setPhoneNumber("**");
+//            }
         }
         return nullUser;
 
@@ -153,8 +155,10 @@ public class UserService {
 //    }
     public User save(User user) throws ValidationException {
         System.out.println("in the save user service...");
-        userRepository.save(user);
-        return user;
+        User savedUser = userRepository.save(user);
+        User userWithId = userRepository.findUserByEmail(savedUser.getEmail());
+        System.out.println("the users id pulled form db: " + userWithId.getUserId());
+        return userWithId;
     }
 
     /**
@@ -174,5 +178,37 @@ public class UserService {
             System.out.println("id: " + user.getUserId());
         }
         return user;
+    }
+
+    public boolean checkIfUsernameExists(String username) {
+        User user = new User();
+        System.out.println("checking if username exists");
+        System.out.println("************");
+        System.out.println(username);
+        user = userRepository.findUserByUsername(username);
+        if(user != null) {
+            System.out.println("found a user, username already exists");
+            System.out.println("USERNAME: " + user.getUsername());
+            System.out.println("id: " + user.getUserId());
+            return true;
+        }
+        System.out.println("the username is available");
+        return false;
+    }
+
+    public boolean checkIfEmailExists(String email) {
+        User user = new User();
+        System.out.println("checking if username exists");
+        System.out.println("************");
+        System.out.println(email);
+        user = userRepository.findUserByEmail(email);
+        if(user != null) {
+            System.out.println("found a user with that email ");
+            System.out.println("Email: " + user.getEmail());
+            System.out.println("id: " + user.getUserId());
+            return true;
+        }
+        System.out.println("the email is available");
+        return false;
     }
 }

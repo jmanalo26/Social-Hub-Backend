@@ -7,6 +7,7 @@ import TheBoyz.TheBoyz.data.model.TwitterData;
 import TheBoyz.TheBoyz.data.repository.TwitterDataRepository;
 import TheBoyz.TheBoyz.data.repository.TwitterRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.web.bind.annotation.RestController;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
@@ -71,9 +72,9 @@ public class TwitterService {
      * @return returns the number of followers the user has
      * @throws TwitterException
      */
-    public Integer getFollowerCount() throws TwitterException {
+    public Integer getFollowerCount(String handle) throws TwitterException {
         System.out.println("In teh get follower count method");
-        User user = twitter.showUser("SocialHubClub");
+        User user = twitter.showUser(handle);
         System.out.println("This is the follower count: " + user.getFollowersCount());
         System.out.println("This is the favorites count: " + user.getFavouritesCount());
         System.out.println("This is the URL: " + user.getURL());
@@ -417,5 +418,77 @@ public class TwitterService {
            return null;
        }
        return searchData;
+    }
+
+    /**
+     * Get the user's status as a breif object of only the important attributes.
+     * @return
+     * @throws TwitterException
+     */
+    public List<BriefStatus> getUserTimeline(String twitterHandle) throws TwitterException {
+        User user = twitter.showUser(twitterHandle);
+        ResponseList<Status> userTimeline = twitter.getUserTimeline(twitterHandle);
+        List<BriefStatus> userTimelineBrief = new ArrayList<>();
+//        System.out.println("the lenght of timeline: " + userTimeline.size());
+
+        int numOfRetweets = 0;
+        BriefStatus mostRetweeted = new BriefStatus();
+        for(int i = 0; i < userTimeline.size(); i++){
+            BriefStatus bs = new BriefStatus();
+            bs.setRetweetCount(userTimeline.get(i).getRetweetCount());
+            if(userTimeline.get(i).getRetweetCount() > numOfRetweets){
+                numOfRetweets = userTimeline.get(i).getRetweetCount();
+                System.out.println(numOfRetweets);
+                mostRetweeted.setRetweetCount(userTimeline.get(i).getRetweetCount());
+                mostRetweeted.setText(userTimeline.get(i).getText());
+                System.out.println(userTimeline.get(i).getText());
+                mostRetweeted.setScreenName(userTimeline.get(i).getUser().getName());
+                mostRetweeted.setHandle(userTimeline.get(i).getUser().getScreenName());
+                mostRetweeted.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
+                mostRetweeted.setCreatedAt(userTimeline.get(i).getCreatedAt());
+            }
+            bs.setText(userTimeline.get(i).getText());
+            bs.setScreenName(userTimeline.get(i).getUser().getName());
+            bs.setHandle(userTimeline.get(i).getUser().getScreenName());
+            bs.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
+            bs.setCreatedAt(userTimeline.get(i).getCreatedAt());
+            userTimelineBrief.add(bs);
+        }
+//        System.out.println(userTimelineBrief.size());
+        userTimelineBrief.add(0, mostRetweeted);
+//        System.out.println(userTimelineBrief.size());
+//
+//
+//        System.out.println(userTimelineBrief.get(0).getText());
+//        System.out.println(userTimelineBrief.get(0).getRetweetCount());
+
+        return userTimelineBrief;
+
+
+
+
+
+//        String twitterStatus = "";
+//        System.out.println(user.getStatus());
+//        if (user.getStatus() != null) {
+//            System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+//            twitterStatus = user.getStatus().getText();
+//        } else {
+//            System.out.println("@" + user.getScreenName());
+//        }
+//        System.out.println("************");
+//        System.out.println("returning: " + twitterStatus);
+//        user.get400x400ProfileImageURL();
+//        Tweet statusTweet = new Tweet();
+//        BriefStatus briefStatusTweet = new BriefStatus();
+//        briefStatusTweet.setCreatedAt(user.getStatus().getCreatedAt());
+//        briefStatusTweet.setFavoriteCount(user.getStatus().getFavoriteCount());
+//        briefStatusTweet.setHandle(user.getName());
+//        briefStatusTweet.setScreenName(user.getScreenName());
+//        briefStatusTweet.setRetweetCount(user.getStatus().getRetweetCount());
+//        briefStatusTweet.setText(user.getStatus().getText());
+//        statusTweet.setTweetText(user.getStatus().getText());
+//        statusTweet.setTweetCreatedBy(user.getName());
+//        return userTimeline;
     }
 }
