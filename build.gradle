@@ -31,6 +31,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.flywaydb:flyway-core'
+ 	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
+	implementation 'com.github.instagram4j:instagram4j:2.0.3'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //	runtimeOnly 'dev.miku:r2dbc-mysql'
@@ -55,3 +57,5 @@ dependencyManagement {
 test {
 	useJUnitPlatform()
 }
+
+

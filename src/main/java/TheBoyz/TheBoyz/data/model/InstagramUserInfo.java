@@ -14,6 +14,7 @@ public class InstagramUserInfo {
 
 
     private int followerCount;
+    private String[] followerFeed;
     private int followingCount;
     private int mediaCount;
     private String profilePicUrl;
@@ -21,6 +22,8 @@ public class InstagramUserInfo {
     private String UserName;
     private String instaBio;
     private String[] imageFeed;
+    private String[] imageFeedCaption;
+    private String[] imageFeedComment;
 
 
 }
