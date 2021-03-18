@@ -28,6 +28,15 @@ public class FacebookController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "post")
+    public void postMessage(@RequestBody String msg) {
+        System.out.println("Inside page post method" );
+        msg = msg.replace("\"", "");
+        System.out.println(msg);
+        FBService.publishPost(msg);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "login")
     public ResponseEntity<FacebookLogin> login() {
         System.out.println("Inside FB Controller Login");

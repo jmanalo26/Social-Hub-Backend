@@ -45,6 +45,9 @@ public class FBService {
         scope.addPermission(FacebookPermissions.PAGES_SHOW_LIST);
         scope.addPermission(FacebookPermissions.USER_MANAGED_GROUPS);
         scope.addPermission(FacebookPermissions.USER_PHOTOS);
+        scope.addPermission(FacebookPermissions.PAGES_READ_ENGAGEMENT);
+        scope.addPermission(FacebookPermissions.PAGES_MANAGE_POSTS);
+        //scope.addPermission(FacebookPermissions.PUBLISH_TO_GROUPS);
         String login = facebookClient.getLoginDialogUrl(appID, redirectURL, scope, Parameter.with("fields", "name"));
         String logout = facebookClient.getLogoutUrl(redirectURL);
         FacebookLogin l = new FacebookLogin();
@@ -139,6 +142,22 @@ public class FBService {
         fp.setPageNames(pages);
         fp.setPageURLs(urls);
         return fp;
+    }
+
+    public static void publishPost(String msg){
+        ArrayList<String> pageIDs = new ArrayList<>();
+        ArrayList<String> tokens = new ArrayList<>();
+        Connection<Account> myAccounts = facebookClient.fetchConnection("me/accounts", Account.class);
+        for (Account a: myAccounts.getData()){
+            pageIDs.add(a.getId());
+            tokens.add(a.getAccessToken());
+        }
+        System.out.println(pageIDs.get(0));
+        System.out.println(tokens.get(0));
+        //GET PAGE ACCESS TOKEN AND PUT IN CONNECTION BEFORE /FEED
+        FacebookClient f = new DefaultFacebookClient(tokens.get(0), Version.LATEST);
+        f.publish(pageIDs.get(0) + "/feed", FacebookType.class, Parameter.with("message", msg));
+        System.out.println("Message published to page");
     }
 
 }
