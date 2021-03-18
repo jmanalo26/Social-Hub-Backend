@@ -10,8 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,33 +26,24 @@ public class YoutubeController {
         this.youtubeRepository = youtubeRepository;
         this.youtubeService = youtubeService;
     }
-    @GetMapping(value = "/api/youtube/videos")
-    public ResponseEntity<List<String>> getVideos() throws IOException {
-        return new ResponseEntity<List<String>>(youtubeService.getVideos(), HttpStatus.OK);
-    }
-    @GetMapping(value = "/api/youtube/channelId")
-    public ResponseEntity<String> getChannelId() throws IOException {
+//    @GetMapping(value = "/api/youtube/videos")
+//    public ResponseEntity<List<String>> getVideos() throws IOException {
+//        return new ResponseEntity<List<String>>(youtubeService.getVideos(), HttpStatus.OK);
+//    }
+    @GetMapping(value = "/api/youtube/channel")
+    public ResponseEntity<String> getChannelInfo() throws IOException {
         return new ResponseEntity<String> (youtubeService.getChannelInfo(), HttpStatus.OK);
     }
-//    @GetMapping(value = "/api/youtube/add")
-//    public @ResponseBody String addYoutube() throws IOException {
-//        Youtube youtube = new Youtube();
-//        //       youtube.setVideos(youtubeService.getVideos());
-//        youtube.setChannel_id("Hello");
-//        youtube.setProfile_photo(youtubeService.getProfilePicture());
-//        youtubeRepository.save(youtube);
-//        return "saved";
+
+//    @GetMapping(value = "/api/youtube/playlists")
+//    public ResponseEntity<ArrayList<String>> getPlaylists() throws IOException {
+//        return new ResponseEntity<ArrayList<String>>(youtubeService.getUserPlaylist(), HttpStatus.OK);
 //    }
 
-    @GetMapping(value = "/api/youtube/playlists")
-    public ResponseEntity<ArrayList<String>> getPlaylists() throws IOException {
-        return new ResponseEntity<ArrayList<String>>(youtubeService.getUserPlaylist(), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/api/youtube/liked")
-    public ResponseEntity<ArrayList<String>> getLikedVideos() throws IOException {
-        return new ResponseEntity<ArrayList<String>>(youtubeService.getLikedVideos(), HttpStatus.OK);
-    }
+//    @GetMapping(value = "/api/youtube/liked")
+//    public ResponseEntity<ArrayList<String>> getLikedVideos() throws IOException {
+//        return new ResponseEntity<ArrayList<String>>(youtubeService.getLikedVideos(), HttpStatus.OK);
+//    }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/api/youtube/newUser")
@@ -63,14 +52,14 @@ public class YoutubeController {
         Youtube yt = new Youtube();
         yt.setChannelId(youtube.getChannel_id());
         yt.setProfile_pic(youtube.getProfile_photo());
-        yt.setUserId(youtube.getUserId());
+        yt.setUsernameSH(youtube.getUsernameSH());
         yt.setUsername(youtube.getUsername());
 
         Youtube temp = this.youtubeService.saveUser(yt);
         return yt;
     }
-    @GetMapping(value = "api/youtube/retrieve/{id}")
-    public ResponseEntity<String> getUserById(@PathVariable long id){
-        return new ResponseEntity<String>(youtubeRepository.findUserByUserId(id).toString(), HttpStatus.OK);
-    }
+//    @GetMapping(value = "api/youtube/retrieve/{id}")
+//    public ResponseEntity<String> getUserById(@PathVariable long id){
+//        return new ResponseEntity<String>(youtubeRepository.findUserByUserId(id).toString(), HttpStatus.OK);
+//    }
 }
