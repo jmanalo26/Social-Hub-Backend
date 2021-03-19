@@ -20,6 +20,7 @@ import org.apache.hc.core5.http.ParseException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -222,7 +223,6 @@ public class SpotifyService {
     }
 
     public static SpotifyPlaylist removeTracksFromPlaylist(String playlist_id, JsonArray tracksArray) {
-
         var removeFromPlaylistRequest = spotifyApi.removeItemsFromPlaylist(playlist_id, tracksArray).build();
         try {
             var playlist = removeFromPlaylistRequest.execute();
@@ -232,10 +232,10 @@ public class SpotifyService {
         }
         return getPlaylistById(playlist_id);
     }
-    
 
 
     public static SpotifyArtist[] searchByArtist(String query) {
+
         var searchFromApiRequest = spotifyApi.searchArtists(query).build();
         try {
             var result = searchFromApiRequest.execute();
