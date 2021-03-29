@@ -138,9 +138,23 @@ public class FBService {
         for (Account a: myAccounts2.getData()){
             urls.add(a.getLink());
         }
+
+        ArrayList<String> lPages = new ArrayList<>();
+        ArrayList<String> lLinks = new ArrayList<>();
+        Connection<Account> likedPages = facebookClient.fetchConnection("me/likes", Account.class, Parameter.with("fields", "name"));
+        for (Account l :likedPages.getData()){
+            lPages.add(l.getName());
+        }
+        Connection<Account> likedLinks = facebookClient.fetchConnection("me/likes", Account.class, Parameter.with("fields", "link"));
+        for (Account l :likedLinks.getData()){
+            lLinks.add(l.getLink());
+        }
+
         FacebookPages fp = new FacebookPages();
         fp.setPageNames(pages);
         fp.setPageURLs(urls);
+        fp.setLikedNames(lPages);
+        fp.setLikedLinks(lLinks);
         return fp;
     }
 

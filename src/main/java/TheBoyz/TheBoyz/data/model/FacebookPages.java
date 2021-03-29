@@ -13,4 +13,6 @@ import lombok.*;
 public class FacebookPages {
     private ArrayList<String> pageNames;
     private ArrayList<String> pageURLs;
+    private ArrayList<String> likedNames;
+    private ArrayList<String> likedLinks;
 }
