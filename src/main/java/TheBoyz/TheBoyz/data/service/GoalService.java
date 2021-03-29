@@ -24,7 +24,12 @@ public class GoalService {
     }
 
     public Goal saveGoal(Goal goal) throws ValidationException {
-        System.out.println("in the save user service...");
+        System.out.println("in the save goal service...");
+        Goal searchedGoal = goalRepository.findByUserId(goal.getUserId());
+        if(searchedGoal != null){
+            System.out.println("it exists");
+            goalRepository.delete(searchedGoal);
+        }
 //        System.out.println("the users id pulled form db: " + userWithId.getUserId());
         return goalRepository.save(goal);
     }

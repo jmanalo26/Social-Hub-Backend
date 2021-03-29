@@ -73,33 +73,39 @@ public class configurationBuilder {
 //        twitter.getfoll
 //        Page<User> user2 = (Page<User>) twitter.getFollowersList("SocialHubClub", 1, 1);
 //        System.out.println(user2.);
-        ResponseList<Status> userTimeline = twitter.getUserTimeline("SocialHubClub");
-        System.out.println("This is the size: " + userTimeline.size());
-        for(int i =0; i < userTimeline.size(); i++){
-            System.out.println(userTimeline.get(i).getText());
-            System.out.println(userTimeline.get(i).getUser().getName());
-            System.out.println(userTimeline.get(i).getUser().getScreenName());
-            System.out.println(userTimeline.get(i).getRetweetCount());
-            System.out.println(userTimeline.get(i).getFavoriteCount());
-            System.out.println(userTimeline.get(i).getCreatedAt());
-//            System.out.println(userTimeline.get(i).getUser().getStatus().getText().toString());
-            System.out.println();
+//        ResponseList<Status> userTimeline = twitter.getUserTimeline("SocialHubClub");
+//        System.out.println("This is the size: " + userTimeline.size());
+//        for(int i =0; i < userTimeline.size(); i++){
+//            System.out.println(userTimeline.get(i).getText());
+//            System.out.println(userTimeline.get(i).getUser().getName());
+//            System.out.println(userTimeline.get(i).getUser().getScreenName());
+//            System.out.println(userTimeline.get(i).getRetweetCount());
+//            System.out.println(userTimeline.get(i).getFavoriteCount());
+//            System.out.println(userTimeline.get(i).getCreatedAt());
+////            System.out.println(userTimeline.get(i).getUser().getStatus().getText().toString());
+//            System.out.println();
+//
+//        }
 
-        }
-
-        ResponseList<User> userFollowerList = twitter.getFollowersList("SocialHubClub", 1, 1);
+        ResponseList<User> userFollowerList = twitter.getFollowersList("SocialHubClub", -1, 1);
         System.out.println("THE SIZE OF THE FOLLOWER LIST");
         System.out.println(userFollowerList.size());
-//        for(int i =0; i< userFollowerList.size(); i++){
-//            userFollowerList.get(i).getName()
-//        }
+        for(int i =0; i< userFollowerList.size(); i++){
+            userFollowerList.get(i).getName();
+        }
 
        IDs ids = twitter.getFriendsIDs("SocialHubClub", -1);
         System.out.println("THE LENGTH OF THE FRIENDS IDS");
         System.out.println(ids.getIDs().length);
-//        for(int i =0; i < ids.getIDs().length; i++){
-//
-//        }
+        for(int i =0; i < ids.getIDs().length; i++){
+            System.out.println(ids.getIDs());
+            System.out.println("ID: " + ids.getIDs()[i]);
+            System.out.println("TWITTER SHOW USER GET ID: " + twitter.showUser(ids.getIDs()[i]));
+            System.out.println("SCREEN NAME: " + twitter.showUser(ids.getIDs()[i]).getScreenName());
+//            System.out.println(twitter.showUser(ids.getIDs()[i]).getName());
+
+
+        }
 
         List<User> users = twitter.getFriendsList("SocialHubClub", -1);
         System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());

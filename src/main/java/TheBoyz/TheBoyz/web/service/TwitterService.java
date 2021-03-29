@@ -7,7 +7,6 @@ import TheBoyz.TheBoyz.data.model.TwitterData;
 import TheBoyz.TheBoyz.data.repository.TwitterDataRepository;
 import TheBoyz.TheBoyz.data.repository.TwitterRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.web.bind.annotation.RestController;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
@@ -17,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -490,5 +491,23 @@ public class TwitterService {
 //        statusTweet.setTweetText(user.getStatus().getText());
 //        statusTweet.setTweetCreatedBy(user.getName());
 //        return userTimeline;
+    }
+
+    public List<String> getFriends(String handle) throws TwitterException {
+        System.out.println(handle);
+//        User user = twitter.showUser(handle);
+//        twitter.getFriendsIDs(handle, -1);
+        List<User> users = twitter.getFriendsList(handle, -1);
+        System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());
+        Collections.sort(users, Comparator.comparing(User::getFollowersCount));
+
+
+        List<String> friendsList = new ArrayList<>();
+        for(int i =0; i < users.size(); i++){
+            friendsList.add(users.get(i).getScreenName());
+            System.out.println(users.get(i).getScreenName());
+            System.out.println(users.get(i).getFollowersCount());
+        }
+        return friendsList;
     }
 }
