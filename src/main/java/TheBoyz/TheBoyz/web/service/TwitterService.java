@@ -256,8 +256,8 @@ public class TwitterService {
      * @return
      * @throws TwitterException
      */
-    public BriefStatus getBriefStatus() throws TwitterException {
-        User user = twitter.showUser("SocialHubClub");
+    public BriefStatus getBriefStatus(String handle) throws TwitterException {
+        User user = twitter.showUser(handle);
         String twitterStatus = "";
         System.out.println(user.getStatus());
         if (user.getStatus() != null) {
@@ -427,27 +427,46 @@ public class TwitterService {
      * @throws TwitterException
      */
     public List<BriefStatus> getUserTimeline(String twitterHandle) throws TwitterException {
+        System.out.println( "IN THE GET USER TIMELINE...");
         User user = twitter.showUser(twitterHandle);
         ResponseList<Status> userTimeline = twitter.getUserTimeline(twitterHandle);
         List<BriefStatus> userTimelineBrief = new ArrayList<>();
 //        System.out.println("the lenght of timeline: " + userTimeline.size());
 
         int numOfRetweets = 0;
+        int numOfFavorites = 0;
         BriefStatus mostRetweeted = new BriefStatus();
+        BriefStatus mostFavorited= new BriefStatus();
+
         for(int i = 0; i < userTimeline.size(); i++){
             BriefStatus bs = new BriefStatus();
             bs.setRetweetCount(userTimeline.get(i).getRetweetCount());
             if(userTimeline.get(i).getRetweetCount() > numOfRetweets){
                 numOfRetweets = userTimeline.get(i).getRetweetCount();
-                System.out.println(numOfRetweets);
+
+                System.out.println("num of retweets: " + numOfRetweets);
                 mostRetweeted.setRetweetCount(userTimeline.get(i).getRetweetCount());
                 mostRetweeted.setText(userTimeline.get(i).getText());
-                System.out.println(userTimeline.get(i).getText());
+//                System.out.println(userTimeline.get(i).getText());
                 mostRetweeted.setScreenName(userTimeline.get(i).getUser().getName());
                 mostRetweeted.setHandle(userTimeline.get(i).getUser().getScreenName());
                 mostRetweeted.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
                 mostRetweeted.setCreatedAt(userTimeline.get(i).getCreatedAt());
             }
+            if(userTimeline.get(i).getFavoriteCount() > numOfFavorites){
+                System.out.println("true ");
+                numOfFavorites = userTimeline.get(i).getFavoriteCount();
+
+                System.out.println("numOfFavorites: :" + numOfFavorites);
+                mostFavorited.setRetweetCount(userTimeline.get(i).getRetweetCount());
+                mostFavorited.setText(userTimeline.get(i).getText());
+//                System.out.println(userTimeline.get(i).getText());
+                mostFavorited.setScreenName(userTimeline.get(i).getUser().getName());
+                mostFavorited.setHandle(userTimeline.get(i).getUser().getScreenName());
+                mostFavorited.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
+                mostFavorited.setCreatedAt(userTimeline.get(i).getCreatedAt());
+            }
+
             bs.setText(userTimeline.get(i).getText());
             bs.setScreenName(userTimeline.get(i).getUser().getName());
             bs.setHandle(userTimeline.get(i).getUser().getScreenName());
@@ -456,7 +475,13 @@ public class TwitterService {
             userTimelineBrief.add(bs);
         }
 //        System.out.println(userTimelineBrief.size());
-        userTimelineBrief.add(0, mostRetweeted);
+        if (numOfFavorites != 0){
+            userTimelineBrief.add(0, mostFavorited);
+        }
+        if(numOfRetweets != 0){
+            userTimelineBrief.add(0, mostRetweeted);
+
+        }
 //        System.out.println(userTimelineBrief.size());
 //
 //

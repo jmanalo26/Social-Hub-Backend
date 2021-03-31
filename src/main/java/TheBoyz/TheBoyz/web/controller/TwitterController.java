@@ -37,7 +37,7 @@ public class TwitterController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/api/twitter/followers/{handle}")
     public ResponseEntity<Integer> getFollowerCount(@PathVariable String handle) throws TwitterException {
-        System.out.println("in the tiwtter controller for get followers");
+        System.out.println("in the Twitter controller for get followers");
        return new ResponseEntity<>(twitterService.getFollowerCount(handle), HttpStatus.OK);
     }
 
@@ -75,19 +75,19 @@ public class TwitterController {
         return new ResponseEntity<>(twitterService.getStatus(), HttpStatus.OK);
     }
 
-    /**
-     * Gets the user's current status tweet.
-     * @return returns the Status
-     * @throws TwitterException
-     */
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping(value = "/api/twitter/brief-status/{userId}")
-    public ResponseEntity<BriefStatus> getBriefStatus(@PathVariable String userId) throws TwitterException {
-        System.out.println("in the twitter controller for status");
-        System.out.println("*************");
-        System.out.println(twitterService.getStatus());
-        return new ResponseEntity<>(twitterService.getBriefStatus(), HttpStatus.OK);
-    }
+//    /**
+//     * Gets the user's current status tweet.
+//     * @return returns the Status
+//     * @throws TwitterException
+//     */
+//    @CrossOrigin(origins = "http://localhost:4200")
+//    @GetMapping(value = "/api/twitter/brief-status/{userId}")
+//    public ResponseEntity<BriefStatus> getBriefStatus(@PathVariable String userId) throws TwitterException {
+//        System.out.println("in the twitter controller for status");
+//        System.out.println("*************");
+//        System.out.println(twitterService.getStatus());
+//        return new ResponseEntity<>(twitterService.getBriefStatus(), HttpStatus.OK);
+//    }
     /**
      * Gets the current status as a tweet.
      * @return returns the user's tweet as a tweet object
@@ -196,6 +196,21 @@ public class TwitterController {
         return twitterService.getFriends(handle);
 
 //        return new ResponseEntity<>(twitterService.getStatus(), HttpStatus.OK);
+    }
+
+    /**
+     * Gets the user's current status tweet.
+     * @return returns the Status
+     * @throws TwitterException
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/twitter/most-recent-post/{handle}")
+    public ResponseEntity<BriefStatus> getMostRecentPost(@PathVariable String handle) throws TwitterException {
+        System.out.println("TWITTER CONTROLLER: FRIENDS");
+        System.out.println("*************");
+        System.out.println(twitterService.getStatus());
+        return new ResponseEntity<>(twitterService.getBriefStatus(handle), HttpStatus.OK);
+
     }
 
 }
