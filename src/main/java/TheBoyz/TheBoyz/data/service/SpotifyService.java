@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.neovisionaries.i18n.CountryCode;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
+import com.wrapper.spotify.enums.ModelObjectType;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.model_objects.specification.User;
@@ -135,10 +136,6 @@ public class SpotifyService {
         return null;
     }
 
-    // Modify Track to hold a Spotify Artist Object
-    // Modify Front-end Model
-    // Make appropriate changes to other back-end methods
-
     public static SpotifyTrack getTrackById(String id) {
         var getItemsRequest = spotifyApi.getTrack(id).build();
         try {
@@ -261,11 +258,6 @@ public class SpotifyService {
             return null;
         }
     }
-
-    // add a search album by id method
-    // modify the track to hold an album object
-    // create album model front and back
-    // Album object: name, id, uri, url, image,  artist?
 
     public static SpotifyAlbum getAlbumById(String albumId) {
         var searchFromApiRequest = spotifyApi.getAlbum(albumId).build();
@@ -400,6 +392,55 @@ public class SpotifyService {
         }
 
         return getPlaylistById(playlist_id);
+    }
+
+    public static SpotifyTrack[] getRecommendations() {
+        var getRecommendationsRequest = spotifyApi.getRecommendations().build();
+
+        return null;
+    }
+
+    public static Boolean followArtist(String... artistId) {
+        var followArtistRequest = spotifyApi.followArtistsOrUsers(ModelObjectType.ARTIST, artistId).build();
+        try {
+            System.out.println(followArtistRequest.execute());
+            return true;
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return false;
+    }
+
+    public static Boolean unfollowArtist(String... artistId) {
+        var unfollowArtistRequest = spotifyApi.unfollowArtistsOrUsers(ModelObjectType.ARTIST, artistId).build();
+        try {
+            System.out.println(unfollowArtistRequest.execute());
+            return true;
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return false;
+    }
+
+    public static Boolean checkUserFollowArtist(String... artistId) {
+        var checkUserFollowArtistRequest = spotifyApi.checkCurrentUserFollowsArtistsOrUsers(ModelObjectType.ARTIST, artistId).build();
+        try {
+            return checkUserFollowArtistRequest.execute()[0];
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return false;
+    }
+
+    public static SpotifyTrack[] getUserFollowedTracks() {
+        var getUserFollowedTracksRequest = spotifyApi.getUsersSavedTracks().build();
+        try {
+            var result = getUserFollowedTracksRequest.execute();
+//            Arrays.stream(savedTracks.getItems()).forEach(System.out::println);
+            return Arrays.stream(result.getItems())
+                    .map((a) -> getTrackById(a.getTrack().getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyTrack[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return null;
     }
 
 

@@ -178,12 +178,38 @@ public class SpotifyController {
 
     @PutMapping("/playlist/update/{playlist_id}/{playlist_name}/{playlist_description}")
     public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name, @PathVariable String playlist_description) {
+        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, playlist_description), HttpStatus.OK);
     }
 
     @PutMapping("/playlist/update/{playlist_id}/{playlist_name}")
     public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name) {
+        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, null), HttpStatus.OK);
+    }
+
+    @PutMapping("/artist/follow/{artist_id}")
+    public ResponseEntity<Boolean> followArtist(@PathVariable String... artist_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.followArtist(artist_id), HttpStatus.OK);
+    }
+
+    @PutMapping("/artist/unfollow/{artist_id}")
+    public ResponseEntity<Boolean> unfollowArtist(@PathVariable String... artist_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.unfollowArtist(artist_id), HttpStatus.OK);
+    }
+
+    @GetMapping("/artist/follow/contains/{artist_id}")
+    public ResponseEntity<Boolean> checkFollowArtist(@PathVariable String... artist_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.checkUserFollowArtist(artist_id), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/get/follow/tracks/")
+    public ResponseEntity<SpotifyTrack[]> getUserFollowedTracks() {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getUserFollowedTracks(), HttpStatus.OK);
     }
 
 
