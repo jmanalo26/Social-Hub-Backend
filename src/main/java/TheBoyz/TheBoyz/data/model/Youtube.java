@@ -16,11 +16,15 @@ import javax.persistence.*;
 @Table(name = "youtube")
 public class Youtube {
     @Id
+    @Column(name="U_id")
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long U_id;
+
     @NotNull
     @Column(name = "usernameSH")
     private String usernameSH;
     @NotNull
-    @Column(name = "channelId")
+    @Column(name = "channel_id")
     private String channelId;
 
     @NotNull

@@ -86,6 +86,7 @@ public class YoutubeService {
         for(int i = 0; i < items.length(); i++) {
             String videoId = (String) items.getJSONObject(i).getJSONObject("id").get("videoId");
             String videoDescription = (String) items.getJSONObject(i).getJSONObject("snippet").get("description");
+            String videoPublished = (String) items.getJSONObject(i).getJSONObject("snippet").get("publishedAt");
             String videoDetailResponse = videoDetails(videoId);
             JSONObject obj = new JSONObject(videoDetailResponse);
             JSONArray detailItems = obj.getJSONArray("items");
@@ -96,7 +97,7 @@ public class YoutubeService {
             Long dislike = (Long) stats.getLong("dislikeCount");
             Long favorite = (Long) stats.getLong("favoriteCount");
             Long comment = (Long) stats.getLong("commentCount");
-            VideoDetails vd = new VideoDetails(duration, views, likes, dislike, favorite, comment);
+            VideoDetails vd = new VideoDetails(duration, views, likes, dislike, favorite, comment, videoPublished);
             String fullVideoId = youtubelink + videoId;
             Video video = new Video(fullVideoId, videoDescription, vd);
             videoArr.add(video);

@@ -3,6 +3,10 @@ package TheBoyz.TheBoyz.web.controller;
 import TheBoyz.TheBoyz.data.model.Youtube;
 import TheBoyz.TheBoyz.data.repository.YoutubeRepository;
 import TheBoyz.TheBoyz.web.service.YoutubeService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +62,17 @@ public class YoutubeController {
         Youtube temp = this.youtubeService.saveUser(yt);
         return yt;
     }
-//    @GetMapping(value = "api/youtube/retrieve/{id}")
-//    public ResponseEntity<String> getUserById(@PathVariable long id){
-//        return new ResponseEntity<String>(youtubeRepository.findUserByUserId(id).toString(), HttpStatus.OK);
-//    }
+    @GetMapping(value = "api/youtube/retrieve/{s}")
+    public ResponseEntity<String> getUserById(@PathVariable String s) throws JsonProcessingException {
+        Youtube y = youtubeRepository.findUserByUsernameSH(s);
+        if (y == null) {
+            return new ResponseEntity<String>("null", HttpStatus.OK);
+        } else {
+            ObjectMapper o = new ObjectMapper();
+            o.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+            String youtubeString = o.writeValueAsString(y);
+            return new ResponseEntity<String>(youtubeString, HttpStatus.OK);
+        }
+
+    }
 }
