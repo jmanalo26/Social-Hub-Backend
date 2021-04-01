@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`goals`
     `start_date`              DATETIME NULL DEFAULT NULL,
     `goal_start_number`       INT      NULL DEFAULT NULL,
     `user_id`                 INT      NOT NULL,
+    `goal_max_number` INT NULL DEFAULT NULL,
+    `goal_type` VARCHAR(45) NULL DEFAULT NULL,
     PRIMARY KEY (`goals_id`),
     UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) VISIBLE,
     INDEX `goals_fk_user_id_idx` (`user_id` ASC) VISIBLE,

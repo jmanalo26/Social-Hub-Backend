@@ -190,9 +190,6 @@ public class TwitterController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/api/twitter/get-friends-list/{handle}")
     public List<String> getFriends(@PathVariable String handle) throws TwitterException {
-        System.out.println("TWITTER CONTROLLER: FRIENDS");
-        System.out.println("*************");
-        System.out.println(twitterService.getStatus());
         return twitterService.getFriends(handle);
 
 //        return new ResponseEntity<>(twitterService.getStatus(), HttpStatus.OK);
@@ -206,10 +203,21 @@ public class TwitterController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/api/twitter/most-recent-post/{handle}")
     public ResponseEntity<BriefStatus> getMostRecentPost(@PathVariable String handle) throws TwitterException {
-        System.out.println("TWITTER CONTROLLER: FRIENDS");
-        System.out.println("*************");
         System.out.println(twitterService.getStatus());
         return new ResponseEntity<>(twitterService.getBriefStatus(handle), HttpStatus.OK);
+
+    }
+
+    /**
+     * Gets the user's current status tweet.
+     * @return returns the Status
+     * @throws TwitterException
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/twitter/get-rankings/{handle}")
+    public List<TwitterRanking> getRankingList(@PathVariable String handle) throws TwitterException {
+
+        return twitterService.getRankingList(handle);
 
     }
 

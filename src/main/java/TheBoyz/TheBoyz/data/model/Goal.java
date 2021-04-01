@@ -40,4 +40,10 @@ public class Goal {
     @Column(name = "user_id")
     private int userId;
 
+    @Column(name = "goal_max_number")
+    private int goalMaxNumber;
+
+    @Column(name = "goal_type")
+    private String goalType;
+
 }

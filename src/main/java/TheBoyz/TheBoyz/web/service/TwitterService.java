@@ -1,14 +1,13 @@
 package TheBoyz.TheBoyz.web.service;
 
-import TheBoyz.TheBoyz.data.model.BriefStatus;
-import TheBoyz.TheBoyz.data.model.SecureTwitter;
-import TheBoyz.TheBoyz.data.model.Tweet;
-import TheBoyz.TheBoyz.data.model.TwitterData;
+import TheBoyz.TheBoyz.data.model.*;
 import TheBoyz.TheBoyz.data.repository.TwitterDataRepository;
 import TheBoyz.TheBoyz.data.repository.TwitterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 import twitter4j.*;
+import twitter4j.Status;
+import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.math.BigInteger;
@@ -474,7 +473,7 @@ public class TwitterService {
             bs.setCreatedAt(userTimeline.get(i).getCreatedAt());
             userTimelineBrief.add(bs);
         }
-//        System.out.println(userTimelineBrief.size());
+        System.out.println(userTimelineBrief.size());
         if (numOfFavorites != 0){
             userTimelineBrief.add(0, mostFavorited);
         }
@@ -534,5 +533,26 @@ public class TwitterService {
             System.out.println(users.get(i).getFollowersCount());
         }
         return friendsList;
+    }
+
+    public List<TwitterRanking> getRankingList(String handle) throws TwitterException {
+        System.out.println(handle);
+
+        List<TwitterRanking> twitterRankingList = new ArrayList<>();
+        List<User> users = twitter.getFriendsList(handle, -1);
+        users.add(twitter.showUser(handle));
+        System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());
+        Collections.sort(users, Comparator.comparing(User::getFollowersCount));
+
+
+        for(int i =0; i < users.size(); i++){
+            TwitterRanking tR = new TwitterRanking();
+            tR.setFollowerCount(users.get(i).getFollowersCount());
+            tR.setName(users.get(i).getScreenName());
+            System.out.println(users.get(i).getScreenName());
+            System.out.println(users.get(i).getFollowersCount());
+            twitterRankingList.add(tR);
+        }
+        return twitterRankingList;
     }
 }
