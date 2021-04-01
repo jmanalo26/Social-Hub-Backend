@@ -146,4 +146,19 @@ public class InstagramService {
         return searchInstagramUser;
     }
 
+    public InstaUser saveUser(InstaUser user) {
+        InstaUser userSH = instagramRepository.findInstaUserByUsername(user.getUsername());
+        if (userSH == null) {
+            System.out.println("in save User");
+            instagramRepository.save(user);
+        }
+        return user;
+    }
+
+    public InstaUser getUserByID(int id) {
+        InstaUser userSH = instagramRepository.findInstaUserByInstaId(id);
+
+        return userSH;
+    }
+
 }

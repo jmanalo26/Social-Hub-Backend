@@ -15,43 +15,43 @@ import java.util.ArrayList;
 
 public class Insta4j {
     public static void main(String[] args) throws IOException {
-        OkHttpClient httpClient = new OkHttpClient.Builder().build();
-        IGClient client  = IGClient.builder()
-                .username("hbb_disposable")
-                .password("yaga186")
-                .client(httpClient)
-                .login();
-        IGResponse response = new AccountsSetBiographyRequest("Test boi!").execute(client).join();
-        System.out.println(response.getStatus());
+//        OkHttpClient httpClient = new OkHttpClient.Builder().build();
+//        IGClient client  = IGClient.builder()
+//                .username("hbb_disposable")
+//                .password("yaga186")
+//                .client(httpClient)
+//                .login();
+//        IGResponse response = new AccountsSetBiographyRequest("Test boi!").execute(client).join();
+//        System.out.println(response.getStatus());
 
 
-//
-//        Instagram4j instagram = Instagram4j.builder().username("hbb_disposable").password("yaga186").build();
-//        instagram.setup();
-//        instagram.login();
-//        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("hbb_disposable"));
-//
-//
-//
-//        InstagramUserInfo searchInstagramUser = new InstagramUserInfo();
-//        searchInstagramUser.setFollowerCount(usernameResult.getUser().follower_count);
-//        searchInstagramUser.setFollowingCount(usernameResult.getUser().following_count);
-//        searchInstagramUser.setMediaCount(usernameResult.getUser().media_count);
-//        searchInstagramUser.setProfilePicUrl(usernameResult.getUser().profile_pic_url);
-//        searchInstagramUser.setInstaBio(usernameResult.getUser().biography);
-//        searchInstagramUser.setDisplayName(usernameResult.getUser().full_name);
-//        searchInstagramUser.setUserName(usernameResult.getUser().username);
-//
-//
-//        InstagramGetUserFollowersResult followersResult = instagram.sendRequest(
-//                new InstagramGetUserFollowersRequest(usernameResult.getUser().getPk()));
-//        ArrayList<String> followerFeed = new ArrayList<String>();
-//        for (InstagramUserSummary account : followersResult.getUsers()) {
-//            followerFeed.add(account.full_name + " ProfilePic:" + account.profile_pic_url);
-//        }
-//        System.out.println(followerFeed.size());
-//        searchInstagramUser.setFollowerFeed(followerFeed.toArray(String[]::new));
-//
+
+        Instagram4j instagram = Instagram4j.builder().username("hbb_disposable").password("yaga186").build();
+        instagram.setup();
+        instagram.login();
+        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("hbb_disposable"));
+
+
+
+        InstagramUserInfo searchInstagramUser = new InstagramUserInfo();
+        searchInstagramUser.setFollowerCount(usernameResult.getUser().follower_count);
+        searchInstagramUser.setFollowingCount(usernameResult.getUser().following_count);
+        searchInstagramUser.setMediaCount(usernameResult.getUser().media_count);
+        searchInstagramUser.setProfilePicUrl(usernameResult.getUser().profile_pic_url);
+        searchInstagramUser.setInstaBio(usernameResult.getUser().biography);
+        searchInstagramUser.setDisplayName(usernameResult.getUser().full_name);
+        searchInstagramUser.setUserName(usernameResult.getUser().username);
+
+
+        InstagramGetUserFollowersResult followersResult = instagram.sendRequest(
+                new InstagramGetUserFollowersRequest(usernameResult.getUser().getPk()));
+        ArrayList<String> followerFeed = new ArrayList<String>();
+        for (InstagramUserSummary account : followersResult.getUsers()) {
+            followerFeed.add(account.full_name + " ProfilePic:" + account.profile_pic_url);
+        }
+        System.out.println(followerFeed.size());
+        searchInstagramUser.setFollowerFeed(followerFeed.toArray(String[]::new));
+
 //
 //
 //        InstagramFeedResult postList = instagram.sendRequest(new InstagramUserFeedRequest(usernameResult.getUser().getPk()));

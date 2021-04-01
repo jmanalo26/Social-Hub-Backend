@@ -2,6 +2,7 @@ package TheBoyz.TheBoyz.web.controller;
 
 import TheBoyz.TheBoyz.data.model.InstaUser;
 import TheBoyz.TheBoyz.data.model.InstagramUserInfo;
+import TheBoyz.TheBoyz.data.repository.InstagramRepository;
 import TheBoyz.TheBoyz.data.service.InstagramService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,22 @@ public class InstagramController {
         this.instagramService = instagramService;
     }
 
+    @PostMapping(value = "/api/instagram/user/newInstaUser/{user}/{password}")
+    public void getUserLogIn(@PathVariable String user,@PathVariable String password) throws IOException {
+        InstaUser newUser = new InstaUser();
+        System.out.println("running bio change");
+        newUser.setUsername(user);
+        newUser.setPassword(password);
+        instagramService.saveUser(newUser);
+    }
+
     @GetMapping(value = "/api/instagram/user")
     public ResponseEntity<InstagramUserInfo> getUser() throws IOException {
+//        InstaUser user = instagramService.getUserByID(id)
+
+
         InstaUser user = new InstaUser();
+
 
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
@@ -46,7 +60,7 @@ public class InstagramController {
     @PostMapping(value = "/api/instagram/userSearch")
     public ResponseEntity<InstagramUserInfo> userSearch(@RequestBody String userSearch) throws IOException {
         InstaUser user = new InstaUser();
-        System.out.println("running bio change");
+        System.out.println("running user search");
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
