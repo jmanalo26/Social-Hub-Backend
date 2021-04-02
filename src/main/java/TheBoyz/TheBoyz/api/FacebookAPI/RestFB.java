@@ -27,11 +27,11 @@ public class RestFB extends DefaultFacebookClient{
      * @param args Args
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String accessToken = "EAAqDduci0a0BACZBcyzyGIxgu9dz1mqZBdGsVEtuA2MgbPrTxP86Ypcp08f6jjcXd5H6qg90o3nhxWzci9ZAdjFZAdVZCHxKZBtdKl0oHuQkODlKnEvNh52Kftk0xuVqu5bbPL4826pNQHvMwQv9ahI1c9O9HAzwMZBYerZCxl4w1okhqbAFa3gRmJKAyZA5ksDyAWjUZAacHDTYhvBAKuZAjE8QbVO7tD93zMfdWI0H7oq7AZDZD";
-        logout();
+        String accessToken = "EAAqDduci0a0BAI3ZBCpnw3ih4ln1eg3RzCGlTsDXLVVjLCf56CZBrrZCpvgInSVWB4gO6toAQLWsfbCo93yVA3gQ1FeQ2dvqxpZBTzTaNo8aSZCybZCOq08KBZBXTGSQ9CEHnyQaYPfZCrL3ZAWkWSzkmNWgKMnV32d4DkOi6auocXRruY0fp989lzZCuHOwh1PEv4n86yoeHLlztlZBiBYmkjWFpVkjRihpfDxrUm9jeP9ywZDZD";
+        //logout();
         //getUser();
-        //FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
-        //getPages(fb);
+        FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
+        getFriendsList(fb);
         //start();
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
@@ -55,10 +55,9 @@ public class RestFB extends DefaultFacebookClient{
     }
 
     public static void getPages(FacebookClient fb){
-        Connection<Account> myPhotos = fb.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"), Parameter.with("fields", "link"));
+        Connection<Account> myPhotos = fb.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"), Parameter.with("fields", "fan_count"));
         for (Account p: myPhotos.getData()){
-            System.out.println(p.getName());
-            System.out.println(p.getLink());
+            System.out.println(p.getFanCount());
         }
     }
 
@@ -171,6 +170,7 @@ public class RestFB extends DefaultFacebookClient{
      */
     public static void getFriendsList(FacebookClient fb){
         Connection<User> myFriends = fb.fetchConnection("me/friends", User.class);
+        System.out.println(myFriends.getTotalCount());
         for (User friend: myFriends.getData()){
             System.out.println("Friend Name: " + friend.getName());
             System.out.println("Friend ID: " + friend.getId());

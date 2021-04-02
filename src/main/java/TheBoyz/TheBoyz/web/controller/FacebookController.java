@@ -33,7 +33,9 @@ public class FacebookController {
         System.out.println("Inside page post method" );
         msg = msg.replace("\"", "");
         System.out.println(msg);
-        FBService.publishPost(msg);
+        String[] pageBody=  msg.split("\\*");
+        System.out.println(pageBody[0] + ", " + pageBody[1]);
+        FBService.publishPost(pageBody[1], pageBody[0]);
     }
 
     @CrossOrigin(origins = "http://localhost:4200")

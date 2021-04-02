@@ -78,6 +78,8 @@ public class FBService {
         ProfilePictureSource p = pic.getPicture();
         p.setWidth(500);
         p.setHeight(500);
+        Connection<User> myFriends = facebookClient.fetchConnection("me/friends", User.class);
+        f.setFriendCount(myFriends.getTotalCount().toString());
         f.setFacebookEmail(email.getEmail());
         f.setPhotoURL(p.getUrl());
         System.out.println(f.getPhotoURL());
@@ -130,6 +132,7 @@ public class FBService {
     public static FacebookPages getPages(){
         ArrayList<String> pages = new ArrayList<String>();
         ArrayList<String> urls = new ArrayList<String>();
+        ArrayList<String> fans = new ArrayList<>();
         Connection<Account> myAccounts = facebookClient.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"));
         for (Account a: myAccounts.getData()){
             pages.add(a.getName());
@@ -137,6 +140,10 @@ public class FBService {
         Connection<Account> myAccounts2 = facebookClient.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "link"));
         for (Account a: myAccounts2.getData()){
             urls.add(a.getLink());
+        }
+        Connection<Account> myPhotos = facebookClient.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "fan_count"));
+        for (Account p: myPhotos.getData()){
+            fans.add(p.getFanCount().toString());
         }
 
         ArrayList<String> lPages = new ArrayList<>();
@@ -153,24 +160,33 @@ public class FBService {
         FacebookPages fp = new FacebookPages();
         fp.setPageNames(pages);
         fp.setPageURLs(urls);
+        fp.setPageFans(fans);
         fp.setLikedNames(lPages);
         fp.setLikedLinks(lLinks);
         return fp;
     }
 
-    public static void publishPost(String msg){
+    public static void publishPost(String name, String msg){
+        int pageIndex = 0;
+        ArrayList<String> pageNames = new ArrayList<>();
         ArrayList<String> pageIDs = new ArrayList<>();
         ArrayList<String> tokens = new ArrayList<>();
         Connection<Account> myAccounts = facebookClient.fetchConnection("me/accounts", Account.class);
         for (Account a: myAccounts.getData()){
+            pageNames.add(a.getName());
             pageIDs.add(a.getId());
             tokens.add(a.getAccessToken());
         }
-        System.out.println(pageIDs.get(0));
-        System.out.println(tokens.get(0));
+        for (String n: pageNames){
+            if (n.equals(name)){
+                System.out.println("Index found");
+                pageIndex = pageNames.indexOf(n);
+                System.out.println(pageIndex);
+            }
+        }
         //GET PAGE ACCESS TOKEN AND PUT IN CONNECTION BEFORE /FEED
-        FacebookClient f = new DefaultFacebookClient(tokens.get(0), Version.LATEST);
-        f.publish(pageIDs.get(0) + "/feed", FacebookType.class, Parameter.with("message", msg));
+        FacebookClient f = new DefaultFacebookClient(tokens.get(pageIndex), Version.LATEST);
+        f.publish(pageIDs.get(pageIndex) + "/feed", FacebookType.class, Parameter.with("message", msg));
         System.out.println("Message published to page");
     }
 
