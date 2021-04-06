@@ -20,7 +20,7 @@ public class FBService {
     public static DefaultFacebookClient facebookClient;// = new DefaultFacebookClient(accessToken, Version.LATEST);;
     private static String appID = "2959296474304941";
     private static String appSecret = "7195fbe6d20da5b6ad187dbd14c83784";
-    private static String redirectURL = "http://localhost:4200/facebook";
+    private static String redirectURL = "http://localhost:4200/dashboard";
     private static String fbCode;
 
     public static User user;// = facebookClient.fetchObject("me", User.class);
