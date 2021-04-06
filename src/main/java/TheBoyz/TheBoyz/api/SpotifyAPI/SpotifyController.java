@@ -212,5 +212,11 @@ public class SpotifyController {
         return new ResponseEntity<>(SpotifyService.getUserFollowedTracks(), HttpStatus.OK);
     }
 
+    @GetMapping("/artist/related/{artist_id}")
+    public ResponseEntity<SpotifyArtist[]> getRelatedArtist(@PathVariable String artist_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getRecommendedArtists(artist_id), HttpStatus.OK);
+    }
+
 
 }

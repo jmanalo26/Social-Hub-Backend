@@ -403,7 +403,7 @@ public class SpotifyService {
     public static Boolean followArtist(String... artistId) {
         var followArtistRequest = spotifyApi.followArtistsOrUsers(ModelObjectType.ARTIST, artistId).build();
         try {
-            System.out.println(followArtistRequest.execute());
+            followArtistRequest.execute();
             return true;
         } catch (IOException | SpotifyWebApiException | ParseException e) {
         }
@@ -413,7 +413,7 @@ public class SpotifyService {
     public static Boolean unfollowArtist(String... artistId) {
         var unfollowArtistRequest = spotifyApi.unfollowArtistsOrUsers(ModelObjectType.ARTIST, artistId).build();
         try {
-            System.out.println(unfollowArtistRequest.execute());
+            unfollowArtistRequest.execute();
             return true;
         } catch (IOException | SpotifyWebApiException | ParseException e) {
         }
@@ -443,6 +443,21 @@ public class SpotifyService {
         return null;
     }
 
+    /**
+     * TODO: Create follow/ unfollow tracks method
+     * TODO: Create getRecommendedArtists Method
+     **/
+
+    public static SpotifyArtist[] getRecommendedArtists(String artist_id) {
+        var getRecommendedArtistsRequest = spotifyApi.getArtistsRelatedArtists(artist_id).build();
+
+        try {
+            var resultSet = getRecommendedArtistsRequest.execute();
+            return Arrays.stream(resultSet).map(artist -> getArtistById(artist.getId())).collect(Collectors.toList()).toArray(SpotifyArtist[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return null;
+    }
 
 }
 
