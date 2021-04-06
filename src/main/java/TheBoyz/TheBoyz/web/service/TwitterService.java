@@ -536,23 +536,65 @@ public class TwitterService {
     }
 
     public List<TwitterRanking> getRankingList(String handle) throws TwitterException {
+        System.out.println("getting the ranking list...");
         System.out.println(handle);
-
+        long cursor = -1;
+//        List<TwitterRanking> twitterRankingList = new ArrayList<>();
+//        List<User> users = twitter.getFriendsList(handle, -1);
+//        users.add(twitter.showUser(handle));
+//        List<User> users;
+        PagableResponseList<User> users;
         List<TwitterRanking> twitterRankingList = new ArrayList<>();
-        List<User> users = twitter.getFriendsList(handle, -1);
+        int incrementor = 0;
+        do {
+            System.out.println("cursor.... " + cursor);
+            System.out.println("incrementor: " + incrementor);
+            incrementor += 1;
+            users = twitter.getFriendsList(handle, -1);
+            for(int i =0; i < users.size(); i++){
+                TwitterRanking tR = new TwitterRanking();
+                tR.setFollowerCount(users.get(i).getFollowersCount());
+                tR.setName(users.get(i).getScreenName());
+                System.out.println(users.get(i).getScreenName());
+                System.out.println(users.get(i).getFollowersCount());
+                twitterRankingList.add(tR);
+            }
+        } while ((cursor = users.getNextCursor()) != 0);
         users.add(twitter.showUser(handle));
         System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());
         Collections.sort(users, Comparator.comparing(User::getFollowersCount));
 
 
-        for(int i =0; i < users.size(); i++){
-            TwitterRanking tR = new TwitterRanking();
-            tR.setFollowerCount(users.get(i).getFollowersCount());
-            tR.setName(users.get(i).getScreenName());
-            System.out.println(users.get(i).getScreenName());
-            System.out.println(users.get(i).getFollowersCount());
-            twitterRankingList.add(tR);
-        }
+//        for(int i =0; i < users.size(); i++){
+//            TwitterRanking tR = new TwitterRanking();
+//            tR.setFollowerCount(users.get(i).getFollowersCount());
+//            tR.setName(users.get(i).getScreenName());
+//            System.out.println(users.get(i).getScreenName());
+//            System.out.println(users.get(i).getFollowersCount());
+//            twitterRankingList.add(tR);
+//        }
         return twitterRankingList;
     }
+
+//    public List<TwitterRanking> getRankingList(String handle) throws TwitterException {
+//        System.out.println("getting the ranking list...");
+//        System.out.println(handle);
+//        long cursor = -1;
+//        List<TwitterRanking> twitterRankingList = new ArrayList<>();
+//        List<User> users = twitter.getFriendsList(handle, -1);
+//        users.add(twitter.showUser(handle));
+//        System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());
+//        Collections.sort(users, Comparator.comparing(User::getFollowersCount));
+//
+//
+//        for(int i =0; i < users.size(); i++){
+//            TwitterRanking tR = new TwitterRanking();
+//            tR.setFollowerCount(users.get(i).getFollowersCount());
+//            tR.setName(users.get(i).getScreenName());
+//            System.out.println(users.get(i).getScreenName());
+//            System.out.println(users.get(i).getFollowersCount());
+//            twitterRankingList.add(tR);
+//        }
+//        return twitterRankingList;
+//    }
 }
