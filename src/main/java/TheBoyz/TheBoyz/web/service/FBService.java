@@ -177,6 +177,21 @@ public class FBService {
             pageIDs.add(a.getId());
             tokens.add(a.getAccessToken());
         }
+
+        String[] pages=  name.split(",");
+        for (String p: pages){
+            for (String n : pageNames){
+                if (n.equals(p)){
+                    System.out.println("Index found");
+                    pageIndex = pageNames.indexOf(n);
+                    System.out.println(pageIndex);
+                    FacebookClient f = new DefaultFacebookClient(tokens.get(pageIndex), Version.LATEST);
+                    f.publish(pageIDs.get(pageIndex) + "/feed", FacebookType.class, Parameter.with("message", msg));
+                    System.out.println("Message published to " + pageNames.get(pageIndex));
+                }
+            }
+        }
+        /**
         for (String n: pageNames){
             if (n.equals(name)){
                 System.out.println("Index found");
@@ -184,10 +199,12 @@ public class FBService {
                 System.out.println(pageIndex);
             }
         }
+
         //GET PAGE ACCESS TOKEN AND PUT IN CONNECTION BEFORE /FEED
         FacebookClient f = new DefaultFacebookClient(tokens.get(pageIndex), Version.LATEST);
         f.publish(pageIDs.get(pageIndex) + "/feed", FacebookType.class, Parameter.with("message", msg));
         System.out.println("Message published to page");
+         **/
     }
 
 }
