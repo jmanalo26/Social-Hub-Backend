@@ -206,6 +206,24 @@ public class SpotifyController {
         return new ResponseEntity<>(SpotifyService.checkUserFollowArtist(artist_id), HttpStatus.OK);
     }
 
+    @PutMapping("/user/favourite/track/{track_id}")
+    public ResponseEntity<Boolean> favouriteTrack(@PathVariable String... track_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.favouriteTrack(track_id), HttpStatus.OK);
+    }
+
+    @PutMapping("/user/unfavourite/track/{track_id}")
+    public ResponseEntity<Boolean> unfavouriteTrack(@PathVariable String... track_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.unfavouriteTrack(track_id), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/check/favourite/track/{track_id}")
+    public ResponseEntity<Boolean> checkFavouriteTrack(@PathVariable String... track_id) {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.checkFavouriteTrack(track_id), HttpStatus.OK);
+    }
+
     @GetMapping("/user/get/follow/tracks/")
     public ResponseEntity<SpotifyTrack[]> getUserFollowedTracks() {
         authorizationCodeRefresh_Sync();

@@ -443,21 +443,50 @@ public class SpotifyService {
         return null;
     }
 
-    /**
-     * TODO: Create follow/ unfollow tracks method
-     * TODO: Create getRecommendedArtists Method
-     **/
-
     public static SpotifyArtist[] getRecommendedArtists(String artist_id) {
         var getRecommendedArtistsRequest = spotifyApi.getArtistsRelatedArtists(artist_id).build();
 
         try {
             var resultSet = getRecommendedArtistsRequest.execute();
+//            System.out.println(resultSet);
             return Arrays.stream(resultSet).map(artist -> getArtistById(artist.getId())).collect(Collectors.toList()).toArray(SpotifyArtist[]::new);
         } catch (IOException | SpotifyWebApiException | ParseException e) {
         }
         return null;
     }
+
+    public static Boolean favouriteTrack(String... track_ids) {
+        var followTrackRequest = spotifyApi.saveTracksForUser(track_ids).build();
+        try {
+            followTrackRequest.execute();
+            return true;
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return false;
+    }
+
+    public static Boolean unfavouriteTrack(String... track_ids) {
+        var unfollowTrackRequest = spotifyApi.removeUsersSavedTracks(track_ids).build();
+        try {
+            unfollowTrackRequest.execute();
+            return true;
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return false;
+    }
+
+    public static Boolean checkFavouriteTrack(String... track_ids) {
+        var checkFavouriteRequest = spotifyApi.checkUsersSavedTracks(track_ids).build();
+        try {
+            return checkFavouriteRequest.execute()[0];
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+
+        return false;
+    }
+
+    // TODO: Modify the tracks model to have a boolean favourite?
+    // TODO: Return the entire array of favourited tracks
 
 }
 
