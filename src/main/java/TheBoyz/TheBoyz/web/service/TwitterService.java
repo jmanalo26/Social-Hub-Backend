@@ -19,6 +19,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.io.File;
+import java.io.IOException;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 /**
  * The class that makes calls to the database and to the api.
@@ -213,8 +217,18 @@ public class TwitterService {
      * @return returns the status of that tweet.
      * @throws TwitterException
      */
-    public Status postStatus(String textStatus) throws TwitterException {
-
+    public Status postStatus(String textStatus) throws TwitterException, IOException {
+        System.out.println("IN HTE POST STATUS METHOD!");
+        var statusUpdate = new StatusUpdate(textStatus);
+        int width = 963;    //width of the image
+        int height = 640;   //height of the image
+        BufferedImage image = null;
+        File f = null;
+        f = new File("kyleimg.jpg"); //image file path
+        System.out.println(f.getName());
+        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        image = ImageIO.read(f);
+        statusUpdate.setMedia(f);
         Status newStatus = twitter.updateStatus(textStatus);
         System.out.println(newStatus.getText());
         return newStatus;
@@ -226,9 +240,24 @@ public class TwitterService {
      * @return
      * @throws TwitterException
      */
-    public Tweet postUserStatus(String textStatus) throws TwitterException {
+    public Tweet postUserStatus(String textStatus) throws TwitterException, IOException {
 
-        Status newStatus = twitter.updateStatus(textStatus);
+        System.out.println("IN HTE POST USER STATUS METHOD!");
+        var statusUpdate = new StatusUpdate(textStatus);
+        int width = 963;    //width of the image
+        int height = 640;   //height of the image
+        BufferedImage image = null;
+        File f = null;
+        f = new File("src/download.jpg"); //image file path
+        System.out.println(f.getName());
+        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        image = ImageIO.read(f);
+        statusUpdate.setMedia(f);
+        Status newStatus = twitter.updateStatus(statusUpdate);
+//        System.out.println(newStatus.getText());
+
+
+//        Status newStatus = twitter.updateStatus(textStatus);
         Tweet newTweet = new Tweet();
         newTweet.setTweetCreatedBy(newStatus.getUser().getScreenName());
         newTweet.setTweetText(textStatus);
@@ -298,8 +327,11 @@ public class TwitterService {
             System.out.println("the user id does not exist in the db, saving secure infromation");
             setTwitterTokens(secureTwitter);
             twitterRepository.save(secureTwitter);
+
             return secureTwitter;
         } else {
+            twitterRepository.save(secureTwitter);
+
             hashObject(secureTwitter);
             return searchedSecure;
         }
@@ -426,21 +458,21 @@ public class TwitterService {
      * @throws TwitterException
      */
     public List<BriefStatus> getUserTimeline(String twitterHandle) throws TwitterException {
-        System.out.println( "IN THE GET USER TIMELINE...");
+        System.out.println("IN THE GET USER TIMELINE...");
         User user = twitter.showUser(twitterHandle);
         ResponseList<Status> userTimeline = twitter.getUserTimeline(twitterHandle);
         List<BriefStatus> userTimelineBrief = new ArrayList<>();
-//        System.out.println("the lenght of timeline: " + userTimeline.size());
+//        System.out.println("the length of timeline: " + userTimeline.size());
 
         int numOfRetweets = 0;
         int numOfFavorites = 0;
         BriefStatus mostRetweeted = new BriefStatus();
-        BriefStatus mostFavorited= new BriefStatus();
+        BriefStatus mostFavorited = new BriefStatus();
 
-        for(int i = 0; i < userTimeline.size(); i++){
+        for (int i = 0; i < userTimeline.size(); i++) {
             BriefStatus bs = new BriefStatus();
             bs.setRetweetCount(userTimeline.get(i).getRetweetCount());
-            if(userTimeline.get(i).getRetweetCount() > numOfRetweets){
+            if (userTimeline.get(i).getRetweetCount() > numOfRetweets) {
                 numOfRetweets = userTimeline.get(i).getRetweetCount();
 
                 System.out.println("num of retweets: " + numOfRetweets);
@@ -452,7 +484,7 @@ public class TwitterService {
                 mostRetweeted.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
                 mostRetweeted.setCreatedAt(userTimeline.get(i).getCreatedAt());
             }
-            if(userTimeline.get(i).getFavoriteCount() > numOfFavorites){
+            if (userTimeline.get(i).getFavoriteCount() > numOfFavorites) {
                 System.out.println("true ");
                 numOfFavorites = userTimeline.get(i).getFavoriteCount();
 
@@ -474,23 +506,52 @@ public class TwitterService {
             userTimelineBrief.add(bs);
         }
         System.out.println(userTimelineBrief.size());
-        if (numOfFavorites != 0){
+        if (numOfFavorites != 0) {
             userTimelineBrief.add(0, mostFavorited);
         }
-        if(numOfRetweets != 0){
-            userTimelineBrief.add(0, mostRetweeted);
+        if (numOfRetweets != 0) {
+            userTimelineBrief.add(1, mostRetweeted);
 
         }
-//        System.out.println(userTimelineBrief.size());
+        System.out.println(userTimelineBrief.size());
+
+
+        System.out.println(userTimelineBrief.get(0).getText());
+        System.out.println(userTimelineBrief.get(0).getRetweetCount());
+
+        return userTimelineBrief;
+    }
+
+
+//    /**
+//     * Get the user's status as a breif object of only the important attributes.
+//     * @return
+//     * @throws TwitterException
+//     */
+//    public List<BriefStatus> getUserTimeline(String twitterHandle) throws TwitterException {
+//        System.out.println( "IN THE GET USER TIMELINE...");
+//        User user = twitter.showUser(twitterHandle);
+//        ResponseList<Status> userTimeline = twitter.getUserTimeline(twitterHandle);
+//        List<BriefStatus> userTimelineBrief = new ArrayList<>();
+////        System.out.println("the length of timeline: " + userTimeline.size());
 //
+//        for(int i = 0; i < userTimeline.size(); i++){
+//            System.out.println(userTimeline.get(i).getText());
+//            BriefStatus bs = new BriefStatus();
+//            bs.setRetweetCount(userTimeline.get(i).getRetweetCount());
+//            bs.setText(userTimeline.get(i).getText());
+//            bs.setScreenName(userTimeline.get(i).getUser().getName());
+//            bs.setHandle(userTimeline.get(i).getUser().getScreenName());
+//            bs.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
+//            bs.setCreatedAt(userTimeline.get(i).getCreatedAt());
+//            userTimelineBrief.add(bs);
+//        }
+//        System.out.println(userTimelineBrief.size());
 //
 //        System.out.println(userTimelineBrief.get(0).getText());
 //        System.out.println(userTimelineBrief.get(0).getRetweetCount());
-
-        return userTimelineBrief;
-
-
-
+//
+//        return userTimelineBrief;
 
 
 //        String twitterStatus = "";
@@ -515,7 +576,7 @@ public class TwitterService {
 //        statusTweet.setTweetText(user.getStatus().getText());
 //        statusTweet.setTweetCreatedBy(user.getName());
 //        return userTimeline;
-    }
+//    }
 
     public List<String> getFriends(String handle) throws TwitterException {
         System.out.println(handle);
@@ -535,66 +596,102 @@ public class TwitterService {
         return friendsList;
     }
 
-    public List<TwitterRanking> getRankingList(String handle) throws TwitterException {
-        System.out.println("getting the ranking list...");
-        System.out.println(handle);
-        long cursor = -1;
-//        List<TwitterRanking> twitterRankingList = new ArrayList<>();
-//        List<User> users = twitter.getFriendsList(handle, -1);
-//        users.add(twitter.showUser(handle));
-//        List<User> users;
-        PagableResponseList<User> users;
-        List<TwitterRanking> twitterRankingList = new ArrayList<>();
-        int incrementor = 0;
-        do {
-            System.out.println("cursor.... " + cursor);
-            System.out.println("incrementor: " + incrementor);
-            incrementor += 1;
-            users = twitter.getFriendsList(handle, -1);
-            for(int i =0; i < users.size(); i++){
-                TwitterRanking tR = new TwitterRanking();
-                tR.setFollowerCount(users.get(i).getFollowersCount());
-                tR.setName(users.get(i).getScreenName());
-                System.out.println(users.get(i).getScreenName());
-                System.out.println(users.get(i).getFollowersCount());
-                twitterRankingList.add(tR);
-            }
-        } while ((cursor = users.getNextCursor()) != 0);
-        users.add(twitter.showUser(handle));
-        System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());
-        Collections.sort(users, Comparator.comparing(User::getFollowersCount));
-
-
-//        for(int i =0; i < users.size(); i++){
-//            TwitterRanking tR = new TwitterRanking();
-//            tR.setFollowerCount(users.get(i).getFollowersCount());
-//            tR.setName(users.get(i).getScreenName());
-//            System.out.println(users.get(i).getScreenName());
-//            System.out.println(users.get(i).getFollowersCount());
-//            twitterRankingList.add(tR);
-//        }
-        return twitterRankingList;
-    }
-
 //    public List<TwitterRanking> getRankingList(String handle) throws TwitterException {
 //        System.out.println("getting the ranking list...");
 //        System.out.println(handle);
 //        long cursor = -1;
+////        List<TwitterRanking> twitterRankingList = new ArrayList<>();
+////        List<User> users = twitter.getFriendsList(handle, -1);
+////        users.add(twitter.showUser(handle));
+////        List<User> users;
+//        PagableResponseList<User> users;
 //        List<TwitterRanking> twitterRankingList = new ArrayList<>();
-//        List<User> users = twitter.getFriendsList(handle, -1);
+//        int incrementor = 0;
+//        do {
+//            System.out.println("cursor.... " + cursor);
+//            System.out.println("incrementor: " + incrementor);
+//            incrementor += 1;
+//            users = twitter.getFriendsList(handle, -1);
+//            for(int i =0; i < users.size(); i++){
+//                TwitterRanking tR = new TwitterRanking();
+//                tR.setFollowerCount(users.get(i).getFollowersCount());
+//                tR.setName(users.get(i).getScreenName());
+//                System.out.println(users.get(i).getScreenName());
+//                System.out.println(users.get(i).getFollowersCount());
+//                twitterRankingList.add(tR);
+//            }
+//        } while ((cursor = users.getNextCursor()) != 0);
 //        users.add(twitter.showUser(handle));
 //        System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());
 //        Collections.sort(users, Comparator.comparing(User::getFollowersCount));
 //
 //
-//        for(int i =0; i < users.size(); i++){
-//            TwitterRanking tR = new TwitterRanking();
-//            tR.setFollowerCount(users.get(i).getFollowersCount());
-//            tR.setName(users.get(i).getScreenName());
-//            System.out.println(users.get(i).getScreenName());
-//            System.out.println(users.get(i).getFollowersCount());
-//            twitterRankingList.add(tR);
-//        }
+////        for(int i =0; i < users.size(); i++){
+////            TwitterRanking tR = new TwitterRanking();
+////            tR.setFollowerCount(users.get(i).getFollowersCount());
+////            tR.setName(users.get(i).getScreenName());
+////            System.out.println(users.get(i).getScreenName());
+////            System.out.println(users.get(i).getFollowersCount());
+////            twitterRankingList.add(tR);
+////        }
 //        return twitterRankingList;
 //    }
+
+    public List<TwitterRanking> getRankingList(String handle) throws TwitterException {
+        System.out.println("getting the ranking list...");
+        System.out.println(handle);
+        long cursor = -1;
+        List<TwitterRanking> twitterRankingList = new ArrayList<>();
+        List<User> users = twitter.getFriendsList(handle, -1);
+        users.add(twitter.showUser(handle));
+        System.out.println("USERS FRIENDS LIST LENGTH: " +  users.size());
+        Collections.sort(users, Comparator.comparing(User::getFollowersCount));
+
+
+        for(int i =0; i < users.size(); i++){
+            TwitterRanking tR = new TwitterRanking();
+            tR.setFollowerCount(users.get(i).getFollowersCount());
+            tR.setName(users.get(i).getScreenName());
+            System.out.println(users.get(i).getScreenName());
+            System.out.println(users.get(i).getFollowersCount());
+            twitterRankingList.add(tR);
+        }
+        return twitterRankingList;
+    }
+
+    public SecureTwitter getTwitterTokens(String id){
+        SecureTwitter searchedSecure = twitterRepository.findSecureTwitterByUserId(Integer.valueOf(id));
+        if(searchedSecure != null){
+            setTwitterTokens(searchedSecure);
+            return searchedSecure;
+        }
+        SecureTwitter nullSecure = new SecureTwitter();
+
+        return nullSecure;
+    }
+
+    /**
+     * Makes the api call to post a tweet to the user's twitter page.
+     * @param textStatus is the content (text) of the tweet to be posted.
+     * @return
+     * @throws TwitterException
+     */
+    public Tweet postUserStatusWithContent(String textStatus, File file) throws TwitterException, IOException {
+
+        System.out.println("IN THE POST USER STATUS  with content...!");
+        var statusUpdate = new StatusUpdate(textStatus);
+//        f = new File("src/download.jpg"); //image file path
+        System.out.println(file.getName());
+        statusUpdate.setMedia(file);
+        Status newStatus = twitter.updateStatus(statusUpdate);
+//        System.out.println(newStatus.getText());
+
+
+//        Status newStatus = twitter.updateStatus(textStatus);
+        Tweet newTweet = new Tweet();
+        newTweet.setTweetCreatedBy(newStatus.getUser().getScreenName());
+        newTweet.setTweetText(textStatus);
+        System.out.println(newStatus.getText());
+        return newTweet;
+    }
 }

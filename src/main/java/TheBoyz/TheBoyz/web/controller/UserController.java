@@ -74,6 +74,16 @@ public class UserController {
     }
 
     /**
+     * gets the user from the database.
+     * @return returns the user
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/api/get-user/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable String id)  {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+    }
+
+    /**
      * gets a user from the database by a username.
      * @param username the username passed in from the front end.
      * @return returns a user from the database.

@@ -179,6 +179,23 @@ public class UserService {
         }
         return user;
     }
+    /**
+     * Gets the user from the database.
+     *
+     * @param username the username created by the user.
+     * @return returns the User.
+     */
+    public User getUserById(String id) {
+        User user = new User();
+        System.out.println("************");
+        user = userRepository.findByUserId(Integer.valueOf(id));
+        if(user != null) {
+            System.out.println("USERNAME: " + user.getUsername());
+            System.out.println("id: " + user.getUserId());
+        }
+        return user;
+    }
+
 
     public boolean checkIfUsernameExists(String username) {
         User user = new User();
