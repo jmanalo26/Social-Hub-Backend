@@ -9,10 +9,7 @@ import com.sun.istack.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.brunocvcunha.instagram4j.Instagram4j;
-import org.brunocvcunha.instagram4j.requests.InstagramGetUserFollowersRequest;
-import org.brunocvcunha.instagram4j.requests.InstagramGetUserFollowingRequest;
-import org.brunocvcunha.instagram4j.requests.InstagramSearchUsernameRequest;
-import org.brunocvcunha.instagram4j.requests.InstagramUserFeedRequest;
+import org.brunocvcunha.instagram4j.requests.*;
 import org.brunocvcunha.instagram4j.requests.payload.*;
 import org.springframework.stereotype.Service;
 import com.github.instagram4j.instagram4j.IGClient;
@@ -94,6 +91,39 @@ public class InstagramService {
                 .login();
         IGResponse response = new AccountsSetBiographyRequest(bio).execute(client).join();
         System.out.println(response.getStatus());
+    }
+
+    public boolean followingStatus(@NotNull InstaUser user, String userSearch) throws IOException {
+        Instagram4j instagram = Instagram4j.builder().username(user.getUsername()).password(user.getPassword()).build();
+        instagram.setup();
+        instagram.login();
+
+        InstagramSearchUsernameResult followResult = instagram.sendRequest(new InstagramSearchUsernameRequest(userSearch));
+        if (instagram.sendRequest(new InstagramGetFriendshipRequest(followResult.getUser().getPk())).following)
+        {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public void followSearchUserAccount(@NotNull InstaUser user, String userSearch) throws IOException {
+        Instagram4j instagram = Instagram4j.builder().username(user.getUsername()).password(user.getPassword()).build();
+        instagram.setup();
+        instagram.login();
+
+        InstagramSearchUsernameResult followResult = instagram.sendRequest(new InstagramSearchUsernameRequest(userSearch));
+        instagram.sendRequest(new InstagramFollowRequest(followResult.getUser().getPk()));
+    }
+
+    public void unfollowSearchUserAccount(@NotNull InstaUser user, String userSearch) throws IOException {
+        Instagram4j instagram = Instagram4j.builder().username(user.getUsername()).password(user.getPassword()).build();
+        instagram.setup();
+        instagram.login();
+
+        InstagramSearchUsernameResult followResult = instagram.sendRequest(new InstagramSearchUsernameRequest(userSearch));
+        instagram.sendRequest(new InstagramUnfollowRequest(followResult.getUser().getPk()));
     }
 
     public InstagramUserInfo getSearchUserAccount(@NotNull InstaUser user, String userSearch) throws IOException {

@@ -26,31 +26,36 @@ public class Insta4j {
 
 
 
-        Instagram4j instagram = Instagram4j.builder().username("hbb_disposable").password("yaga186").build();
+        Instagram4j instagram = Instagram4j.builder().username("thesocialhubclub").password("Capstone2021").build();
         instagram.setup();
         instagram.login();
-        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("hbb_disposable"));
+        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("thesocialhubclub"));
 
 
+        InstagramSearchUsernameResult githubResult = instagram.sendRequest(new InstagramSearchUsernameRequest("github"));
 
-        InstagramUserInfo searchInstagramUser = new InstagramUserInfo();
-        searchInstagramUser.setFollowerCount(usernameResult.getUser().follower_count);
-        searchInstagramUser.setFollowingCount(usernameResult.getUser().following_count);
-        searchInstagramUser.setMediaCount(usernameResult.getUser().media_count);
-        searchInstagramUser.setProfilePicUrl(usernameResult.getUser().profile_pic_url);
-        searchInstagramUser.setInstaBio(usernameResult.getUser().biography);
-        searchInstagramUser.setDisplayName(usernameResult.getUser().full_name);
-        searchInstagramUser.setUserName(usernameResult.getUser().username);
+//        instagram.sendRequest(new InstagramFollowRequest(githubResult.getUser().getPk()));
+        System.out.println(instagram.sendRequest(new InstagramGetFriendshipRequest(githubResult.getUser().getPk())).following);
 
-
-        InstagramGetUserFollowersResult followersResult = instagram.sendRequest(
-                new InstagramGetUserFollowersRequest(usernameResult.getUser().getPk()));
-        ArrayList<String> followerFeed = new ArrayList<String>();
-        for (InstagramUserSummary account : followersResult.getUsers()) {
-            followerFeed.add(account.full_name + " ProfilePic:" + account.profile_pic_url);
-        }
-        System.out.println(followerFeed.size());
-        searchInstagramUser.setFollowerFeed(followerFeed.toArray(String[]::new));
+//
+//        InstagramUserInfo searchInstagramUser = new InstagramUserInfo();
+//        searchInstagramUser.setFollowerCount(usernameResult.getUser().follower_count);
+//        searchInstagramUser.setFollowingCount(usernameResult.getUser().following_count);
+//        searchInstagramUser.setMediaCount(usernameResult.getUser().media_count);
+//        searchInstagramUser.setProfilePicUrl(usernameResult.getUser().profile_pic_url);
+//        searchInstagramUser.setInstaBio(usernameResult.getUser().biography);
+//        searchInstagramUser.setDisplayName(usernameResult.getUser().full_name);
+//        searchInstagramUser.setUserName(usernameResult.getUser().username);
+//
+//
+//        InstagramGetUserFollowersResult followersResult = instagram.sendRequest(
+//                new InstagramGetUserFollowersRequest(usernameResult.getUser().getPk()));
+//        ArrayList<String> followerFeed = new ArrayList<String>();
+//        for (InstagramUserSummary account : followersResult.getUsers()) {
+//            followerFeed.add(account.full_name + " ProfilePic:" + account.profile_pic_url);
+//        }
+//        System.out.println(followerFeed.size());
+//        searchInstagramUser.setFollowerFeed(followerFeed.toArray(String[]::new));
 
 //
 //
