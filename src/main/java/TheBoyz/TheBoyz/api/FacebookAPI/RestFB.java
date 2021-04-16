@@ -21,26 +21,50 @@ public class RestFB extends DefaultFacebookClient{
 
     private static String appID = "2959296474304941";
     private static String appSecret = "7195fbe6d20da5b6ad187dbd14c83784";
-    private static String redirectURI = "http://localhost:4200/facebook";
+    private static String redirectURI = "http://localhost:4200";
     /**
      * Main application
      * @param args Args
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String accessToken = "EAAqDduci0a0BAGwuC28w5DzSI4MlEsuJfEQZALOndMdOZBOAzCcg1DuZCwNOZBUxCM0HJ0r4rArZCKVc3swHXEOtNIhMNdyKE4YgyrEeRE7VvqnCifv0d5Ht2ixErPYyE3jnz8muX3BjreoIZBAYx9hfZAhNIAPa6OfsmqJA7NTyZA7Y0qwODndAUPsexBwmz4EoAeisaPZA7FoLgkDV92BDemtd2SPuISgaswD1kK3j1kgZDZD";
-        getUser();
-        //FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
-        //getAlbum(fb);
+        String accessToken = "EAAqDduci0a0BAI3ZBCpnw3ih4ln1eg3RzCGlTsDXLVVjLCf56CZBrrZCpvgInSVWB4gO6toAQLWsfbCo93yVA3gQ1FeQ2dvqxpZBTzTaNo8aSZCybZCOq08KBZBXTGSQ9CEHnyQaYPfZCrL3ZAWkWSzkmNWgKMnV32d4DkOi6auocXRruY0fp989lzZCuHOwh1PEv4n86yoeHLlztlZBiBYmkjWFpVkjRihpfDxrUm9jeP9ywZDZD";
+        //logout();
+        //getUser();
+        FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
+        getFriendsList(fb);
         //start();
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
     }
 
+    public static void logout(){
+        DefaultFacebookClient facebookClient = new DefaultFacebookClient(Version.LATEST);
+        ScopeBuilder scope = new ScopeBuilder();
+        scope.addPermission(FacebookPermissions.PUBLIC_PROFILE);
+        scope.addPermission(FacebookPermissions.USER_FRIENDS);
+        scope.addPermission(FacebookPermissions.USER_BIRTHDAY);
+        scope.addPermission(FacebookPermissions.EMAIL);
+        scope.addPermission(FacebookPermissions.USER_POSTS);
+        scope.addPermission(FacebookPermissions.PAGES_SHOW_LIST);
+        scope.addPermission(FacebookPermissions.USER_MANAGED_GROUPS);
+        scope.addPermission(FacebookPermissions.USER_PHOTOS);
+        String login = facebookClient.getLoginDialogUrl(appID, redirectURI, scope, Parameter.with("fields", "name"));
+        String logout = facebookClient.getLogoutUrl("https://www.google.com/");
+        System.out.println(login);
+        System.out.println(logout);
+    }
+
+    public static void getPages(FacebookClient fb){
+        Connection<Account> myPhotos = fb.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"), Parameter.with("fields", "fan_count"));
+        for (Account p: myPhotos.getData()){
+            System.out.println(p.getFanCount());
+        }
+    }
 
     public static void getAlbum(FacebookClient fb){
-        Connection<Photo> myPhotos = fb.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "picture"), Parameter.with("type", "uploaded"));
+        Connection<Photo> myPhotos = fb.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "link"), Parameter.with("type", "uploaded"));
         for (Photo p: myPhotos.getData()){
-            System.out.println(p.getPicture());
+            System.out.println(p.getLink());
         }
     }
 
@@ -146,6 +170,7 @@ public class RestFB extends DefaultFacebookClient{
      */
     public static void getFriendsList(FacebookClient fb){
         Connection<User> myFriends = fb.fetchConnection("me/friends", User.class);
+        System.out.println(myFriends.getTotalCount());
         for (User friend: myFriends.getData()){
             System.out.println("Friend Name: " + friend.getName());
             System.out.println("Friend ID: " + friend.getId());

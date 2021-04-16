@@ -12,4 +12,5 @@ import lombok.*;
 @ToString
 public class FacebookPhotos {
     private ArrayList<String> photos;
+    private ArrayList<String> photoURLs;
 }

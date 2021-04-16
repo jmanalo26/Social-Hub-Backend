@@ -12,4 +12,5 @@ import lombok.*;
 @ToString
 public class FacebookLogin {
     private String loginDialogURL;
+    private String logoutDialogURL;
 }
