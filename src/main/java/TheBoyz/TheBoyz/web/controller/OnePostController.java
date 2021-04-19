@@ -80,5 +80,30 @@ public class OnePostController {
 
     }
 
+    /**
+     * Gets the current status as a status json object.
+     * @return returns the user's tweet.
+     * @throws TwitterException
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "/api/one-posts/save/form-data/text-only")
+    public OnePosts saveOnePostsAsFormDataTextOnly(@RequestParam("textContent")  String textContent,
+                                           @RequestParam("userId")  String userId,
+                                           @RequestParam("socialMedia")  String socialMedia,
+                                           @RequestParam("createdAt")  String createdAt
+    ) throws IOException, ParseException {
+        System.out.println("ONE POST CONTROLLER POST");
+        OnePosts newOnePost = new OnePosts();
+        newOnePost.setTextContent(textContent);
+        newOnePost.setUserId(Integer.valueOf(userId));
+        newOnePost.setSocialMedia(socialMedia);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+//        java.util.Date date = sdf1.parse(createdAt); // Returns a Date format object with the pattern
+
+//        newOnePost.setCreatedAt(date);
+        return onePostService.saveOnePost(newOnePost);
+
+    }
+
 
 }
