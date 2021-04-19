@@ -18,10 +18,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.ChannelListResponse;
-import com.google.api.services.youtube.model.PlaylistListResponse;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.api.services.youtube.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,7 +38,7 @@ import java.util.Collection;
 public class YoutubeService {
 
     private final String CLIENT_SECRETS = "src/main/resources/client_secret.json";
-    private final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
+    private final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtube.force-ssl");
     private final String APPLICATION_NAME = "API code samples";
     private final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static YouTube youTube;
@@ -70,7 +67,22 @@ public class YoutubeService {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     }
+    public String postComment(String videoId, String comment) throws GeneralSecurityException, IOException {
+        CommentThread commentThread = new CommentThread();
+        CommentThreadSnippet snippet = new CommentThreadSnippet();
+        Comment topLevelComment = new Comment();
+        CommentSnippet commentSnippet = new CommentSnippet();
+        commentSnippet.setTextOriginal(comment);
+        topLevelComment.setSnippet(commentSnippet);
+        snippet.setTopLevelComment(topLevelComment);
+        snippet.setVideoId(videoId);
+        commentThread.setSnippet(snippet);
 
+        YouTube.CommentThreads.Insert request = youTube.commentThreads()
+                .insert("snippet", commentThread);
+        CommentThread response = request.execute();
+        return response.toString();
+    }
     public ArrayList<Video> getVideos() throws IOException {
         System.out.println(++numCalls);
         YouTube.Search.List request = youTube.search().list("snippet");
@@ -86,6 +98,7 @@ public class YoutubeService {
         for(int i = 0; i < items.length(); i++) {
             String videoId = (String) items.getJSONObject(i).getJSONObject("id").get("videoId");
             String videoDescription = (String) items.getJSONObject(i).getJSONObject("snippet").get("description");
+            String videoTitle = (String) items.getJSONObject(i).getJSONObject("snippet").get("title");
             String videoPublished = (String) items.getJSONObject(i).getJSONObject("snippet").get("publishedAt");
             String videoDetailResponse = videoDetails(videoId);
             JSONObject obj = new JSONObject(videoDetailResponse);
@@ -97,7 +110,7 @@ public class YoutubeService {
             Long dislike = (Long) stats.getLong("dislikeCount");
             Long favorite = (Long) stats.getLong("favoriteCount");
             Long comment = (Long) stats.getLong("commentCount");
-            VideoDetails vd = new VideoDetails(duration, views, likes, dislike, favorite, comment, videoPublished);
+            VideoDetails vd = new VideoDetails(duration, views, likes, dislike, favorite, comment, videoPublished, videoTitle);
             String fullVideoId = youtubelink + videoId;
             Video video = new Video(fullVideoId, videoDescription, vd);
             videoArr.add(video);

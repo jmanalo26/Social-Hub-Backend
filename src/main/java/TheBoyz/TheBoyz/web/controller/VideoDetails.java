@@ -8,8 +8,9 @@ public class VideoDetails {
     private Long favorites;
     private Long comments;
     private String published;
+    private String videoTitle;
 
-    public VideoDetails(String duration, Long views, Long likes, Long dislikes, Long favorites, Long comments, String published) {
+    public VideoDetails(String duration, Long views, Long likes, Long dislikes, Long favorites, Long comments, String published, String videoTitle) {
         this.duration = duration;
         this.views = views;
         this.likes = likes;
@@ -17,5 +18,6 @@ public class VideoDetails {
         this.favorites = favorites;
         this.comments = comments;
         this.published = published;
+        this.videoTitle = videoTitle;
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 @Slf4j
 @RestController
@@ -52,7 +53,6 @@ public class YoutubeController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/api/youtube/newUser")
     public Youtube save(@RequestBody Youtube youtube) {
-        System.out.println("in post mapping");
         Youtube yt = new Youtube();
         yt.setChannelId(youtube.getChannel_id());
         yt.setProfile_pic(youtube.getProfile_photo());
@@ -62,6 +62,14 @@ public class YoutubeController {
         Youtube temp = this.youtubeService.saveUser(yt);
         return yt;
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "/api/youtube/comment")
+    public String comment(@RequestBody VideoComment vc) throws GeneralSecurityException, IOException {
+        System.out.println("Submitted Comment");
+        return this.youtubeService.postComment(vc.getVideoId(), vc.getVideoComment());
+    }
+
     @GetMapping(value = "api/youtube/retrieve/{s}")
     public ResponseEntity<String> getUserById(@PathVariable String s) throws JsonProcessingException {
         Youtube y = youtubeRepository.findUserByUsernameSH(s);
