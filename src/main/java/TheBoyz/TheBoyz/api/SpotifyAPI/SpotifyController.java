@@ -224,19 +224,32 @@ public class SpotifyController {
         return new ResponseEntity<>(SpotifyService.checkFavouriteTrack(track_id), HttpStatus.OK);
     }
 
+    // User's followed tracks, albums, and artists
     @GetMapping("/user/get/follow/tracks/")
     public ResponseEntity<SpotifyTrack[]> getUserFollowedTracks() {
         authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getUserFollowedTracks(), HttpStatus.OK);
     }
 
+    @GetMapping("/user/get/follow/albums/")
+    public ResponseEntity<SpotifyAlbum[]> getUserFollowedAlbums() {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getUserFollowedAlbums(), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/get/follow/artists/")
+    public ResponseEntity<SpotifyArtist[]> getUserFollowedArtists() {
+        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getUserFollowedArtists(), HttpStatus.OK);
+    }
+
+    // related artists
+
     @GetMapping("/artist/related/{artist_id}")
     public ResponseEntity<SpotifyArtist[]> getRelatedArtist(@PathVariable String artist_id) {
         authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getRecommendedArtists(artist_id), HttpStatus.OK);
     }
-
-    // TODO: get user top tracks, get recent tracks, get recommended tracks, new releases
 
     @GetMapping("/user/get/top/tracks")
     public ResponseEntity<SpotifyTrack[]> getUserTopTracks() {

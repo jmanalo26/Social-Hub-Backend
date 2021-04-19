@@ -529,7 +529,7 @@ public final class SpotifyService {
     }
 
     public static SpotifyTrack[] getRecentlyPlayedTracks() {
-        var getRecentlyPlayedTracksRequest = spotifyApi.getCurrentUsersRecentlyPlayedTracks().limit(5).build();
+        var getRecentlyPlayedTracksRequest = spotifyApi.getCurrentUsersRecentlyPlayedTracks().limit(10).build();
         try {
             return Arrays.stream(getRecentlyPlayedTracksRequest.execute().getItems())
                     .map(track -> getTrackById(track.getTrack().getId()))
@@ -553,7 +553,6 @@ public final class SpotifyService {
         return null;
     }
 
-    // TODO: Create a new model which doesn't include the tracks of the playlist & return that
     public static SpotifyPlaylistSnapshot[] getFeaturedPlaylists() {
         var getFeaturedPlaylistsRequest = spotifyApi.getListOfFeaturedPlaylists().country(CountryCode.getByLocale(Locale.US)).limit(10).build();
 
@@ -562,6 +561,31 @@ public final class SpotifyService {
                     .map(playlist -> getPlaylistSnapshotById(playlist.getId()))
                     .collect(Collectors.toList())
                     .toArray(SpotifyPlaylistSnapshot[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+        return null;
+    }
+
+    public static SpotifyArtist[] getUserFollowedArtists() {
+        var getFavouritedArtistsRequest = spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).build();
+        try {
+            return Arrays.stream(getFavouritedArtistsRequest.execute().getItems())
+                    .map(artist -> getArtistById(artist.getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyArtist[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+        return null;
+
+    }
+
+    public static SpotifyAlbum[] getUserFollowedAlbums() {
+        var getFavouritedAlbumsRequest = spotifyApi.getCurrentUsersSavedAlbums().build();
+        try {
+            return Arrays.stream(getFavouritedAlbumsRequest.execute().getItems())
+                    .map(album -> getAlbumById(album.getAlbum().getId())).collect(Collectors.toList()).toArray(SpotifyAlbum[]::new);
         } catch (IOException | SpotifyWebApiException | ParseException e) {
 
         }
