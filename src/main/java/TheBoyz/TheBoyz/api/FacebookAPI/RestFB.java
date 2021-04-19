@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * IGNORE THIS CLASS, THIS IS FOR TESTING PURPOSES ONLY
@@ -27,14 +28,36 @@ public class RestFB extends DefaultFacebookClient{
      * @param args Args
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String accessToken = "EAAqDduci0a0BAI3ZBCpnw3ih4ln1eg3RzCGlTsDXLVVjLCf56CZBrrZCpvgInSVWB4gO6toAQLWsfbCo93yVA3gQ1FeQ2dvqxpZBTzTaNo8aSZCybZCOq08KBZBXTGSQ9CEHnyQaYPfZCrL3ZAWkWSzkmNWgKMnV32d4DkOi6auocXRruY0fp989lzZCuHOwh1PEv4n86yoeHLlztlZBiBYmkjWFpVkjRihpfDxrUm9jeP9ywZDZD";
+        String accessToken = "EAAqDduci0a0BAPbcWRcqMg0ZCZB8GnS97e4q4eoZAZBjWWwNwFfoAF8RI8jweDjzOeDb4mEwm0XOzwYZA8wP7ZBinJFDPSRnCV3pGxWIcNlGcOM6ZBLx5zBgGngdcvZCvWPYBIc8aScSd869a0IeqxrJThWb8kRyudzQlUnZCTsUqemO7v5NH42RQn62msUGSmkIZBNLqh1XdiReCQJU2ZBzl1DAYH0fysbpoX7BTkjvwdtYAZDZD";
+       FacebookClient facebookClient = new DefaultFacebookClient(accessToken, appSecret, Version.LATEST);
+       String pageID = "101710815360723";
+        Connection<Post> pagePosts = facebookClient.fetchConnection(pageID +"/feed", Post.class);
+        for (Post p: pagePosts.getData()){
+            System.out.println(p.getMessage());
+            System.out.println(p.getCreatedTime().toString());
+        }
         //logout();
         //getUser();
-        FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
-        getFriendsList(fb);
+        /**
+        Connection<Post> feed = fb.fetchConnection("101710815360723/feed", Post.class, Parameter.with("limit", 1));
+
+        for (List<Post> feedConnectionPage : feed) {
+            for (Post post : feedConnectionPage) {
+                System.out.println(post.getMessage());
+            }
+        }
+
+        Connection<Account> myAccounts = fb.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"));
+        for (Account a: myAccounts.getData()){
+            System.out.println(a.getName() + "; " + a.getId());
+        }
+
+
+        //getPages(fb);
         //start();
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
+         **/
     }
 
     public static void logout(){
@@ -55,9 +78,10 @@ public class RestFB extends DefaultFacebookClient{
     }
 
     public static void getPages(FacebookClient fb){
-        Connection<Account> myPhotos = fb.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"), Parameter.with("fields", "fan_count"));
-        for (Account p: myPhotos.getData()){
-            System.out.println(p.getFanCount());
+        Connection<Photo> myPhotos = fb.fetchConnection("me/likes", Photo.class, Parameter.with("fields", "picture.type(large){url}"));
+        System.out.println(myPhotos);
+        for (Photo p: myPhotos.getData()){
+            System.out.println(p.getPicture());
         }
     }
 

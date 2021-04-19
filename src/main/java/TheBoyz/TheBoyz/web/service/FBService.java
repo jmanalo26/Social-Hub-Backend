@@ -24,6 +24,9 @@ public class FBService {
     private static String fbCode;
 
     public static User user;// = facebookClient.fetchObject("me", User.class);
+    public static ArrayList<String> pages;
+    public static ArrayList<String> ids;
+    public static String currentPage;
 
 
     public static DefaultFacebookClient getFacebookClient() {
@@ -129,13 +132,36 @@ public class FBService {
         return ph;
     }
 
+    public static FacebookVideos getVideos(){
+        ArrayList<String> vids = new ArrayList<>();
+        ArrayList<String> tb = new ArrayList<>();
+        FacebookClient fb = new DefaultFacebookClient(accessToken, appSecret, Version.LATEST);
+        Connection<Video> videos = fb.fetchConnection("me/videos", Video.class,  Parameter.with("fields", "source"), Parameter.with("type", "uploaded"));
+        for (Video v: videos.getData()){
+            System.out.println(v.getSource());
+            vids.add(v.getSource());
+        }
+
+        Connection<Video> v2 = fb.fetchConnection("me/videos", Video.class,  Parameter.with("fields", "picture"), Parameter.with("type", "uploaded"));
+        for (Video v: v2.getData()){
+            tb.add(v.getPicture());
+        }
+
+        FacebookVideos fbVids = new FacebookVideos();
+        fbVids.setSources(vids);
+        fbVids.setThumbnails(tb);
+        return fbVids;
+    }
+
     public static FacebookPages getPages(){
-        ArrayList<String> pages = new ArrayList<String>();
+        pages = new ArrayList<>();
+        ids = new ArrayList<>();
         ArrayList<String> urls = new ArrayList<String>();
         ArrayList<String> fans = new ArrayList<>();
         Connection<Account> myAccounts = facebookClient.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"));
         for (Account a: myAccounts.getData()){
             pages.add(a.getName());
+            ids.add(a.getId());
         }
         Connection<Account> myAccounts2 = facebookClient.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "link"));
         for (Account a: myAccounts2.getData()){
@@ -148,6 +174,7 @@ public class FBService {
 
         ArrayList<String> lPages = new ArrayList<>();
         ArrayList<String> lLinks = new ArrayList<>();
+        ArrayList<String> f = new ArrayList<>();
         Connection<Account> likedPages = facebookClient.fetchConnection("me/likes", Account.class, Parameter.with("fields", "name"));
         for (Account l :likedPages.getData()){
             lPages.add(l.getName());
@@ -156,6 +183,10 @@ public class FBService {
         for (Account l :likedLinks.getData()){
             lLinks.add(l.getLink());
         }
+        Connection<Account> count = facebookClient.fetchConnection("me/likes", Account.class, Parameter.with("fields", "fan_count"));
+        for (Account l :count.getData()){
+            f.add(l.getFanCount().toString());
+        }
 
         FacebookPages fp = new FacebookPages();
         fp.setPageNames(pages);
@@ -163,7 +194,37 @@ public class FBService {
         fp.setPageFans(fans);
         fp.setLikedNames(lPages);
         fp.setLikedLinks(lLinks);
+        fp.setFanCounts(f);
         return fp;
+    }
+
+    public static FacebookPagePosts getPagePosts(){
+        System.out.println(currentPage);
+        currentPage = currentPage.replace("\"", "");
+        ArrayList<String> posts = new ArrayList<>();
+        ArrayList<String> postTimes = new ArrayList<>();
+        int pageIndex = 0;
+        for (String p: pages){
+            if (currentPage.equals(p)){
+                System.out.println("P: " + p);
+                pageIndex = pages.indexOf(currentPage);
+            }
+        }
+
+        String pageID = ids.get(pageIndex);
+        System.out.println("PAGE: " + pages.get(pageIndex));
+        System.out.println("PAGE ID: " + pageID);
+        Connection<Post> pagePosts = facebookClient.fetchConnection(pageID +"/feed", Post.class);
+        for (Post p: pagePosts.getData()){
+            posts.add(p.getMessage());
+            postTimes.add(p.getCreatedTime().toString());
+        }
+
+        FacebookPagePosts fpp = new FacebookPagePosts();
+        fpp.setPagePosts(posts);
+        System.out.println(posts.get(0));
+        fpp.setTimes(postTimes);
+        return fpp;
     }
 
     public static void publishPost(String name, String msg){

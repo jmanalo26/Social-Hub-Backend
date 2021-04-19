@@ -39,6 +39,21 @@ public class FacebookController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "pagePost")
+    public void getPagePosts(@RequestBody String name) {
+        System.out.println("Inside get page posts method" );
+        System.out.println(name);
+        FBService.currentPage = name;
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "pagePost2")
+    public ResponseEntity<FacebookPagePosts> getPagePosts2() {
+        System.out.println("Inside get page posts method 2");
+        return new ResponseEntity<FacebookPagePosts>(FBService.getPagePosts(), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "login")
     public ResponseEntity<FacebookLogin> login() {
         System.out.println("Inside FB Controller Login");
@@ -60,6 +75,12 @@ public class FacebookController {
     @GetMapping(value = "photos")
     public ResponseEntity<FacebookPhotos> getUserPhotos(){
         return new ResponseEntity<>(FBService.getPhotos(), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "videos")
+    public ResponseEntity<FacebookVideos> getUserVideos(){
+        return new ResponseEntity<>(FBService.getVideos(), HttpStatus.OK);
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
