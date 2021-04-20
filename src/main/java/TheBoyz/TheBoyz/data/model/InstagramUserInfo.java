@@ -24,6 +24,7 @@ public class InstagramUserInfo {
     private String[] imageFeed;
     private String[] imageFeedCaption;
     private String[] imageFeedComment;
+    private boolean followingStatus;
 
 
 }

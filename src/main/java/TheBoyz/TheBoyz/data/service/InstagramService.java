@@ -142,6 +142,10 @@ public class InstagramService {
         searchInstagramUser.setDisplayName(usernameResult.getUser().full_name);
         searchInstagramUser.setUserName(usernameResult.getUser().username);
 
+        InstagramSearchUsernameResult followResult = instagram.sendRequest(new InstagramSearchUsernameRequest(userSearch));
+        searchInstagramUser.setFollowingStatus(instagram.sendRequest(new InstagramGetFriendshipRequest(followResult.getUser().getPk())).following);
+
+
 
         InstagramGetUserFollowersResult followersResult = instagram.sendRequest(
                 new InstagramGetUserFollowersRequest(usernameResult.getUser().getPk()));
