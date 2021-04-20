@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TheBoyzApplication {
 
 	public static void main(String[] args) {
-		System.out.println("yo Momma!");
 		SpringApplication.run(TheBoyzApplication.class, args);
-//		SpotifyApiConnection.authorizationCodeUri_Sync();
 	}
 
 }

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+  function authenticate() {
+    return gapi.auth2.getAuthInstance()
+        .signIn({scope: "https://www.googleapis.com/auth/youtube.readonly"})
+        .then(function() { console.log("Sign-in successful"); },
+              function(err) { console.error("Error signing in", err); });
+  }
+  function loadClient() {
+    gapi.client.setApiKey("AIzaSyBsgGsLLQOFP4WZvVKUJqfuWPthPra71zs");
+    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+        .then(function() { console.log("GAPI client loaded for API"); execute();},
+              function(err) { console.error("Error loading GAPI client for API", err); });
+  }
+  function execute() {
+      return gapi.client.youtube.search.list({
+      "part": [
+        "snippet"
+      ],
+      "forMine": true,
+      "maxResults": 25,
+      "type": [
+        "video"
+      ]
+    })
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+                addVideos(response.result.items);
+
+              },
+              function(err) { console.error("Execute error", err); });
+  }
+
+  function addVideos(videos) {
+  getUserInfo()
+  var youtubeString = "https://www.youtube.com/embed/";
+    for(var i = 0; i < videos.length; i++) {
+        var iframe = document.createElement('iframe');
+        iframe.src = youtubeString + videos[i].id.videoId;
+
+        document.getElementById('videoContainer').appendChild(iframe);
+    }
+  }
+
+  function getUserInfo() {
+        return gapi.client.youtube.channels.list({
+      "part": [
+        "snippet,contentDetails,statistics"
+      ],
+      "mine": true,
+    })
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log(response)
+                document.getElementById('username').innerHTML = response.result.items[0].snippet.localized.title;
+                document.getElementById('profile_picture').src = response.result.items[0].snippet.thumbnails.default.url;
+                document.getElementById('link').href = 'https://www.youtube.com/channel/' + response.result.items[0].id;
+                document.getElementById('link').style = "display: block;";
+              },
+              function(err) { console.error("Execute error", err); });
+  }
+  gapi.load("client:auth2", function() {
+    gapi.auth2.init({client_id: "665124826397-55241tfc755m03bp83d5io7kef9irbo2.apps.googleusercontent.com"});
+  });
+  function addBio() {
+    document.getElementById('bioText').style = "display: block";
+    document.getElementById('addBioButton').style = "display: none";
+    document.getElementById('submitButton').style = "display: block";
+  }
+  function addBioToH1() {
+    document.getElementById('bio').innerHTML = document.getElementById('bioText').value;
+    document.getElementById('bio').style = "display: block";
+    document.getElementById('bioText').style = "display: none";
+    document.getElementById('addBioButton').style = "display: block";
+    document.getElementById('submitButton').style = "display: none";
+  }
+</script>
+
+
+
+    <style>
+* {box-sizing: border-box;}
+
+.container {
+  position: relative;
+  width: 50%;
+  max-width: 300px;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 35%;
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.5); /* Black see-through */
+  color: #f1f1f1;
+  width: 20%;
+  left:40%;
+  transition: .5s ease;
+  opacity:0;
+  color: white;
+  font-size: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.container:hover .overlay {
+  opacity: 1;
+}
+</style>
+</head>
+
+<body>
+
+<div id = "nav-placeholder">
+
+</div>
+<!-- jquery method to get the menu bar from seperate HTML file menubar.html -->
+<script>
+    $(function() {
+    $("#nav-placeholder").load("menubar.html");
+    });
+</script>
+
+<button onclick="authenticate().then(loadClient)">Sign In to Youtube </button>
+
+<!-- end jquery -->
+<!-- start row -->
+<div class = "row">
+    <div class = "container">
+        <img id="profile_picture" class ="mx-auto d-block rounded-circle" style = "height: 200px; width: 200px">
+        <input type="file"  accept="image/*" name="image" id="file-input" onchange="loadFile(event)" style="display: none;">
+        <div class = "overlay">
+            Edit
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<!-- jquery method to trigger file chooser -->
+<script>
+    $('#profile_picture').on('click', function() {
+        $('#file-input').trigger('click');
+    });
+</script>
+<!-- javascript to change image source -->
+<script>
+    var loadFile = function(event) {
+        var img = document.getElementById('profile_picture');
+        img.src = URL.createObjectURL(event.target.files[0]);
+    };
+</script>
+<!-- end javascript -->
+<!-- end jquery -->
+<!-- start row -->
+<div class = "row">
+    <div class = "col-12">
+        <center> <h1 id = 'username'>  </h1> </center>
+    </div>
+</div>
+<!-- end row -->
+<!-- start row -->
+<div class = "row">
+    <div class = "col-12">
+        <center><button id= "submitButton" onclick="addBioToH1()" style = "display: none;"> Submit </button></center>
+        <center><button id= "addBioButton" onclick="addBio()"> Edit Bio </button></center>
+        <center> <textarea id = "bioText" style = 'display: none;'> </textarea></center>
+        <center> <h4 id = 'bio'>  </h4> </center>
+    </div>
+</div>
+<!-- end row -->
+<!-- start row -->
+<div id = "videoContainer" class = "row" style="margin-top: 50px">
+
+</div>
+<!-- end row -->
+<div id = "links" class = "fixed-bottom">
+    <div class = "col-12">
+        <center> <h3> Links </h3> </center>
+    <center> <a id = 'link' style = "display: none; margin-top: 10px;"> Youtube </a></center>
+    </div>
+</div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+</html>
