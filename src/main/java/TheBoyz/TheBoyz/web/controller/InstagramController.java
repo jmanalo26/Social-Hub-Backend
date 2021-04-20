@@ -91,7 +91,7 @@ public class InstagramController {
     @PostMapping(value = "/api/instagram/unfollowUserSearch")
     public void unfollowUserSearch(@RequestBody String userSearch) throws IOException {
         InstaUser user = new InstaUser();
-        System.out.println("Unfollowd User");
+        System.out.println("Unfollowed User");
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
