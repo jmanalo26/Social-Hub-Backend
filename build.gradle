@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.4.2'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.4.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
 group = 'TheBoyz'
@@ -9,9 +9,9 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
@@ -20,33 +20,30 @@ repositories {
 }
 
 ext {
-	set('testcontainersVersion', "1.15.1")
+    set('testcontainersVersion', "1.15.1")
 }
 
 dependencies {
-
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.flywaydb:flyway-core'
- 	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
-	implementation 'com.github.instagram4j:instagram4j:2.0.3'
-	compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.flywaydb:flyway-core'
+	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
+	implementation 'com.github.instagram4j:instagram4j:2.0.3'
     compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //	runtimeOnly 'dev.miku:r2dbc-mysql'
-	runtimeOnly 'mysql:mysql-connector-java'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:mysql'
+    runtimeOnly 'mysql:mysql-connector-java'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mysql'
 //	testImplementation 'org.testcontainers:r2dbc'
+    compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.1'
 	compile 'org.twitter4j:twitter4j-core:4.0.7'
 	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
 	implementation 'com.github.instagram4j:instagram4j:2.0.3'
@@ -65,13 +62,11 @@ dependencies {
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
-	}
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+    }
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
-
-
