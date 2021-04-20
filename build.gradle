@@ -16,7 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
-	maven { url 'https://jitpack.io' }
+	maven { url 'https://jitpack.io/' }
 }
 
 ext {
@@ -28,25 +28,25 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-//	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+//    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.flywaydb:flyway-core'
- 	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
+	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
 	implementation 'com.github.instagram4j:instagram4j:2.0.3'
 	compileOnly 'org.projectlombok:lombok'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    compileOnly 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-//	runtimeOnly 'dev.miku:r2dbc-mysql'
+//    runtimeOnly 'dev.miku:r2dbc-mysql'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:mysql'
-//	testImplementation 'org.testcontainers:r2dbc'
+//    testImplementation 'org.testcontainers:r2dbc'
 	compile 'org.twitter4j:twitter4j-core:4.0.7'
 	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
 	implementation 'com.github.instagram4j:instagram4j:2.0.3'
@@ -58,9 +58,9 @@ dependencies {
 
 
 	testImplementation 'org.apache.httpcomponents:httpclient'
-//	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
-//	com.jayway.jsonpath:json-path:2.2.0
-//	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
+//    com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
+//    com.jayway.jsonpath:json-path:2.2.0
+//    org.slf4j:slf4j-api:1.7.16 -> 1.7.22
 	compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.1'
 }
 
@@ -73,5 +73,4 @@ dependencyManagement {
 test {
 	useJUnitPlatform()
 }
-
 
