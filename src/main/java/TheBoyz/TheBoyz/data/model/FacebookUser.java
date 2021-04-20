@@ -37,4 +37,5 @@ public class FacebookUser {
     private String facebookDOB;
 
     private String photoURL;
+    private String friendCount;
 }

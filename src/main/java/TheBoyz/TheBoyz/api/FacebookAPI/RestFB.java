@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * IGNORE THIS CLASS, THIS IS FOR TESTING PURPOSES ONLY
@@ -21,26 +22,73 @@ public class RestFB extends DefaultFacebookClient{
 
     private static String appID = "2959296474304941";
     private static String appSecret = "7195fbe6d20da5b6ad187dbd14c83784";
-    private static String redirectURI = "http://localhost:4200/facebook";
+    private static String redirectURI = "http://localhost:4200";
     /**
      * Main application
      * @param args Args
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String accessToken = "EAAqDduci0a0BAGwuC28w5DzSI4MlEsuJfEQZALOndMdOZBOAzCcg1DuZCwNOZBUxCM0HJ0r4rArZCKVc3swHXEOtNIhMNdyKE4YgyrEeRE7VvqnCifv0d5Ht2ixErPYyE3jnz8muX3BjreoIZBAYx9hfZAhNIAPa6OfsmqJA7NTyZA7Y0qwODndAUPsexBwmz4EoAeisaPZA7FoLgkDV92BDemtd2SPuISgaswD1kK3j1kgZDZD";
-        getUser();
-        //FacebookClient fb = new DefaultFacebookClient(accessToken, Version.LATEST);
-        //getAlbum(fb);
+        String accessToken = "EAAqDduci0a0BAPbcWRcqMg0ZCZB8GnS97e4q4eoZAZBjWWwNwFfoAF8RI8jweDjzOeDb4mEwm0XOzwYZA8wP7ZBinJFDPSRnCV3pGxWIcNlGcOM6ZBLx5zBgGngdcvZCvWPYBIc8aScSd869a0IeqxrJThWb8kRyudzQlUnZCTsUqemO7v5NH42RQn62msUGSmkIZBNLqh1XdiReCQJU2ZBzl1DAYH0fysbpoX7BTkjvwdtYAZDZD";
+       FacebookClient facebookClient = new DefaultFacebookClient(accessToken, appSecret, Version.LATEST);
+       String pageID = "101710815360723";
+        Connection<Post> pagePosts = facebookClient.fetchConnection(pageID +"/feed", Post.class);
+        for (Post p: pagePosts.getData()){
+            System.out.println(p.getMessage());
+            System.out.println(p.getCreatedTime().toString());
+        }
+        //logout();
+        //getUser();
+        /**
+        Connection<Post> feed = fb.fetchConnection("101710815360723/feed", Post.class, Parameter.with("limit", 1));
+
+        for (List<Post> feedConnectionPage : feed) {
+            for (Post post : feedConnectionPage) {
+                System.out.println(post.getMessage());
+            }
+        }
+
+        Connection<Account> myAccounts = fb.fetchConnection("me/accounts", Account.class, Parameter.with("fields", "name"));
+        for (Account a: myAccounts.getData()){
+            System.out.println(a.getName() + "; " + a.getId());
+        }
+
+
+        //getPages(fb);
         //start();
         //FacebookClient.AccessToken a = getAccessToken();
         //System.out.println(a);
+         **/
     }
 
+    public static void logout(){
+        DefaultFacebookClient facebookClient = new DefaultFacebookClient(Version.LATEST);
+        ScopeBuilder scope = new ScopeBuilder();
+        scope.addPermission(FacebookPermissions.PUBLIC_PROFILE);
+        scope.addPermission(FacebookPermissions.USER_FRIENDS);
+        scope.addPermission(FacebookPermissions.USER_BIRTHDAY);
+        scope.addPermission(FacebookPermissions.EMAIL);
+        scope.addPermission(FacebookPermissions.USER_POSTS);
+        scope.addPermission(FacebookPermissions.PAGES_SHOW_LIST);
+        scope.addPermission(FacebookPermissions.USER_MANAGED_GROUPS);
+        scope.addPermission(FacebookPermissions.USER_PHOTOS);
+        String login = facebookClient.getLoginDialogUrl(appID, redirectURI, scope, Parameter.with("fields", "name"));
+        String logout = facebookClient.getLogoutUrl("https://www.google.com/");
+        System.out.println(login);
+        System.out.println(logout);
+    }
 
-    public static void getAlbum(FacebookClient fb){
-        Connection<Photo> myPhotos = fb.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "picture"), Parameter.with("type", "uploaded"));
+    public static void getPages(FacebookClient fb){
+        Connection<Photo> myPhotos = fb.fetchConnection("me/likes", Photo.class, Parameter.with("fields", "picture.type(large){url}"));
+        System.out.println(myPhotos);
         for (Photo p: myPhotos.getData()){
             System.out.println(p.getPicture());
+        }
+    }
+
+    public static void getAlbum(FacebookClient fb){
+        Connection<Photo> myPhotos = fb.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "link"), Parameter.with("type", "uploaded"));
+        for (Photo p: myPhotos.getData()){
+            System.out.println(p.getLink());
         }
     }
 
@@ -146,6 +194,7 @@ public class RestFB extends DefaultFacebookClient{
      */
     public static void getFriendsList(FacebookClient fb){
         Connection<User> myFriends = fb.fetchConnection("me/friends", User.class);
+        System.out.println(myFriends.getTotalCount());
         for (User friend: myFriends.getData()){
             System.out.println("Friend Name: " + friend.getName());
             System.out.println("Friend ID: " + friend.getId());

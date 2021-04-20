@@ -1,5 +1,5 @@
 package TheBoyz.TheBoyz.data.model;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import lombok.*;
 
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class FacebookLogin {
-    private String loginDialogURL;
-    private String logoutDialogURL;
+public class FacebookVideos {
+    private ArrayList<String> sources;
+    private ArrayList<String> thumbnails;
 }
