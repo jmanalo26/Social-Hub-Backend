@@ -154,7 +154,7 @@ public class UserController {
 //        System.out.println(user.getPassword());
 //        System.out.println(user.getPhoneNumber());
         System.out.println(updatedUser.getUserId());
-        
+
         User existingUser = this.userService.findUserByUserId(updatedUser.getUserId());
         if(!updatedUser.getUsername().equals("")) {
             //check if username is taken

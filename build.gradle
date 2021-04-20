@@ -30,6 +30,9 @@ dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.8.RELEASE') {
+		exclude module: "spring-boot-starter-tomcat"
+	}
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.flywaydb:flyway-core'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -51,7 +54,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.restfb/restfb
 	implementation group: 'com.restfb', name: 'restfb', version: '3.14.0'
 //    implementation 'org.springframework.boot:spring-boot-starter-security'
-
+	compile 'com.google.api-client:google-api-client:1.23.0'
+	compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+	compile 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
+	implementation 'org.json:json:20200518'
+	implementation group: 'com.mopano', name: 'hibernate-array-contributor', version: '1.0'
 
 	testImplementation 'org.apache.httpcomponents:httpclient'
 //	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
