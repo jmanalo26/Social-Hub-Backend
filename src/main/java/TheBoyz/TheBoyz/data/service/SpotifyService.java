@@ -446,7 +446,7 @@ public final class SpotifyService {
     }
 
     public static SpotifyTrack[] getUserFollowedTracks() {
-        var getUserFollowedTracksRequest = spotifyApi.getUsersSavedTracks().build();
+        var getUserFollowedTracksRequest = spotifyApi.getUsersSavedTracks().limit(50).build();
         try {
             var result = getUserFollowedTracksRequest.execute();
 //            Arrays.stream(savedTracks.getItems()).forEach(System.out::println);
@@ -568,7 +568,7 @@ public final class SpotifyService {
     }
 
     public static SpotifyArtist[] getUserFollowedArtists() {
-        var getFavouritedArtistsRequest = spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).build();
+        var getFavouritedArtistsRequest = spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).limit(50).build();
         try {
             return Arrays.stream(getFavouritedArtistsRequest.execute().getItems())
                     .map(artist -> getArtistById(artist.getId()))
