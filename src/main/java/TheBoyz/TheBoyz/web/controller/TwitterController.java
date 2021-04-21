@@ -293,6 +293,21 @@ public class TwitterController {
         }
     }
 
+    /**
+     * Gets the current status as a status json object.
+     * @return returns the user's tweet.
+     * @throws TwitterException
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "/api/twitter/post/text-only")
+    public void postTweetTextOnly(@RequestParam("textContent")  String textContent) throws IOException, TwitterException {
+        System.out.println("POST TWEET TEXT ONLY");
+        System.out.println(textContent);
+        twitterService.postUserStatusTextOnly(textContent);
+
+        }
+    }
+
 
 //    /**
 //     * Gets the current status as a status json object.
@@ -332,4 +347,3 @@ public class TwitterController {
 //
 //        }
 //    }
-}

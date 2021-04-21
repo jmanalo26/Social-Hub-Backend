@@ -219,16 +219,16 @@ public class TwitterService {
      */
     public Status postStatus(String textStatus) throws TwitterException, IOException {
         System.out.println("IN HTE POST STATUS METHOD!");
-        var statusUpdate = new StatusUpdate(textStatus);
-        int width = 963;    //width of the image
-        int height = 640;   //height of the image
-        BufferedImage image = null;
-        File f = null;
-        f = new File("kyleimg.jpg"); //image file path
-        System.out.println(f.getName());
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        image = ImageIO.read(f);
-        statusUpdate.setMedia(f);
+//        var statusUpdate = new StatusUpdate(textStatus);
+//        int width = 963;    //width of the image
+//        int height = 640;   //height of the image
+//        BufferedImage image = null;
+//        File f = null;
+//        f = new File("kyleimg.jpg"); //image file path
+//        System.out.println(f.getName());
+//        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//        image = ImageIO.read(f);
+//        statusUpdate.setMedia(f);
         Status newStatus = twitter.updateStatus(textStatus);
         System.out.println(newStatus.getText());
         return newStatus;
@@ -244,20 +244,7 @@ public class TwitterService {
 
         System.out.println("IN HTE POST USER STATUS METHOD!");
         var statusUpdate = new StatusUpdate(textStatus);
-        int width = 963;    //width of the image
-        int height = 640;   //height of the image
-        BufferedImage image = null;
-        File f = null;
-        f = new File("src/download.jpg"); //image file path
-        System.out.println(f.getName());
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        image = ImageIO.read(f);
-        statusUpdate.setMedia(f);
         Status newStatus = twitter.updateStatus(statusUpdate);
-//        System.out.println(newStatus.getText());
-
-
-//        Status newStatus = twitter.updateStatus(textStatus);
         Tweet newTweet = new Tweet();
         newTweet.setTweetCreatedBy(newStatus.getUser().getScreenName());
         newTweet.setTweetText(textStatus);
@@ -503,7 +490,12 @@ public class TwitterService {
             bs.setHandle(userTimeline.get(i).getUser().getScreenName());
             bs.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
             bs.setCreatedAt(userTimeline.get(i).getCreatedAt());
+            MediaEntity[] media = userTimeline.get(i).getMediaEntities(); //get the media entities from the status
+            for(MediaEntity m : media){ //search trough your entities
+                System.out.println(m.getMediaURL()); //get your url!
+            }
             userTimelineBrief.add(bs);
+//            userTimeline.get(i).getMediaEntities(i)
         }
         System.out.println(userTimelineBrief.size());
         if (numOfFavorites != 0) {
@@ -688,6 +680,25 @@ public class TwitterService {
 
 
 //        Status newStatus = twitter.updateStatus(textStatus);
+        Tweet newTweet = new Tweet();
+        newTweet.setTweetCreatedBy(newStatus.getUser().getScreenName());
+        newTweet.setTweetText(textStatus);
+        System.out.println(newStatus.getText());
+        return newTweet;
+    }
+
+
+    /**
+     * Makes the api call to post a tweet to the user's twitter page.
+     * @param textStatus is the content (text) of the tweet to be posted.
+     * @return
+     * @throws TwitterException
+     */
+    public Tweet postUserStatusTextOnly(String textStatus) throws TwitterException, IOException {
+
+        System.out.println("IN THE POST USER STATUS  txt only...!");
+        var statusUpdate = new StatusUpdate(textStatus);
+        Status newStatus = twitter.updateStatus(statusUpdate);
         Tweet newTweet = new Tweet();
         newTweet.setTweetCreatedBy(newStatus.getUser().getScreenName());
         newTweet.setTweetText(textStatus);
