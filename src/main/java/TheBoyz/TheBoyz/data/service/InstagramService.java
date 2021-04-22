@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.github.instagram4j.instagram4j.IGClient;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -51,6 +52,7 @@ public class InstagramService {
         instagramUser.setUserName(usernameResult.getUser().username);
 
 
+
         InstagramGetUserFollowersResult followersResult = instagram.sendRequest(
                 new InstagramGetUserFollowersRequest(usernameResult.getUser().getPk()));
         ArrayList<String> followerFeed = new ArrayList<String>();
@@ -65,18 +67,24 @@ public class InstagramService {
         ArrayList<String> imageFeed = new ArrayList<String>();
         ArrayList<String> imageFeedCaption = new ArrayList<String>();
         ArrayList<String> imageFeedComment = new ArrayList<String>();
+        ArrayList<Integer> imageFeedLikes = new ArrayList<>();
+        ArrayList<String> imageFeedTopLikes = new ArrayList<>();
         System.out.println(postList.getItems().size());
         for(InstagramFeedItem post : postList.getItems()) {
 
             imageFeed.add(post.image_versions2.getCandidates().toString());
             System.out.println(post.image_versions2.getCandidates().toString());
             imageFeedCaption.add(post.getCaption().getText());
+            imageFeedLikes.add(post.like_count);
+            imageFeedTopLikes.add(post.top_likers.toString());
             imageFeedComment.add(post.toString());
         }
 
         instagramUser.setImageFeed(imageFeed.toArray(String[]::new));
         instagramUser.setImageFeedCaption(imageFeedCaption.toArray(String[]::new));
         instagramUser.setImageFeedComment(imageFeedComment.toArray(String[]::new));
+        instagramUser.setImageFeedLikes(imageFeedLikes.toArray(Integer[]::new));
+        instagramUser.setImageFeedTopLikes(imageFeedTopLikes.toArray(String[]::new));
 
 
         return instagramUser;
