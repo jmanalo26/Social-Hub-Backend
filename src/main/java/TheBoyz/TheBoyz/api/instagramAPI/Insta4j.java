@@ -11,6 +11,7 @@ import org.brunocvcunha.instagram4j.requests.*;
 import org.brunocvcunha.instagram4j.requests.payload.*;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -29,27 +30,57 @@ public class Insta4j {
 //        System.out.println(response.getStatus());
 
 
-
         Instagram4j instagram = Instagram4j.builder().username("thesocialhubclub").password("Capstone2021").build();
         instagram.setup();
         instagram.login();
 //        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("thesocialhubclub"));
 //        System.out.println(usernameResult.getUser().getFollower_count());
+        int width = 1000;    //width of the image
+        int height = 1000;   //height of the image
+        File f = new File("test.jpg"); //image file path
 
-        int width = 344;    //width of the image
-        int height = 284;   //height of the image
-        BufferedImage image = null;
-        File f = new File("download.jpg"); //image file path
 
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        image = ImageIO.read(f);
-
-        ImageIO.write(image, "jpg", new File("test.jpg"));
-
-        File test = new File("test.jpg");
-
-        instagram.sendRequest(new InstagramUploadPhotoRequest(test,"new post" ));
+        BufferedImage in = javax.imageio.ImageIO.read(f);
+        BufferedImage out = scaleImage(in,
+                BufferedImage.TYPE_INT_RGB, width, height);
+        javax.imageio.ImageIO.write(out, "JPG", new java.io.File("testpt6.jpg"));
+        File test = new File("testpt6.jpg");
+        instagram.sendRequest(new InstagramUploadPhotoRequest(test, "new posted"));
         System.out.println("Picture Posted");
+    }
+
+    /**
+     * @param image     The image to be scaled
+     * @param imageType Target image type, e.g. TYPE_INT_RGB
+     * @param newWidth  The required width
+     * @param newHeight The required width
+     * @return The scaled image
+     */
+    public static BufferedImage scaleImage(BufferedImage image, int imageType,
+                                           int newWidth, int newHeight) {
+        // Make sure the aspect ratio is maintained, so the image is not distorted
+        double thumbRatio = (double) newWidth / (double) newHeight;
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+        double aspectRatio = (double) imageWidth / (double) imageHeight;
+
+        if (thumbRatio < aspectRatio) {
+            newHeight = (int) (newWidth / aspectRatio);
+        } else {
+            newWidth = (int) (newHeight * aspectRatio);
+        }
+
+        // Draw the scaled image
+        BufferedImage newImage = new BufferedImage(newWidth, newHeight,
+                imageType);
+        Graphics2D graphics2D = newImage.createGraphics();
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics2D.drawImage(image, 0, 0, newWidth, newHeight, null);
+
+        return newImage;
+    }
+}
 
 
 //        InstagramSearchUsernameResult githubResult = instagram.sendRequest(new InstagramSearchUsernameRequest("github"));
@@ -123,7 +154,7 @@ public class Insta4j {
 //
 //        }
 
-    }
-}
+
+
 
 
