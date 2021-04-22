@@ -184,7 +184,7 @@ public final class SpotifyService {
 //            user.getExternalUrls().getExternalUrls().get("spotify");
 //            System.out.println(user);
             // create and return the model
-            if (user.getImages()[0] == null) {
+            if (user.getImages().length == 0) {
                 spotify_user = new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), null);
             } else {
                 spotify_user = new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), user.getImages()[0].getUrl());
