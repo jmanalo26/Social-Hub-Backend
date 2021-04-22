@@ -59,6 +59,15 @@ dependencies {
 //	com.jayway.jsonpath:json-path:2.2.0
 //	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
 	compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.1'
+
+    compile 'com.google.api-client:google-api-client:1.23.0'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    compile 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
+    implementation 'org.json:json:20200518'
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.8.RELEASE') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: '2.0.9.RELEASE')
 }
 
 dependencyManagement {
