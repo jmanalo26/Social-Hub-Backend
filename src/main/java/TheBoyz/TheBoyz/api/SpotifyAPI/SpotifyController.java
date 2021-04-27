@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import static TheBoyz.TheBoyz.data.service.SpotifyService.*;
 
 
@@ -38,20 +43,20 @@ public class SpotifyController {
 
     @GetMapping("playlist/{playlist_id}")
     public ResponseEntity<SpotifyPlaylist> getPlaylistById(@PathVariable String playlist_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getPlaylistById(playlist_id), HttpStatus.OK);
     }
 
     @GetMapping("playlist")
     public ResponseEntity<SpotifyPlaylist[]> displayPlaylists() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(getListOfCurrentUsersPlaylists_Sync(getSpotifyApi().getAccessToken()), HttpStatus.OK);
     }
 
     @PostMapping("playlist/create/{name}/{description}")
     public ResponseEntity<SpotifyPlaylist> addPlaylist(@PathVariable String name, @PathVariable String description) {
 //        log.info("Create Playlist Method Called!");
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
 //        createNewPlaylist(name, description);
         return new ResponseEntity<>(createNewPlaylist(name, description), HttpStatus.OK);
 
@@ -66,13 +71,13 @@ public class SpotifyController {
         // "spotify:track:6rqhFgbbKwnb9MLmUQDhG6";
         // spotify:track:3lPr8ghNDBLc2uZovNyLs9
         // spotify:artist:12Chz98pHFMPJEknJQMWvI
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(addToPlaylist(playlist_id, track_uri), HttpStatus.OK);
     }
 
     @GetMapping("playlist/remove/playlist/{playlist_id}")
     public RedirectView removeUserPlaylist(@PathVariable String playlist_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         removePlaylist(playlist_id);
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("http://localhost:4200/spotify");
@@ -102,13 +107,13 @@ public class SpotifyController {
         JsonArray js = new JsonArray();
         js.add(new Gson().fromJson(spotifyURI, JsonObject.class));
 
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(removeTracksFromPlaylist(playlist_id, js), HttpStatus.OK);
     }
 
     @GetMapping("userinfo")
     public ResponseEntity<SpotifyUser> getUserProfile() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(getCurrentUsersProfile_Sync(getSpotifyApi().getAccessToken()), HttpStatus.OK);
     }
 
@@ -116,7 +121,8 @@ public class SpotifyController {
     @ResponseBody
     public RedirectView generateAuthenticationToken(@RequestParam String code) {
         authorizationCode_Sync(code);
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(SpotifyService::authorizationCodeRefresh_Sync, 0, 3000, TimeUnit.SECONDS);
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("http://localhost:4200/spotify");
         return redirectView;
@@ -127,7 +133,7 @@ public class SpotifyController {
     @ResponseBody
     public ResponseEntity<SpotifyArtist[]> queryArtist(@PathVariable String artistName) {
 //        log.info("Inside the searchByArtistMethod: " + artistName);
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
 //        System.out.println("In The Controller: called searchByArtist: " + artistName);
         return new ResponseEntity<>(searchByArtist(artistName), HttpStatus.OK);
     }
@@ -136,7 +142,7 @@ public class SpotifyController {
     @ResponseBody
     public ResponseEntity<SpotifyTrack[]> queryTrack(@PathVariable String trackName) {
 //        log.info("Inside the searchByTrack: " + trackName);
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
 //        System.out.println("In The Controller: called searchByTrack: " + trackName);
         return new ResponseEntity<>(searchByTrack(trackName), HttpStatus.OK);
     }
@@ -145,7 +151,7 @@ public class SpotifyController {
     @ResponseBody
     public ResponseEntity<SpotifyAlbum> getAlbumById(@PathVariable String album_id) {
 //        log.info("Inside the searchByTrack: " + album_id);
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
 //        System.out.println("In The Controller: called searchByTrack: " + album_id);
         return new ResponseEntity<>(SpotifyService.getAlbumById(album_id), HttpStatus.OK);
     }
@@ -160,86 +166,86 @@ public class SpotifyController {
 
     @GetMapping("/artist/id/{artistId}")
     public ResponseEntity<SpotifyArtist> getArtistById(@PathVariable String artistId) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getArtistById(artistId), HttpStatus.OK);
     }
 
     @GetMapping("/artist/tracks/{artistId}")
     public ResponseEntity<SpotifyTrack[]> getArtistTopTracksById(@PathVariable String artistId) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getArtistTopTracks(artistId), HttpStatus.OK);
     }
 
     @GetMapping("/artist/albums/{artistId}")
     public ResponseEntity<SpotifyAlbum[]> getArtistAlbumsById(@PathVariable String artistId) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getArtistAlbums(artistId), HttpStatus.OK);
     }
 
     @PutMapping("/playlist/update/{playlist_id}/{playlist_name}/{playlist_description}")
     public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name, @PathVariable String playlist_description) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, playlist_description), HttpStatus.OK);
     }
 
     @PutMapping("/playlist/update/{playlist_id}/{playlist_name}")
     public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, null), HttpStatus.OK);
     }
 
     @PutMapping("/artist/follow/{artist_id}")
     public ResponseEntity<Boolean> followArtist(@PathVariable String... artist_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.followArtist(artist_id), HttpStatus.OK);
     }
 
     @PutMapping("/artist/unfollow/{artist_id}")
     public ResponseEntity<Boolean> unfollowArtist(@PathVariable String... artist_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.unfollowArtist(artist_id), HttpStatus.OK);
     }
 
     @GetMapping("/artist/follow/contains/{artist_id}")
     public ResponseEntity<Boolean> checkFollowArtist(@PathVariable String... artist_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.checkUserFollowArtist(artist_id), HttpStatus.OK);
     }
 
     @PutMapping("/user/favourite/track/{track_id}")
     public ResponseEntity<Boolean> favouriteTrack(@PathVariable String... track_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.favouriteTrack(track_id), HttpStatus.OK);
     }
 
     @PutMapping("/user/unfavourite/track/{track_id}")
     public ResponseEntity<Boolean> unfavouriteTrack(@PathVariable String... track_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.unfavouriteTrack(track_id), HttpStatus.OK);
     }
 
     @GetMapping("/user/check/favourite/track/{track_id}")
     public ResponseEntity<Boolean[]> checkFavouriteTrack(@PathVariable String... track_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.checkFavouriteTrack(track_id), HttpStatus.OK);
     }
 
     // User's followed tracks, albums, and artists
     @GetMapping("/user/get/follow/tracks/")
     public ResponseEntity<SpotifyTrack[]> getUserFollowedTracks() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getUserFollowedTracks(), HttpStatus.OK);
     }
 
     @GetMapping("/user/get/follow/albums/")
     public ResponseEntity<SpotifyAlbum[]> getUserFollowedAlbums() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getUserFollowedAlbums(), HttpStatus.OK);
     }
 
     @GetMapping("/user/get/follow/artists/")
     public ResponseEntity<SpotifyArtist[]> getUserFollowedArtists() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getUserFollowedArtists(), HttpStatus.OK);
     }
 
@@ -247,38 +253,44 @@ public class SpotifyController {
 
     @GetMapping("/artist/related/{artist_id}")
     public ResponseEntity<SpotifyArtist[]> getRelatedArtist(@PathVariable String artist_id) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getRecommendedArtists(artist_id), HttpStatus.OK);
     }
 
     @GetMapping("/user/get/top/tracks")
     public ResponseEntity<SpotifyTrack[]> getUserTopTracks() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getUserTopTracks(), HttpStatus.OK);
     }
 
     @GetMapping("/get/top/albums")
     public ResponseEntity<SpotifyAlbum[]> getNewReleases() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getNewReleases(), HttpStatus.OK);
     }
 
     @GetMapping("/user/get/recent/tracks")
     public ResponseEntity<SpotifyTrack[]> getRecentlyPlayedTracks() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getRecentlyPlayedTracks(), HttpStatus.OK);
     }
 
     @GetMapping("/get/recommended/tracks/{track_ids}")
     public ResponseEntity<SpotifyTrack[]> getRecommendedTracks(@RequestParam String track_ids) {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getRecommendedTracks(track_ids), HttpStatus.OK);
     }
 
     @GetMapping("/get/featured/playlists/")
     public ResponseEntity<SpotifyPlaylistSnapshot[]> getFeaturedPlaylists() {
-        authorizationCodeRefresh_Sync();
+//        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.getFeaturedPlaylists(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get/track/id/{track_id}")
+    public ResponseEntity<SpotifyTrack> getTrackById(@PathVariable String track_id) {
+//        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getTrackById(track_id), HttpStatus.OK);
     }
 
 
