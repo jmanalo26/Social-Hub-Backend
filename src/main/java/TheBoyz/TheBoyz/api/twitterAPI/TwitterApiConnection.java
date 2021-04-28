@@ -36,6 +36,14 @@ public class TwitterApiConnection {
         System.out.println("********************");
         twitterMethods.showUser();
         twitterMethods.getFollowerCount();
+        System.out.println("********************");
+        System.out.println("********************");
+        System.out.println("********************");
+        twitterMethods.getTweets();
+        System.out.println("********************");
+        System.out.println("********************");
+        System.out.println("********************");
+        twitterMethods.getTimeline();
 
 //        ConfigurationBuilder cb = new ConfigurationBuilder();
 //        cb.setDebugEnabled(true)

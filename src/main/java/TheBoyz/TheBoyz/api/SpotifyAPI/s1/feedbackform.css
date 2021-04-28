@@ -1,0 +1,56 @@
+.feedback-body {
+  background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .7)), url("201447.jpg");
+  background-size: 100% 100%;
+  color: snow;
+  text-align: center;
+  background-attachment: fixed;
+}
+
+#comment {
+  width: 60%;
+  height: 200px;
+  padding: 12px 20px;
+  margin: 10px 0px;
+  border: 3px solid black;
+}
+
+.feedback-wrapper {
+  background-color: rgba(51,51,51,.4);
+  opacity: 0.9;
+  width: 50%;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid black;
+}
+
+.Title {
+  margin-top: 5%;
+
+}
+
+.Title .header {
+  font-size: 50px;
+}
+
+.Title .sub-header {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.feedback-form #name, .feedback-form #email, .feedback-form label, .feedback-form #opinions {
+  margin-left: 6px;
+}
+
+
+.feedback-category button {
+  margin-left: 10px;
+  background-color: snow;
+}
+
+.feedback-wrapper button:hover{
+  background-color: rgb(43, 187, 173);
+  border: 2px solid snow;
+  color: snow;
+}
+

@@ -37,7 +37,7 @@ import java.util.Collection;
 @Service
 public class YoutubeService {
 
-    private final String CLIENT_SECRETS = "src/main/resources/client_secret.json";
+    private final String CLIENT_SECRETS = "src/main/resources/client_secret_3.json";
     private final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtube.force-ssl");
     private final String APPLICATION_NAME = "API code samples";
     private final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();

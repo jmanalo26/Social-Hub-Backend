@@ -11,10 +11,10 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 
-   @Query(value = "select user_table.user_id,  user_table.username,  user_table.email,  user_table.password, user_table.phone_number, user_table.login_preference\n" +
-           "from general_preferences\n" +
-           "inner join user_table on user_table.user_id=general_preferences.user_id", nativeQuery = true)
-   User findPreferences(int userId);
+      @Query(value = "select user_table.user_id,  user_table.username,  user_table.email,  user_table.password, user_table.phone_number, user_table.login_preference\n" +
+              "from general_preferences\n" +
+              "inner join user_table on user_table.user_id=general_preferences.user_id", nativeQuery = true)
+      User findPreferences(int userId);
    /**
     * This finds and retrieves a user by the user id.
     *
@@ -24,6 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     */
    public Page<User> findByUserIdContainingOrderByUserId(Long userId, Pageable pageable);
 
+   public User findByUserId(int userId);
    /**
     * Find the User by username
     * @param username the username created by the user

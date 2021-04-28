@@ -2,7 +2,6 @@ plugins {
 	id 'org.springframework.boot' version '2.4.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id 'application'
 }
 
 group = 'TheBoyz'
@@ -17,6 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -24,18 +24,23 @@ ext {
 }
 
 dependencies {
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 //	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.8.RELEASE') {
 		exclude module: "spring-boot-starter-tomcat"
 	}
-	compile(group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: '2.0.9.RELEASE')
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.flywaydb:flyway-core'
+ 	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
+	implementation 'com.github.instagram4j:instagram4j:2.0.3'
 	compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //	runtimeOnly 'dev.miku:r2dbc-mysql'
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -46,11 +51,24 @@ dependencies {
 	testImplementation 'org.testcontainers:mysql'
 //	testImplementation 'org.testcontainers:r2dbc'
 	compile 'org.twitter4j:twitter4j-core:4.0.7'
+	implementation 'com.squareup.okhttp3:okhttp:3.14.6'
+	implementation 'com.github.instagram4j:instagram4j:2.0.3'
+
+	compile 'org.brunocvcunha.instagram4j:instagram4j:1.14'
+	// https://mvnrepository.com/artifact/com.restfb/restfb
+	implementation group: 'com.restfb', name: 'restfb', version: '3.14.0'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
 	compile 'com.google.api-client:google-api-client:1.23.0'
 	compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
 	compile 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
 	implementation 'org.json:json:20200518'
 	implementation group: 'com.mopano', name: 'hibernate-array-contributor', version: '1.0'
+
+	testImplementation 'org.apache.httpcomponents:httpclient'
+//	com.amazonaws:aws-java-sdk-stepfunctions:1.11.86
+//	com.jayway.jsonpath:json-path:2.2.0
+//	org.slf4j:slf4j-api:1.7.16 -> 1.7.22
+	compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.1'
 }
 
 dependencyManagement {
@@ -62,3 +80,5 @@ dependencyManagement {
 test {
 	useJUnitPlatform()
 }
+
+
