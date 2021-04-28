@@ -43,6 +43,9 @@ public class InstagramController {
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
+        user.setInstaId(3);
+        user.setUsername("ernietheeaglebu");
+        user.setPassword("InstantErnie");
         InstagramUserInfo insta = instagramService.getUserAccount(user);
         return new ResponseEntity<InstagramUserInfo>(insta, HttpStatus.OK);
     }
@@ -54,6 +57,9 @@ public class InstagramController {
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
+        user.setInstaId(3);
+        user.setUsername("ernietheeaglebu");
+        user.setPassword("InstantErnie");
         instagramService.changeBio(user, bio);
     }
 
@@ -64,6 +70,9 @@ public class InstagramController {
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
+        user.setInstaId(3);
+        user.setUsername("ernietheeaglebu");
+        user.setPassword("InstantErnie");
         return new ResponseEntity<>(instagramService.getSearchUserAccount(user, userSearch), HttpStatus.OK);
     }
 
@@ -74,6 +83,9 @@ public class InstagramController {
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
+        user.setInstaId(3);
+        user.setUsername("ernietheeaglebu");
+        user.setPassword("InstantErnie");
         boolean status = instagramService.followingStatus(user, userSearch);
         return status;
     }
@@ -85,6 +97,9 @@ public class InstagramController {
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
+        user.setInstaId(3);
+        user.setUsername("ernietheeaglebu");
+        user.setPassword("InstantErnie");
         instagramService.followSearchUserAccount(user, userSearch);
     }
 
@@ -95,6 +110,9 @@ public class InstagramController {
         user.setInstaId(2);
         user.setUsername("hbb_disposable");
         user.setPassword("yaga186");
+        user.setInstaId(3);
+        user.setUsername("ernietheeaglebu");
+        user.setPassword("InstantErnie");
         instagramService.unfollowSearchUserAccount(user, userSearch);
     }
 }

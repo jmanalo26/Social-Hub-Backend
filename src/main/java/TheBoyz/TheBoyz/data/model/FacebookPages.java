@@ -16,4 +16,6 @@ public class FacebookPages {
     private ArrayList<String> pageFans;
     private ArrayList<String> likedNames;
     private ArrayList<String> likedLinks;
+    private ArrayList<String> fanCounts;
+    private ArrayList<String> likedPics;
 }

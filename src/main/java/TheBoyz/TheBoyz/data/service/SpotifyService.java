@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SpotifyService {
+public final class SpotifyService {
 
     private static final String clientId = "0e23f91af6cb403e9f23852a496b803f";
     private static final String clientSecret = "84f1f4ab297a4a2dbb1219a2bafe75fa";
@@ -103,10 +103,12 @@ public class SpotifyService {
         }
     }
 
+    // TODO: modify the playlist model to include a boolean of canModify?
     public static SpotifyPlaylist getPlaylistById(String playlist_id) {
         var getPlaylistRequest = spotifyApi.getPlaylist(playlist_id).build();
         try {
             var resultSet = getPlaylistRequest.execute();
+//            resultSet.getOwner().getId()
             if (resultSet.getImages().length > 0) {
                 return new SpotifyPlaylist(resultSet.getName(), getTracksFromPlaylistById(playlist_id), resultSet.getDescription(), resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getId(), resultSet.getImages()[0].getUrl(), resultSet.getUri());
             } else {
@@ -118,6 +120,23 @@ public class SpotifyService {
             return null;
         }
 
+    }
+
+    public static SpotifyPlaylistSnapshot getPlaylistSnapshotById(String playlist_id) {
+        var getPlaylistRequest = spotifyApi.getPlaylist(playlist_id).build();
+        try {
+            var result = getPlaylistRequest.execute();
+            if (result.getImages().length > 0) {
+                return new SpotifyPlaylistSnapshot(result.getId(), result.getName(), result.getDescription(), result.getOwner().getId(), result.getOwner().getDisplayName(), result.getImages()[0].getUrl());
+            } else {
+                return new SpotifyPlaylistSnapshot(result.getId(), result.getName(), result.getDescription(), result.getOwner().getId(), result.getOwner().getDisplayName(), null);
+
+            }
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+
+        return null;
     }
 
     public static SpotifyTrack[] getTracksFromPlaylistById(String id) {
@@ -298,7 +317,7 @@ public class SpotifyService {
         }
     }
 
-
+    // TODO: REFACTOR
     public static SpotifyTrack[] searchByTrack(String query) {
 
         var searchFromApiRequest = spotifyApi.searchTracks(query).build();
@@ -351,17 +370,14 @@ public class SpotifyService {
 
 
         } catch (IOException | SpotifyWebApiException | ParseException e) {
-            System.out.println("Error in reorder playlist!");
+            System.out.println("Error in artist top tracks!");
             return null;
         }
     }
 
-    // create the call to get albums of an artist
-
+    // TODO: don't return the entire object, just return a map w/ id and name
     public static SpotifyAlbum[] getArtistAlbums(String artistId) {
         var getArtistTopTracksRequest = spotifyApi.getArtistsAlbums(artistId).build();
-//        var spotifyTracksArray = new ArrayList<SpotifyAlbum>();
-
         try {
             var result = getArtistTopTracksRequest.execute();
             return Arrays.stream(result.getItems())
@@ -369,7 +385,7 @@ public class SpotifyService {
                     .collect(Collectors.toList())
                     .toArray(SpotifyAlbum[]::new);
         } catch (IOException | SpotifyWebApiException | ParseException e) {
-            System.out.println("Error in reorder playlist!");
+            System.out.println("Error in artist albums");
             return null;
         }
     }
@@ -475,18 +491,107 @@ public class SpotifyService {
         return false;
     }
 
-    public static Boolean checkFavouriteTrack(String... track_ids) {
+    public static Boolean[] checkFavouriteTrack(String... track_ids) {
         var checkFavouriteRequest = spotifyApi.checkUsersSavedTracks(track_ids).build();
         try {
-            return checkFavouriteRequest.execute()[0];
+            return checkFavouriteRequest.execute();
         } catch (IOException | SpotifyWebApiException | ParseException e) {
         }
 
-        return false;
+        return null;
     }
 
-    // TODO: Modify the tracks model to have a boolean favourite?
     // TODO: Return the entire array of favourited tracks
+
+    public static SpotifyTrack[] getUserTopTracks() {
+        var getUserTopTracksRequest = spotifyApi.getUsersTopTracks().limit(10).build();
+        try {
+            var resultTrackSet = getUserTopTracksRequest.execute();
+            return Arrays.stream(resultTrackSet.getItems())
+                    .map(track -> getTrackById(track.getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyTrack[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return null;
+    }
+
+    public static SpotifyAlbum[] getNewReleases() {
+        var getNewReleasesRequest = spotifyApi.getListOfNewReleases().limit(10).country(CountryCode.getByLocale(Locale.US)).build();
+        try {
+            return Arrays.stream(getNewReleasesRequest.execute().getItems())
+                    .map(album -> getAlbumById(album.getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyAlbum[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return null;
+    }
+
+    public static SpotifyTrack[] getRecentlyPlayedTracks() {
+        var getRecentlyPlayedTracksRequest = spotifyApi.getCurrentUsersRecentlyPlayedTracks().limit(10).build();
+        try {
+            return Arrays.stream(getRecentlyPlayedTracksRequest.execute().getItems())
+                    .map(track -> getTrackById(track.getTrack().getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyTrack[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+        }
+        return null;
+    }
+
+    public static SpotifyTrack[] getRecommendedTracks(String track_ids) {
+        var getRecommendedTracksRequest = spotifyApi.getRecommendations().seed_tracks(track_ids).limit(10).build();
+        try {
+            return Arrays.stream(getRecommendedTracksRequest.execute().getTracks())
+                    .map(track -> getTrackById(track.getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyTrack[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+        return null;
+    }
+
+    public static SpotifyPlaylistSnapshot[] getFeaturedPlaylists() {
+        var getFeaturedPlaylistsRequest = spotifyApi.getListOfFeaturedPlaylists().country(CountryCode.getByLocale(Locale.US)).limit(10).build();
+
+        try {
+            return Arrays.stream(getFeaturedPlaylistsRequest.execute().getPlaylists().getItems())
+                    .map(playlist -> getPlaylistSnapshotById(playlist.getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyPlaylistSnapshot[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+        return null;
+    }
+
+    public static SpotifyArtist[] getUserFollowedArtists() {
+        var getFavouritedArtistsRequest = spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).build();
+        try {
+            return Arrays.stream(getFavouritedArtistsRequest.execute().getItems())
+                    .map(artist -> getArtistById(artist.getId()))
+                    .collect(Collectors.toList())
+                    .toArray(SpotifyArtist[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+        return null;
+
+    }
+
+    public static SpotifyAlbum[] getUserFollowedAlbums() {
+        var getFavouritedAlbumsRequest = spotifyApi.getCurrentUsersSavedAlbums().build();
+        try {
+            return Arrays.stream(getFavouritedAlbumsRequest.execute().getItems())
+                    .map(album -> getAlbumById(album.getAlbum().getId())).collect(Collectors.toList()).toArray(SpotifyAlbum[]::new);
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+
+        }
+        return null;
+    }
+
 
 }
 
