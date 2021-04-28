@@ -9,6 +9,10 @@ import okhttp3.OkHttpClient;
 import org.brunocvcunha.instagram4j.Instagram4j;
 import org.brunocvcunha.instagram4j.requests.*;
 import org.brunocvcunha.instagram4j.requests.payload.*;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -29,13 +33,29 @@ public class Insta4j {
         Instagram4j instagram = Instagram4j.builder().username("thesocialhubclub").password("Capstone2021").build();
         instagram.setup();
         instagram.login();
-        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("thesocialhubclub"));
+//        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("thesocialhubclub"));
+//        System.out.println(usernameResult.getUser().getFollower_count());
+
+        int width = 344;    //width of the image
+        int height = 284;   //height of the image
+        BufferedImage image = null;
+        File f = new File("download.jpg"); //image file path
+
+        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        image = ImageIO.read(f);
+
+        ImageIO.write(image, "jpg", new File("test.jpg"));
+
+        File test = new File("test.jpg");
+
+        instagram.sendRequest(new InstagramUploadPhotoRequest(test,"new post" ));
+        System.out.println("Picture Posted");
 
 
-        InstagramSearchUsernameResult githubResult = instagram.sendRequest(new InstagramSearchUsernameRequest("github"));
-
-//        instagram.sendRequest(new InstagramFollowRequest(githubResult.getUser().getPk()));
-        System.out.println(instagram.sendRequest(new InstagramGetFriendshipRequest(githubResult.getUser().getPk())).following);
+//        InstagramSearchUsernameResult githubResult = instagram.sendRequest(new InstagramSearchUsernameRequest("github"));
+//
+////        instagram.sendRequest(new InstagramFollowRequest(githubResult.getUser().getPk()));
+//        System.out.println(instagram.sendRequest(new InstagramGetFriendshipRequest(githubResult.getUser().getPk())).following);
 
 //
 //        InstagramUserInfo searchInstagramUser = new InstagramUserInfo();
