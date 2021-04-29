@@ -2,6 +2,7 @@ package TheBoyz.TheBoyz.data.model;
 
 import lombok.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 @Getter
@@ -17,7 +18,7 @@ public class InstagramUserInfo {
     private String[] followerFeed;
     private int followingCount;
     private int mediaCount;
-    private String profilePicUrl;
+    private byte[] profilePicUrl;
     private String displayName;
     private String UserName;
     private String instaBio;
@@ -26,6 +27,9 @@ public class InstagramUserInfo {
     private String[] imageFeedComment;
     private String[] imageFeedTopLikes;
     private Integer[] imageFeedLikes;
+    private ArrayList<byte[]> images;
+    private ArrayList<byte[]> followerProfilePics;
+
     private boolean followingStatus;
 
 
