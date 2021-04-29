@@ -2,6 +2,7 @@ package TheBoyz.TheBoyz.data.service;
 
 import TheBoyz.TheBoyz.data.model.InstaUser;
 import TheBoyz.TheBoyz.data.model.InstagramUserInfo;
+import TheBoyz.TheBoyz.data.model.OnePosts;
 import TheBoyz.TheBoyz.data.repository.InstagramRepository;
 import com.github.instagram4j.instagram4j.requests.accounts.AccountsSetBiographyRequest;
 import com.github.instagram4j.instagram4j.responses.IGResponse;
@@ -22,6 +23,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -210,6 +213,14 @@ public class InstagramService {
         File newInstaPost = new File("newPost.jpg");
         instagram.sendRequest(new InstagramUploadPhotoRequest(newInstaPost, caption));
         System.out.println("Picture Posted");
+    }
+
+    public void multipartFileToFile(
+            MultipartFile multipart,
+            Path dir
+    ) throws IOException {
+        Path filepath = Paths.get(dir.toString(), multipart.getOriginalFilename());
+        multipart.transferTo(filepath);
     }
 
     public static BufferedImage scaleImage(BufferedImage image, int imageType,

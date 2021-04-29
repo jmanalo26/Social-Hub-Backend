@@ -80,21 +80,6 @@ public class OnePostController {
         newOnePost.setUserId(Integer.valueOf(userId));
         newOnePost.setSocialMedia(socialMedia);
 
-        System.out.println(socialMedia);
-        if(newOnePost.getSocialMedia().equalsIgnoreCase("instagram")) {
-            System.out.println("past if check");
-            onePostService.multipartFileToFile(mPFile, Path.of("instagramPost.jpg"));
-
-            InstaUser user = new InstaUser();
-
-
-            user.setInstaId(2);
-            user.setUsername("thesocialhubclub");
-            user.setPassword("Capstone2021");
-            File post = new File("instagramPost.jpg");
-            System.out.println("test service call");
-            instagramService.postImage(user, post ,textContent);
-        }
 
 
 

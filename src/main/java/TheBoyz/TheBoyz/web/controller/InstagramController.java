@@ -2,6 +2,7 @@ package TheBoyz.TheBoyz.web.controller;
 
 import TheBoyz.TheBoyz.data.model.InstaUser;
 import TheBoyz.TheBoyz.data.model.InstagramUserInfo;
+import TheBoyz.TheBoyz.data.model.OnePosts;
 import TheBoyz.TheBoyz.data.repository.InstagramRepository;
 import TheBoyz.TheBoyz.data.service.InstagramService;
 
@@ -9,8 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @Slf4j
 @RestController
@@ -104,6 +110,33 @@ public class InstagramController {
         user.setPassword("Capstone2021");
         instagramService.unfollowSearchUserAccount(user, userSearch);
     }
+
+    @CrossOrigin(origins = "http://localhost:4200/")
+    @PostMapping(value = "/api/instagram/uploadImage")
+    public void uploadImage(@RequestParam("file") MultipartFile mPFile, @RequestParam("textContent")  String textContent) throws IOException, ParseException {
+        System.out.println("Instagram iamge CONTROLLER POST");
+        OnePosts newOnePost = new OnePosts();
+        newOnePost.setTextContent(textContent);
+        newOnePost.setImage(mPFile.getBytes());
+
+
+
+        instagramService.multipartFileToFile(mPFile, Path.of("instagramPost.jpg"));
+
+        InstaUser user = new InstaUser();
+
+
+        user.setInstaId(2);
+        user.setUsername("thesocialhubclub");
+        user.setPassword("Capstone2021");
+        File post = new File("instagramPost.jpg");
+        System.out.println("test service call");
+        instagramService.postImage(user, post ,textContent);
+
+
+
+    }
+
 }
 
 
