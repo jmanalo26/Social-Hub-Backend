@@ -110,9 +110,9 @@ public final class SpotifyService {
             var resultSet = getPlaylistRequest.execute();
 //            resultSet.getOwner().getId()
             if (resultSet.getImages().length > 0) {
-                return new SpotifyPlaylist(resultSet.getName(), getTracksFromPlaylistById(playlist_id), resultSet.getDescription(), resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getId(), resultSet.getImages()[0].getUrl(), resultSet.getUri());
+                return new SpotifyPlaylist(resultSet.getName(), getTracksFromPlaylistById(playlist_id), resultSet.getDescription(), resultSet.getOwner().getId(), resultSet.getOwner().getDisplayName(), resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getId(), resultSet.getImages()[0].getUrl(), resultSet.getUri());
             } else {
-                return new SpotifyPlaylist(resultSet.getName(), getTracksFromPlaylistById(playlist_id), resultSet.getDescription(), resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getId(), null, resultSet.getUri());
+                return new SpotifyPlaylist(resultSet.getName(), getTracksFromPlaylistById(playlist_id), resultSet.getDescription(), resultSet.getOwner().getId(), resultSet.getOwner().getDisplayName(), resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getId(), null, resultSet.getUri());
 
             }
         } catch (IOException | SpotifyWebApiException | ParseException e) {
@@ -207,9 +207,9 @@ public final class SpotifyService {
 
             if (description != null && !description.isBlank()) {
                 var modifiedPlaylist = spotifyApi.changePlaylistsDetails(playlist.getId()).description(description).build().execute();
-                return new SpotifyPlaylist(playlist.getName(), null, modifiedPlaylist, playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri());
+                return new SpotifyPlaylist(playlist.getName(), null, modifiedPlaylist, playlist.getOwner().getId(), playlist.getOwner().getDisplayName(), playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri());
             }
-            return new SpotifyPlaylist(playlist.getName(), null, null, playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri());
+            return new SpotifyPlaylist(playlist.getName(), null, null, playlist.getOwner().getId(), playlist.getOwner().getDisplayName(), playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri());
 
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
@@ -219,37 +219,36 @@ public final class SpotifyService {
 
     // Return a playlist object -> update the front-end playlist object?
     // PUT mapping
-    public static SpotifyPlaylist addToPlaylist(String playlistid, String... uri) {
+    public static SpotifyTrack[] addToPlaylist(String playlist_id, String... uri) {
 //spotifyApi.unfollowPlaylist();
-        AddItemsToPlaylistRequest addToPlaylistRequest = spotifyApi.addItemsToPlaylist(playlistid, uri).build();
+        AddItemsToPlaylistRequest addToPlaylistRequest = spotifyApi.addItemsToPlaylist(playlist_id, uri).build();
         try {
-            var playlist = addToPlaylistRequest.execute();
+            addToPlaylistRequest.execute();
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        return getPlaylistById(playlistid);
+        return getTracksFromPlaylistById(playlist_id);
     }
 
     public static void removePlaylist(String playlistid) {
-
         var unfollowPlaylistRequest = spotifyApi.unfollowPlaylist(playlistid).build();
         try {
-            var playlist = unfollowPlaylistRequest.execute();
+            unfollowPlaylistRequest.execute();
 //            System.out.println("Removed Playlist!");
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    public static SpotifyPlaylist removeTracksFromPlaylist(String playlist_id, JsonArray tracksArray) {
+    public static SpotifyTrack[] removeTracksFromPlaylist(String playlist_id, JsonArray tracksArray) {
         var removeFromPlaylistRequest = spotifyApi.removeItemsFromPlaylist(playlist_id, tracksArray).build();
         try {
-            var playlist = removeFromPlaylistRequest.execute();
+            removeFromPlaylistRequest.execute();
 //            System.out.println("Removed Track");
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        return getPlaylistById(playlist_id);
+        return getTracksFromPlaylistById(playlist_id);
     }
 
 

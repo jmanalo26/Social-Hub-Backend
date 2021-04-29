@@ -35,6 +35,7 @@ public class SpotifyController {
     // Recommendations?
     // Search/ Query
 
+//http://localhost:4200/spotify/playlist?id=6ElFEeLHvEhKTh0HEwA74H
 
     @GetMapping("/")
     public ResponseEntity<String> generateURL() {
@@ -67,7 +68,7 @@ public class SpotifyController {
 
     // change the mapping to a PUT mapping and return a response entity of type playlist
     @PutMapping("playlist/add/track/{playlist_id}/{track_uri}")
-    public ResponseEntity<SpotifyPlaylist> addTrackToPlaylist(@PathVariable String playlist_id, @PathVariable String... track_uri) {
+    public ResponseEntity<SpotifyTrack[]> addTrackToPlaylist(@PathVariable String playlist_id, @PathVariable String... track_uri) {
         // "spotify:track:6rqhFgbbKwnb9MLmUQDhG6";
         // spotify:track:3lPr8ghNDBLc2uZovNyLs9
         // spotify:artist:12Chz98pHFMPJEknJQMWvI
@@ -85,7 +86,7 @@ public class SpotifyController {
     }
 
     @PutMapping("playlist/remove/track/{playlist_id}/{track_array}")
-    public ResponseEntity<SpotifyPlaylist> removeTrackFromPlaylist(@PathVariable String playlist_id, @PathVariable String track_array) {
+    public ResponseEntity<SpotifyTrack[]> removeTrackFromPlaylist(@PathVariable String playlist_id, @PathVariable String track_array) {
         //7aCuS3JmM9PdKXTBxg5tl8
         //
         // {
@@ -122,7 +123,7 @@ public class SpotifyController {
     public RedirectView generateAuthenticationToken(@RequestParam String code) {
         authorizationCode_Sync(code);
 //        authorizationCodeRefresh_Sync();
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(SpotifyService::authorizationCodeRefresh_Sync, 0, 3000, TimeUnit.SECONDS);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(SpotifyService::authorizationCodeRefresh_Sync, 0, 3000, TimeUnit.SECONDS);
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("http://localhost:4200/spotify");
         return redirectView;
@@ -276,8 +277,9 @@ public class SpotifyController {
     }
 
     @GetMapping("/get/recommended/tracks/{track_ids}")
-    public ResponseEntity<SpotifyTrack[]> getRecommendedTracks(@RequestParam String track_ids) {
-//        authorizationCodeRefresh_Sync();
+    public ResponseEntity<SpotifyTrack[]> getRecommendedTracks(@PathVariable String track_ids) {
+//        A comma separated list of Spotify IDs for a seed track. Up to 5 seed values may be provided in
+//        any combination of seed_artists, seed_tracks and seed_genres.
         return new ResponseEntity<>(SpotifyService.getRecommendedTracks(track_ids), HttpStatus.OK);
     }
 
