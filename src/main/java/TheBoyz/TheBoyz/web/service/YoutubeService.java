@@ -179,7 +179,7 @@ public class YoutubeService {
         JSONObject object = new JSONObject(response.toString());
         JSONArray items = object.getJSONArray("items");
         ArrayList<String> playlistArr = new ArrayList<String>();
-        String youtubeLink = "https://www.youtube.com/embed/videoseries?list=";
+        String youtubeLink = "http://www.youtube.com/embed/videoseries?list=";
         for(int i = 0; i < items.length(); i++) {
             String playlistId = (String) items.getJSONObject(i).get("id");
             playlistArr.add(youtubeLink + playlistId);
