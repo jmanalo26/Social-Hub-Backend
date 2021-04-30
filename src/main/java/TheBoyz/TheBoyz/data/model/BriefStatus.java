@@ -21,5 +21,6 @@ public class BriefStatus {
     private int retweetCount;
     private String screenName;
     private String handle;
+    private String mediaURL;
 
 }

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.io.File;
 import java.io.IOException;
@@ -457,11 +459,11 @@ public class TwitterService {
         BriefStatus mostFavorited = new BriefStatus();
 
         for (int i = 0; i < userTimeline.size(); i++) {
+            System.out.println(i);
             BriefStatus bs = new BriefStatus();
             bs.setRetweetCount(userTimeline.get(i).getRetweetCount());
             if (userTimeline.get(i).getRetweetCount() > numOfRetweets) {
                 numOfRetweets = userTimeline.get(i).getRetweetCount();
-
                 System.out.println("num of retweets: " + numOfRetweets);
                 mostRetweeted.setRetweetCount(userTimeline.get(i).getRetweetCount());
                 mostRetweeted.setText(userTimeline.get(i).getText());
@@ -485,15 +487,45 @@ public class TwitterService {
                 mostFavorited.setCreatedAt(userTimeline.get(i).getCreatedAt());
             }
 
+
+            for (MediaEntity mediaEntity : userTimeline.get(i).getMediaEntities()) {
+                System.out.println(mediaEntity.getMediaURL().length());
+                System.out.println(mediaEntity.getType() + ": " + mediaEntity.getMediaURL());
+            }
+
             bs.setText(userTimeline.get(i).getText());
+//            bs.setText(tweetText);
             bs.setScreenName(userTimeline.get(i).getUser().getName());
             bs.setHandle(userTimeline.get(i).getUser().getScreenName());
             bs.setFavoriteCount(userTimeline.get(i).getFavoriteCount());
             bs.setCreatedAt(userTimeline.get(i).getCreatedAt());
             MediaEntity[] media = userTimeline.get(i).getMediaEntities(); //get the media entities from the status
             for(MediaEntity m : media){ //search trough your entities
-                System.out.println(m.getMediaURL()); //get your url!
+                System.out.println("this is the url..." + m.getMediaURL()); //get your url!
+                bs.setMediaURL(m.getMediaURL());
             }
+
+//            System.out.println("usertimeline.gettext: " + userTimeline.get(i).getText());
+//            String tweetText = userTimeline.get(i).getText();
+//            System.out.println("this is the tweet text");
+//            System.out.println(tweetText);
+//            if(tweetText.equals("") || tweetText.equals(" ") || tweetText == null){
+//                System.out.println("its null");
+//            } else {
+//                String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+//                Pattern p = Pattern.compile(urlPattern,Pattern.CASE_INSENSITIVE);
+//                Matcher matcher = p.matcher(tweetText);
+//                int k = 0;
+//                while (matcher.find()) {
+//                    tweetText = tweetText.replaceAll(matcher.group(k),"").trim();
+//                    i++;
+//                }
+//                if(!tweetText.equals("")){
+//                    bs.setText(tweetText);
+//                }
+//            }
+
+
             userTimelineBrief.add(bs);
 //            userTimeline.get(i).getMediaEntities(i)
         }
