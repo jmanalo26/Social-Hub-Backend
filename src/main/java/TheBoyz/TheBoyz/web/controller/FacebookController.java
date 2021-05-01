@@ -60,6 +60,12 @@ public class FacebookController {
         return new ResponseEntity<FacebookLogin>(FBService.login(), HttpStatus.OK);}
 
     @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "check")
+    public ResponseEntity<Boolean> checkLogin() {
+        System.out.println("Inside FB Controller Login Check");
+        return new ResponseEntity<Boolean>(FBService.checkLogin(), HttpStatus.OK);}
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "username")
     public ResponseEntity<FacebookUser> getUser(){
         return new ResponseEntity<>(FBService.getUser(), HttpStatus.OK);

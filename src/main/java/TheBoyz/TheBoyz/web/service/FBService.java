@@ -27,6 +27,7 @@ public class FBService {
     public static ArrayList<String> pages;
     public static ArrayList<String> ids;
     public static String currentPage;
+    public static Boolean loggedIn;
 
 
     public static DefaultFacebookClient getFacebookClient() {
@@ -66,6 +67,11 @@ public class FBService {
         System.out.println("Access code is now: " + accessToken);
         facebookClient = new DefaultFacebookClient(accessToken, Version.LATEST);
         user = facebookClient.fetchObject("me", User.class);
+        loggedIn = true;
+    }
+
+    public static Boolean checkLogin(){
+        return loggedIn;
     }
 
     public static FacebookUser getUser() {
