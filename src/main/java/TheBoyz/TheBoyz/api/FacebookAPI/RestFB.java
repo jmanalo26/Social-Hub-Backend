@@ -28,14 +28,18 @@ public class RestFB extends DefaultFacebookClient{
      * @param args Args
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String accessToken = "EAAqDduci0a0BAPbcWRcqMg0ZCZB8GnS97e4q4eoZAZBjWWwNwFfoAF8RI8jweDjzOeDb4mEwm0XOzwYZA8wP7ZBinJFDPSRnCV3pGxWIcNlGcOM6ZBLx5zBgGngdcvZCvWPYBIc8aScSd869a0IeqxrJThWb8kRyudzQlUnZCTsUqemO7v5NH42RQn62msUGSmkIZBNLqh1XdiReCQJU2ZBzl1DAYH0fysbpoX7BTkjvwdtYAZDZD";
-       FacebookClient facebookClient = new DefaultFacebookClient(accessToken, appSecret, Version.LATEST);
-       String pageID = "101710815360723";
-        Connection<Post> pagePosts = facebookClient.fetchConnection(pageID +"/feed", Post.class);
-        for (Post p: pagePosts.getData()){
-            System.out.println(p.getMessage());
-            System.out.println(p.getCreatedTime().toString());
-        }
+//        String accessToken = "EAAqDduci0a0BAKRPIxnlkpaZAVochIrKr2W8ePfeF0hqOc2MfbqS2w0ZC8TSHZAyPhZCdzLXe3mSqFtiZA5nw54V6WdD9b4gamGu9ZCQfysYGk5l6fnwH7hWU3ZBCbfJWpczGzGLRC4elVKnFpStz0uQOKdCopoGhQDZAL99rfhCx2ZBznYYZALY5qhoCIMDD3h3YZD";
+//       FacebookClient facebookClient = new DefaultFacebookClient(accessToken, appSecret, Version.LATEST);
+//       String pageID = "101710815360723";
+//        Connection<Photo> myPhotos = facebookClient.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "images"), Parameter.with("type", "uploaded"));
+//        for (Photo p: myPhotos.getData()){
+//            System.out.println(p.getImages().get(0).getSource());
+//        }
+//        Connection<Post> pagePosts = facebookClient.fetchConnection(pageID +"/feed", Post.class);
+//        for (Post p: pagePosts.getData()){
+//            System.out.println(p.getMessage());
+//            System.out.println(p.getCreatedTime().toString());
+//        }
         //logout();
         //getUser();
         /**

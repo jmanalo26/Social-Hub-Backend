@@ -124,9 +124,13 @@ public class FBService {
     public static FacebookPhotos getPhotos(){
         ArrayList<String> photos = new ArrayList<String>();
         ArrayList<String> urls = new ArrayList<String>();
-        Connection<Photo> myPhotos = facebookClient.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "picture"), Parameter.with("type", "uploaded"));
+//        Connection<Photo> myPhotos = facebookClient.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "picture"), Parameter.with("type", "uploaded"));
+//        for (Photo p: myPhotos.getData()){
+//            photos.add(p.getPicture());
+//        }
+        Connection<Photo> myPhotos = facebookClient.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "images"), Parameter.with("type", "uploaded"));
         for (Photo p: myPhotos.getData()){
-            photos.add(p.getPicture());
+            photos.add(p.getImages().get(0).getSource());
         }
         Connection<Photo> myURLs = facebookClient.fetchConnection("me/photos", Photo.class, Parameter.with("fields", "link"), Parameter.with("type", "uploaded"));
         for (Photo p: myURLs.getData()){
