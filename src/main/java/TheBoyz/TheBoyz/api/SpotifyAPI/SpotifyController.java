@@ -37,7 +37,7 @@ public class SpotifyController {
 
 //http://localhost:4200/spotify/playlist?id=6ElFEeLHvEhKTh0HEwA74H
 
-    @GetMapping("/")
+    @GetMapping("/get/authorizationcode")
     public ResponseEntity<String> generateURL() {
         return new ResponseEntity<>(authorizationCodeUri_Sync(), HttpStatus.OK);
     }
@@ -48,10 +48,10 @@ public class SpotifyController {
         return new ResponseEntity<>(SpotifyService.getPlaylistById(playlist_id), HttpStatus.OK);
     }
 
-    @GetMapping("playlist")
-    public ResponseEntity<SpotifyPlaylist[]> displayPlaylists() {
+    @GetMapping("get/user/current/playlist")
+    public ResponseEntity<SpotifyPlaylistSnapshot[]> getUserPlaylists() {
 //        authorizationCodeRefresh_Sync();
-        return new ResponseEntity<>(getListOfCurrentUsersPlaylists_Sync(getSpotifyApi().getAccessToken()), HttpStatus.OK);
+        return new ResponseEntity<>(getCurrentUserPlaylists(), HttpStatus.OK);
     }
 
     @PostMapping("playlist/create/{name}/{description}")
@@ -60,10 +60,6 @@ public class SpotifyController {
 //        authorizationCodeRefresh_Sync();
 //        createNewPlaylist(name, description);
         return new ResponseEntity<>(createNewPlaylist(name, description), HttpStatus.OK);
-
-//        RedirectView redirectView = new RedirectView();
-//        redirectView.setUrl("http://localhost:4200/spotify");
-//        return redirectView;
     }
 
     // change the mapping to a PUT mapping and return a response entity of type playlist
@@ -115,7 +111,13 @@ public class SpotifyController {
     @GetMapping("userinfo")
     public ResponseEntity<SpotifyUser> getUserProfile() {
 //        authorizationCodeRefresh_Sync();
-        return new ResponseEntity<>(getCurrentUsersProfile_Sync(getSpotifyApi().getAccessToken()), HttpStatus.OK);
+        return new ResponseEntity<>(getCurrentUsersProfile_Sync(), HttpStatus.OK);
+    }
+
+    @GetMapping("get/user/id/{user_id}")
+    public ResponseEntity<SpotifyUser> getUserById(@PathVariable String user_id) {
+//        authorizationCodeRefresh_Sync();
+        return new ResponseEntity<>(SpotifyService.getUserProfileById(user_id), HttpStatus.OK);
     }
 
     @GetMapping("authentication/")
@@ -125,7 +127,7 @@ public class SpotifyController {
 //        authorizationCodeRefresh_Sync();
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(SpotifyService::authorizationCodeRefresh_Sync, 0, 3000, TimeUnit.SECONDS);
         RedirectView redirectView = new RedirectView();
-        redirectView.setUrl("http://localhost:4200/spotify");
+        redirectView.setUrl("http://localhost:4200/spotify/redirect");
         return redirectView;
 //        return new ResponseEntity<>(getCurrentUsersProfile_Sync(getSpotifyApi().getAccessToken()), HttpStatus.OK);
     }
