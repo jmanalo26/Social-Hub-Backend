@@ -22,9 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,6 +102,24 @@ public class InstagramService {
 
             image.add(saveImage(post.image_versions2.getCandidates().toString().substring(post.image_versions2.getCandidates().toString().indexOf("url") + 4,
                     post.image_versions2.getCandidates().toString().indexOf("width") - 2), imageName));
+            try
+            {
+                Files.deleteIfExists(Paths.get(imageName));
+            }
+            catch(NoSuchFileException e)
+            {
+                System.out.println("No such file/directory exists");
+            }
+            catch(DirectoryNotEmptyException e)
+            {
+                System.out.println("Directory is not empty.");
+            }
+            catch(IOException e)
+            {
+                System.out.println("Invalid permissions.");
+            }
+
+            System.out.println("Deletion successful: " + imageName);
         }
 
 
