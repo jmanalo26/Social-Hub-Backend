@@ -484,7 +484,7 @@ public final class SpotifyService {
     }
 
     public static SpotifyAlbum[] getNewReleases() {
-        var getNewReleasesRequest = spotifyApi.getListOfNewReleases().limit(10).country(CountryCode.getByLocale(Locale.US)).build();
+        var getNewReleasesRequest = spotifyApi.getListOfNewReleases().limit(15).country(CountryCode.getByLocale(Locale.US)).build();
         try {
             return Arrays.stream(getNewReleasesRequest.executeAsync().get().getItems())
                     .map(album -> getAlbumById(album.getId()))
