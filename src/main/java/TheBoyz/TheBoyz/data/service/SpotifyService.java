@@ -265,26 +265,10 @@ public final class SpotifyService {
 
         var searchFromApiRequest = spotifyApi.searchArtists(query).build();
         try {
-            var result = searchFromApiRequest.execute();
-//            user.getExternalUrls().getExternalUrls().get("spotify");
-            var tempArray = result.getItems();
-            List<SpotifyArtist> artistList = new ArrayList<>();
-            for (var artist : tempArray) {
-//                System.out.println(artist);
-
-                if (artist.getImages().length > 0) {
-                    artistList.add(new SpotifyArtist(artist.getName(), artist.getExternalUrls().getExternalUrls().get("spotify"), artist.getFollowers().getTotal(), artist.getGenres(), artist.getId(), artist.getImages()[0].getUrl(), artist.getPopularity(), artist.getUri()));
-
-                } else {
-                    artistList.add(new SpotifyArtist(artist.getName(), artist.getExternalUrls().getExternalUrls().get("spotify"), artist.getFollowers().getTotal(), artist.getGenres(), artist.getId(), null, artist.getPopularity(), artist.getUri()));
-
-                }
-
-            }
-//            System.out.println("In Connection: Got result from API!");
-//            System.out.println(artistList.toString());
-            return artistList.toArray(SpotifyArtist[]::new);
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            return Arrays.stream(searchFromApiRequest.executeAsync().get().getItems())
+                    .map(artist -> getArtistById(artist.getId()))
+                    .toArray(SpotifyArtist[]::new);
+        } catch (InterruptedException | ExecutionException e) {
             return null;
         }
     }
@@ -310,7 +294,7 @@ public final class SpotifyService {
             var result = getArtistByIdRequest.executeAsync().get();
 
             if (result.getImages().length < 1) {
-                return new SpotifyArtist(result.getName(), result.getExternalUrls().getExternalUrls().get("spotify"), result.getFollowers().getTotal(), result.getGenres(), result.getId(), null, result.getPopularity(), result.getUri());
+                return new SpotifyArtist(result.getName(), result.getExternalUrls().getExternalUrls().get("spotify"), result.getFollowers().getTotal(), result.getGenres(), result.getId(), "https://img.favpng.com/3/7/23/login-google-account-computer-icons-user-png-favpng-ZwgqcU6LVRjJucQ9udYpX00qa.jpg", result.getPopularity(), result.getUri());
 
             } else {
                 return new SpotifyArtist(result.getName(), result.getExternalUrls().getExternalUrls().get("spotify"), result.getFollowers().getTotal(), result.getGenres(), result.getId(), result.getImages()[0].getUrl(), result.getPopularity(), result.getUri());
