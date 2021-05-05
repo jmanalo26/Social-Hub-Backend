@@ -33,6 +33,9 @@ public final class SpotifyService {
     private static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/spotify/authentication/");
     private static String userId = "";
 
+
+    // Setting up the api to make service calls
+
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(clientId)
             .setClientSecret(clientSecret)
@@ -43,18 +46,10 @@ public final class SpotifyService {
             .show_dialog(true)
             .build();
 
-    public static SpotifyApi getSpotifyApi() {
-        return spotifyApi;
-    }
-
+    // authorization
 
     public static String authorizationCodeUri_Sync() {
         final URI uri = authorizationCodeUriRequest.execute();
-//        try {
-//            java.awt.Desktop.getDesktop().browse(uri);
-//        } catch (IOException e) {
-//
-//        }
         return uri.toString();
     }
 
@@ -63,8 +58,6 @@ public final class SpotifyService {
                 .build();
         try {
             final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRequest.execute();
-
-            // Set access and refresh token for further "spotifyApi" object usage
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
@@ -86,24 +79,114 @@ public final class SpotifyService {
         }
     }
 
+    // ----------------- User's Stuff Here ---------------------------------------
+
+    public static SpotifyUser getCurrentUsersProfile_Sync() {
+        final GetCurrentUsersProfileRequest getCurrentUsersProfileRequest = spotifyApi.getCurrentUsersProfile()
+                .build();
+        try {
+            final User user = getCurrentUsersProfileRequest.execute();
+            userId = user.getId();
+            if (user.getImages().length == 0) {
+                return new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), "https://img.favpng.com/3/7/23/login-google-account-computer-icons-user-png-favpng-ZwgqcU6LVRjJucQ9udYpX00qa.jpg");
+            } else {
+                return new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), user.getImages()[0].getUrl());
+            }
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            return null;
+        }
+    }
+
+    public static SpotifyUser getUserProfileById(String id) {
+        var getUserProfileByIdRequest = spotifyApi.getUsersProfile(id).build();
+        try {
+            var user = getUserProfileByIdRequest.execute();
+            if (user.getImages().length == 0) {
+                return new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), "https://img.favpng.com/3/7/23/login-google-account-computer-icons-user-png-favpng-ZwgqcU6LVRjJucQ9udYpX00qa.jpg");
+            } else {
+                return new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), user.getImages()[0].getUrl());
+            }
+
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+    }
+
+
     public static SpotifyPlaylistSnapshot[] getCurrentUserPlaylists() {
         final GetListOfCurrentUsersPlaylistsRequest getListOfCurrentUsersPlaylistsRequest = spotifyApi
                 .getListOfCurrentUsersPlaylists()
                 .build();
         try {
             final var playlistSimplifiedPaging = getListOfCurrentUsersPlaylistsRequest.executeAsync();
-            return Arrays.stream(playlistSimplifiedPaging.get().getItems()).map(playlist -> getPlaylistSnapshotById(playlist.getId())).toArray(SpotifyPlaylistSnapshot[]::new);
-//            var playlistSimplifiedPagingItems = playlistSimplifiedPaging.getItems();
-//            var playListArray = new ArrayList<SpotifyPlaylist>();
-//            for (var playlist : playlistSimplifiedPagingItems) {
-//                playListArray.add(getPlaylistById(playlist.getId()));
-//            }
-//            return playListArray.toArray(SpotifyPlaylist[]::new);
+            return Arrays.stream(playlistSimplifiedPaging.get().getItems())
+                    .map(playlist -> getPlaylistSnapshotById(playlist.getId()))
+                    .toArray(SpotifyPlaylistSnapshot[]::new);
         } catch (InterruptedException | ExecutionException e) {
-            System.out.println("Error: " + e.getMessage());
             return null;
         }
     }
+
+    public static SpotifyTrack[] getUserFollowedTracks() {
+        var getUserFollowedTracksRequest = spotifyApi.getUsersSavedTracks().limit(50).build();
+        try {
+            var result = getUserFollowedTracksRequest.executeAsync();
+            return Arrays.stream(result.get().getItems())
+                    .map((a) -> getTrackById(a.getTrack().getId()))
+                    .toArray(SpotifyTrack[]::new);
+        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static SpotifyTrack[] getUserTopTracks() {
+        var getUserTopTracksRequest = spotifyApi.getUsersTopTracks().limit(10).build();
+        try {
+            var resultTrackSet = getUserTopTracksRequest.executeAsync();
+            return Arrays.stream(resultTrackSet.get().getItems())
+                    .map(track -> getTrackById(track.getId()))
+                    .toArray(SpotifyTrack[]::new);
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+
+    public static SpotifyTrack[] getRecentlyPlayedTracks() {
+        var getRecentlyPlayedTracksRequest = spotifyApi.getCurrentUsersRecentlyPlayedTracks().limit(10).build();
+        try {
+            return Arrays.stream(getRecentlyPlayedTracksRequest.executeAsync().get().getItems())
+                    .map(track -> getTrackById(track.getTrack().getId()))
+                    .toArray(SpotifyTrack[]::new);
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+
+    public static SpotifyArtist[] getUserFollowedArtists() {
+        var getFavouritedArtistsRequest = spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).limit(50).build();
+        try {
+            return Arrays.stream(getFavouritedArtistsRequest.executeAsync().get().getItems())
+                    .map(artist -> getArtistById(artist.getId()))
+                    .toArray(SpotifyArtist[]::new);
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+
+    public static SpotifyAlbum[] getUserFollowedAlbums() {
+        var getFavouritedAlbumsRequest = spotifyApi.getCurrentUsersSavedAlbums().build();
+        try {
+            return Arrays.stream(getFavouritedAlbumsRequest.executeAsync().get().getItems())
+                    .map(album -> getAlbumById(album.getAlbum().getId())).toArray(SpotifyAlbum[]::new);
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+
+    // ----------------- Getting Playlist Details & Modifying it Here ---------------------------------------
+
 
     public static SpotifyPlaylist getPlaylistById(String playlist_id) {
         var getPlaylistRequest = spotifyApi.getPlaylist(playlist_id).build();
@@ -144,66 +227,6 @@ public final class SpotifyService {
         }
     }
 
-    // Tuesday at 1
-    public static SpotifyTrack getTrackById(String id) {
-        var getItemsRequest = spotifyApi.getTrack(id).build();
-        try {
-            var resultSet = getItemsRequest.executeAsync().get();
-//            var artistMap = new HashMap<String, String>();
-//            for (var artist : resultSet.getArtists()) {
-//                artistMap.put(artist.getId(), artist.getName());
-//            }
-
-            HashMap<String, String> artistMap = Arrays.stream(resultSet.getArtists())
-                    .collect(HashMap<String, String>::new, (map, artist) -> map.put(artist.getId(), artist.getName()), (combiner, map) -> combiner.putAll(map));
-            return new SpotifyTrack(resultSet.getId(), resultSet.getName(), artistMap, resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getDiscNumber(), resultSet.getDurationMs(), resultSet.getIsExplicit(), resultSet.getPopularity(), getAlbumById(resultSet.getAlbum().getId()), resultSet.getUri());
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
-        }
-
-    }
-
-    public static SpotifyUser getCurrentUsersProfile_Sync() {
-        final GetCurrentUsersProfileRequest getCurrentUsersProfileRequest = spotifyApi.getCurrentUsersProfile()
-                .build();
-        SpotifyUser spotify_user = null;
-
-
-        try {
-            final User user = getCurrentUsersProfileRequest.execute();
-//            System.out.println(user);
-            userId = user.getId();
-
-//            user.getExternalUrls().getExternalUrls().get("spotify");
-//            System.out.println(user);
-            // create and return the model
-            if (user.getImages().length == 0) {
-                spotify_user = new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), "https://img.favpng.com/3/7/23/login-google-account-computer-icons-user-png-favpng-ZwgqcU6LVRjJucQ9udYpX00qa.jpg");
-            } else {
-                spotify_user = new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), user.getImages()[0].getUrl());
-            }
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-        return spotify_user;
-    }
-
-    public static SpotifyUser getUserProfileById(String id) {
-        var getUserProfileByIdRequest = spotifyApi.getUsersProfile(id).build();
-        try {
-            var user = getUserProfileByIdRequest.execute();
-            if (user.getImages().length == 0) {
-                return new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), "https://img.favpng.com/3/7/23/login-google-account-computer-icons-user-png-favpng-ZwgqcU6LVRjJucQ9udYpX00qa.jpg");
-            } else {
-                return new SpotifyUser(user.getDisplayName(), user.getId(), user.getBirthdate(), user.getEmail(), user.getCountry().getName(), user.getExternalUrls().getExternalUrls().get("spotify"), user.getUri(), user.getImages()[0].getUrl());
-            }
-
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
-            System.out.println("Error: " + e.getMessage());
-            return null;
-        }
-    }
-
     public static SpotifyPlaylist createNewPlaylist(String name, String description) {
         if (description != null) {
             spotifyApi.changePlaylistsDetails("").description("").build();
@@ -211,7 +234,6 @@ public final class SpotifyService {
         CreatePlaylistRequest createPlaylistRequest = spotifyApi.createPlaylist(userId, name)
                 .build();
         try {
-//            System.out.println("In Create New Playlist!");
             var playlist = createPlaylistRequest.execute();
 
             if (description != null && !description.isBlank()) {
@@ -260,33 +282,53 @@ public final class SpotifyService {
         return getTracksFromPlaylistById(playlist_id);
     }
 
-
-    public static SpotifyArtist[] searchByArtist(String query) {
-
-        var searchFromApiRequest = spotifyApi.searchArtists(query).build();
+    public static SpotifyPlaylist reorderPlaylistItems(String playlist_id, Integer range_start, Integer insert_before) {
+        var test = spotifyApi.reorderPlaylistsItems(playlist_id, range_start, insert_before).build();
         try {
-            return Arrays.stream(searchFromApiRequest.executeAsync().get().getItems())
-                    .map(artist -> getArtistById(artist.getId()))
-                    .toArray(SpotifyArtist[]::new);
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
+            test.execute();
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error in reorder playlist!");
         }
+        return getPlaylistById(playlist_id);
     }
 
-    public static SpotifyAlbum getAlbumById(String albumId) {
-        var searchFromApiRequest = spotifyApi.getAlbum(albumId).build();
-        try {
-            var result = searchFromApiRequest.executeAsync().get();
-            String[] artistNames = Arrays.stream(result.getArtists()).map(artist -> artist.getName()).toArray(String[]::new);
-            if (result.getImages().length > 0) {
-                return new SpotifyAlbum(result.getName(), result.getId(), result.getImages()[0].getUrl(), artistNames, result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri(), result.getReleaseDate(), result.getLabel(), result.getGenres());
-            } else {
-                return new SpotifyAlbum(result.getName(), result.getId(), null, artistNames, result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri(), result.getReleaseDate(), result.getLabel(), result.getGenres());
+    public static SpotifyPlaylist updatePlaylistDetails(String playlist_id, String playlist_name, String playlist_description) {
+        if (playlist_name != null) {
+            var modifyPlaylistNameRequest = spotifyApi.changePlaylistsDetails(playlist_id).name(playlist_name).build();
+            try {
+                var a = modifyPlaylistNameRequest.execute();
+                if (playlist_description != null) {
+                    spotifyApi.changePlaylistsDetails(playlist_id).description(playlist_description).build().execute();
+                } else {
+//                spotifyApi.changePlaylistsDetails(playlist_id).description(" ").build().execute();
+                }
+            } catch (IOException | SpotifyWebApiException | ParseException e) {
+                System.out.println("Error in update playlist!");
             }
+        }
+        return getPlaylistById(playlist_id);
+    }
+
+
+    // ----------------- Getting Track Details---------------------------------------
+
+
+    // Tuesday at 1
+    public static SpotifyTrack getTrackById(String id) {
+        var getItemsRequest = spotifyApi.getTrack(id).build();
+        try {
+            var resultSet = getItemsRequest.executeAsync().get();
+            HashMap<String, String> artistMap = Arrays.stream(resultSet.getArtists())
+                    .collect(HashMap::new, (map, artist) -> map.put(artist.getId(), artist.getName()), (combiner, map) -> combiner.putAll(map));
+            return new SpotifyTrack(resultSet.getId(), resultSet.getName(), artistMap, resultSet.getExternalUrls().getExternalUrls().get("spotify"), resultSet.getDiscNumber(), resultSet.getDurationMs(), resultSet.getIsExplicit(), resultSet.getPopularity(), getAlbumById(resultSet.getAlbum().getId()), resultSet.getUri());
         } catch (InterruptedException | ExecutionException e) {
             return null;
         }
+
     }
+
+
+    // ----------------- Getting Artist stuff ---------------------------------------
 
     public static SpotifyArtist getArtistById(String id) {
         var getArtistByIdRequest = spotifyApi.getArtist(id).build();
@@ -304,32 +346,6 @@ public final class SpotifyService {
         }
     }
 
-    // TODO: REFACTOR
-    public static SpotifyTrack[] searchByTrack(String query) {
-
-        var searchFromApiRequest = spotifyApi.searchTracks(query).build();
-        try {
-
-//            user.getExternalUrls().getExternalUrls().get("spotify");
-            return Arrays.stream(searchFromApiRequest.executeAsync().get().getItems())
-                    .map(track -> getTrackById(track.getId()))
-                    .toArray(SpotifyTrack[]::new);
-
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
-        }
-    }
-
-    public static SpotifyPlaylist reorderPlaylistItems(String playlist_id, Integer range_start, Integer insert_before) {
-        var test = spotifyApi.reorderPlaylistsItems(playlist_id, range_start, insert_before).build();
-        try {
-            test.execute();
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
-            System.out.println("Error in reorder playlist!");
-        }
-        return getPlaylistById(playlist_id);
-    }
-
     public static SpotifyTrack[] getArtistTopTracks(String artistId) {
 
         var getArtistTopTracksRequest = spotifyApi.getArtistsTopTracks(artistId, CountryCode.getByLocale(Locale.US)).build();
@@ -344,7 +360,6 @@ public final class SpotifyService {
         }
     }
 
-    // TODO: don't return the entire object, just return a map w/ id and name
     public static SpotifyAlbum[] getArtistAlbums(String artistId) {
         var getArtistTopTracksRequest = spotifyApi.getArtistsAlbums(artistId).build();
         try {
@@ -353,36 +368,28 @@ public final class SpotifyService {
                     .map((a) -> getAlbumById(a.getId()))
                     .toArray(SpotifyAlbum[]::new);
         } catch (InterruptedException | ExecutionException e) {
-            System.out.println("Error in artist albums");
             return null;
         }
     }
 
-    public static SpotifyPlaylist updatePlaylistDetails(String playlist_id, String playlist_name, String playlist_description) {
-// need some check for the description? prolly not tbh
-        // gonna have front-end checks for the name, so we should be gucci
-        if (playlist_name != null) {
-            var modifyPlaylistNameRequest = spotifyApi.changePlaylistsDetails(playlist_id).name(playlist_name).build();
-            try {
-                var a = modifyPlaylistNameRequest.execute();
-                if (playlist_description != null) {
-                    spotifyApi.changePlaylistsDetails(playlist_id).description(playlist_description).build().execute();
-                } else {
-//                spotifyApi.changePlaylistsDetails(playlist_id).description(" ").build().execute();
-                }
-            } catch (IOException | SpotifyWebApiException | ParseException e) {
-                System.out.println("Error in update playlist!");
+    // ----------------- Getting Album Stuff ---------------------------------------
+
+    public static SpotifyAlbum getAlbumById(String albumId) {
+        var searchFromApiRequest = spotifyApi.getAlbum(albumId).build();
+        try {
+            var result = searchFromApiRequest.executeAsync().get();
+            String[] artistNames = Arrays.stream(result.getArtists()).map(artist -> artist.getName()).toArray(String[]::new);
+            if (result.getImages().length > 0) {
+                return new SpotifyAlbum(result.getName(), result.getId(), result.getImages()[0].getUrl(), artistNames, result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri(), result.getReleaseDate(), result.getLabel(), result.getGenres());
+            } else {
+                return new SpotifyAlbum(result.getName(), result.getId(), null, artistNames, result.getExternalUrls().getExternalUrls().get("spotify"), result.getUri(), result.getReleaseDate(), result.getLabel(), result.getGenres());
             }
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
         }
-
-        return getPlaylistById(playlist_id);
     }
 
-    public static SpotifyTrack[] getRecommendations() {
-        var getRecommendationsRequest = spotifyApi.getRecommendations().build();
-
-        return null;
-    }
+    // ----------------- Favouriting Stuff ---------------------------------------
 
     public static Boolean followArtist(String... artistId) {
         var followArtistRequest = spotifyApi.followArtistsOrUsers(ModelObjectType.ARTIST, artistId).build();
@@ -411,32 +418,6 @@ public final class SpotifyService {
         } catch (InterruptedException | ExecutionException e) {
             return false;
         }
-    }
-
-    public static SpotifyTrack[] getUserFollowedTracks() {
-        var getUserFollowedTracksRequest = spotifyApi.getUsersSavedTracks().limit(50).build();
-        try {
-            var result = getUserFollowedTracksRequest.executeAsync();
-//            Arrays.stream(savedTracks.getItems()).forEach(System.out::println);
-            return Arrays.stream(result.get().getItems())
-                    .map((a) -> getTrackById(a.getTrack().getId()))
-                    .toArray(SpotifyTrack[]::new);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static SpotifyArtist[] getRecommendedArtists(String artist_id) {
-        var getRecommendedArtistsRequest = spotifyApi.getArtistsRelatedArtists(artist_id).build();
-
-        try {
-            var resultSet = getRecommendedArtistsRequest.executeAsync();
-//            System.out.println(resultSet);
-            return Arrays.stream(resultSet.get()).map(artist -> getArtistById(artist.getId())).toArray(SpotifyArtist[]::new);
-        } catch (InterruptedException | ExecutionException e) {
-        }
-        return null;
     }
 
     public static Boolean favouriteTrack(String... track_ids) {
@@ -469,13 +450,26 @@ public final class SpotifyService {
         return null;
     }
 
-    // TODO: Return the entire array of favourited tracks
+    // ----------------- Query/ Search for stuff ---------------------------------------
 
-    public static SpotifyTrack[] getUserTopTracks() {
-        var getUserTopTracksRequest = spotifyApi.getUsersTopTracks().limit(10).build();
+    public static SpotifyArtist[] searchByArtist(String query) {
+
+        var searchFromApiRequest = spotifyApi.searchArtists(query).build();
         try {
-            var resultTrackSet = getUserTopTracksRequest.executeAsync();
-            return Arrays.stream(resultTrackSet.get().getItems())
+            return Arrays.stream(searchFromApiRequest.executeAsync().get().getItems())
+                    .map(artist -> getArtistById(artist.getId()))
+                    .toArray(SpotifyArtist[]::new);
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+
+
+    public static SpotifyTrack[] searchByTrack(String query) {
+
+        var searchFromApiRequest = spotifyApi.searchTracks(query).build();
+        try {
+            return Arrays.stream(searchFromApiRequest.executeAsync().get().getItems())
                     .map(track -> getTrackById(track.getId()))
                     .toArray(SpotifyTrack[]::new);
         } catch (InterruptedException | ExecutionException e) {
@@ -483,23 +477,34 @@ public final class SpotifyService {
         }
     }
 
+    // ----------------- Recommendations ---------------------------------------
+
+//    public static SpotifyTrack[] getRecommendations() {
+//        var getRecommendationsRequest = spotifyApi.getRecommendations().build();
+//
+//        return null;
+//    }
+
+
+    public static SpotifyArtist[] getRecommendedArtists(String artist_id) {
+        var getRecommendedArtistsRequest = spotifyApi.getArtistsRelatedArtists(artist_id).build();
+
+        try {
+            var resultSet = getRecommendedArtistsRequest.executeAsync();
+//            System.out.println(resultSet);
+            return Arrays.stream(resultSet.get()).map(artist -> getArtistById(artist.getId())).toArray(SpotifyArtist[]::new);
+        } catch (InterruptedException | ExecutionException e) {
+        }
+        return null;
+    }
+
+
     public static SpotifyAlbum[] getNewReleases() {
         var getNewReleasesRequest = spotifyApi.getListOfNewReleases().limit(15).country(CountryCode.getByLocale(Locale.US)).build();
         try {
             return Arrays.stream(getNewReleasesRequest.executeAsync().get().getItems())
                     .map(album -> getAlbumById(album.getId()))
                     .toArray(SpotifyAlbum[]::new);
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
-        }
-    }
-
-    public static SpotifyTrack[] getRecentlyPlayedTracks() {
-        var getRecentlyPlayedTracksRequest = spotifyApi.getCurrentUsersRecentlyPlayedTracks().limit(10).build();
-        try {
-            return Arrays.stream(getRecentlyPlayedTracksRequest.executeAsync().get().getItems())
-                    .map(track -> getTrackById(track.getTrack().getId()))
-                    .toArray(SpotifyTrack[]::new);
         } catch (InterruptedException | ExecutionException e) {
             return null;
         }
@@ -523,27 +528,6 @@ public final class SpotifyService {
             return Arrays.stream(getFeaturedPlaylistsRequest.executeAsync().get().getPlaylists().getItems())
                     .map(playlist -> getPlaylistSnapshotById(playlist.getId()))
                     .toArray(SpotifyPlaylistSnapshot[]::new);
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
-        }
-    }
-
-    public static SpotifyArtist[] getUserFollowedArtists() {
-        var getFavouritedArtistsRequest = spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).limit(50).build();
-        try {
-            return Arrays.stream(getFavouritedArtistsRequest.executeAsync().get().getItems())
-                    .map(artist -> getArtistById(artist.getId()))
-                    .toArray(SpotifyArtist[]::new);
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
-        }
-    }
-
-    public static SpotifyAlbum[] getUserFollowedAlbums() {
-        var getFavouritedAlbumsRequest = spotifyApi.getCurrentUsersSavedAlbums().build();
-        try {
-            return Arrays.stream(getFavouritedAlbumsRequest.executeAsync().get().getItems())
-                    .map(album -> getAlbumById(album.getAlbum().getId())).toArray(SpotifyAlbum[]::new);
         } catch (InterruptedException | ExecutionException e) {
             return null;
         }
