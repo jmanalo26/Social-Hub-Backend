@@ -443,11 +443,10 @@ public final class SpotifyService {
     public static Boolean[] checkFavouriteTrack(String... track_ids) {
         var checkFavouriteRequest = spotifyApi.checkUsersSavedTracks(track_ids).build();
         try {
-            return checkFavouriteRequest.execute();
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            return checkFavouriteRequest.executeAsync().get();
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
         }
-
-        return null;
     }
 
     // ----------------- Query/ Search for stuff ---------------------------------------
