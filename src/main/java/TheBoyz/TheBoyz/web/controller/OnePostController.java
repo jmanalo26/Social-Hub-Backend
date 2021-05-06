@@ -1,6 +1,8 @@
 package TheBoyz.TheBoyz.web.controller;
+import TheBoyz.TheBoyz.data.model.InstaUser;
 import TheBoyz.TheBoyz.data.model.OnePosts;
 import TheBoyz.TheBoyz.data.model.Tweet;
+import TheBoyz.TheBoyz.data.service.InstagramService;
 import TheBoyz.TheBoyz.data.service.OnePostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,7 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,9 +26,11 @@ import java.util.List;
 public class OnePostController {
 
     final OnePostService onePostService;
+    final InstagramService instagramService;
 
-    public OnePostController(final OnePostService onePostService) {
+    public OnePostController(final OnePostService onePostService, final InstagramService instagramService) {
         this.onePostService = onePostService;
+        this.instagramService = instagramService;
     }
 
     /**
@@ -70,8 +76,13 @@ public class OnePostController {
         OnePosts newOnePost = new OnePosts();
         newOnePost.setTextContent(textContent);
         newOnePost.setImage(mPFile.getBytes());
+
         newOnePost.setUserId(Integer.valueOf(userId));
         newOnePost.setSocialMedia(socialMedia);
+
+
+
+
         SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 //        java.util.Date date = sdf1.parse(createdAt); // Returns a Date format object with the pattern
 

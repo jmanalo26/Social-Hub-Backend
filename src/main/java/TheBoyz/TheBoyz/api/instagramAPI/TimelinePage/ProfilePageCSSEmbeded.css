@@ -29,7 +29,7 @@ html *{
     height: 270px;
     background-position: center;
     background-size: 100%;
-    background-image: url("background.png");
+    background-image: url("../../../../../../../../../../Database/SpringIn/Social-Hub-Frontend/src/assets/background.png");
 
 }
 
@@ -55,7 +55,7 @@ html *{
 }
 
 .header-filter::before {
-    background-image: url("background.png");
+    background-image: url("../../../../../../../../../../Database/SpringIn/Social-Hub-Frontend/src/assets/background.png");
 }
 
 .main-raised {
