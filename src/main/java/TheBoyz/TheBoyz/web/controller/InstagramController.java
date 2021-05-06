@@ -49,8 +49,8 @@ public class InstagramController {
 
 
         user.setInstaId(2);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
+        user.setUsername("hbb_disposable");
+        user.setPassword("yaga186");
         InstagramUserInfo insta = instagramService.getUserAccount(user);
         return new ResponseEntity<InstagramUserInfo>(insta, HttpStatus.OK);
     }
@@ -61,8 +61,8 @@ public class InstagramController {
         InstaUser user = new InstaUser();
         System.out.println("running bio change");
         user.setInstaId(2);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
+        user.setUsername("hbb_disposable");
+        user.setPassword("yaga186");
         instagramService.changeBio(user, bio);
     }
 
@@ -72,8 +72,8 @@ public class InstagramController {
         InstaUser user = new InstaUser();
         System.out.println("running user search");
         user.setInstaId(2);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
+        user.setUsername("hbb_disposable");
+        user.setPassword("yaga186");
         return new ResponseEntity<>(instagramService.getSearchUserAccount(user, userSearch), HttpStatus.OK);
     }
 
@@ -83,8 +83,8 @@ public class InstagramController {
         InstaUser user = new InstaUser();
         System.out.println("checking following status");
         user.setInstaId(2);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
+        user.setUsername("hbb_disposable");
+        user.setPassword("yaga186");
         boolean status = instagramService.followingStatus(user, userSearch);
         return status;
     }
@@ -95,8 +95,8 @@ public class InstagramController {
         InstaUser user = new InstaUser();
         System.out.println("Followed User");
         user.setInstaId(2);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
+        user.setUsername("hbb_disposable");
+        user.setPassword("yaga186");
         instagramService.followSearchUserAccount(user, userSearch);
     }
 
@@ -106,35 +106,57 @@ public class InstagramController {
         InstaUser user = new InstaUser();
         System.out.println("Unfollowed User");
         user.setInstaId(2);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
+        user.setUsername("hbb_disposable");
+        user.setPassword("yaga186");
         instagramService.unfollowSearchUserAccount(user, userSearch);
     }
 
     @CrossOrigin(origins = "http://localhost:4200/")
     @PostMapping(value = "/api/instagram/uploadImage")
-    public void uploadImage(@RequestParam("file") MultipartFile mPFile, @RequestParam("textContent")  String textContent) throws IOException, ParseException {
-        System.out.println("Instagram iamge CONTROLLER POST");
-        OnePosts newOnePost = new OnePosts();
-        newOnePost.setTextContent(textContent);
-        newOnePost.setImage(mPFile.getBytes());
+    public void uploadImage(@RequestParam("file")  MultipartFile mPFile, @RequestParam("textContent")  String textContent) throws IOException {
+        System.out.println("MADE IT TO THE Instagram BACKEND");
+        System.out.println(mPFile.getName());
+        System.out.println(mPFile.getBytes());
+        System.out.println(mPFile.getContentType());
+        System.out.println(textContent);
 
 
+        String fileName = mPFile.getOriginalFilename();
+        String prefix = fileName.substring(fileName.lastIndexOf("."));
 
-        instagramService.multipartFileToFile(mPFile, Path.of("instagramPost.jpg"));
+        File file = null;
+        try {
 
-        InstaUser user = new InstaUser();
+            file = File.createTempFile(fileName, prefix);
+            mPFile.transferTo(file);
+            InstaUser user = new InstaUser();
+            System.out.println("Unfollowed User");
+            user.setInstaId(2);
+            user.setUsername("hbb_disposable");
+            user.setPassword("yaga186");
+//            instagramService.postImage( user, file, textContent);
 
+        } catch (Exception e) {
+            e.printStackTrace();
 
-        user.setInstaId(2);
-        user.setUsername("thesocialhubclub");
-        user.setPassword("Capstone2021");
-        File post = new File("instagramPost.jpg");
-        System.out.println("test service call");
-        instagramService.postImage(user, post ,textContent);
+        } finally {
+            // After operating the above files, you need to delete the temporary files generated in the root directory
+            File f = new File(file.toURI());
+            f.delete();
 
+//        System.out.println(response.getStatus());
+//        System.out.println(response);
+////        InputStream in = servletContext.getResourceAsStream("/WEB-INF/images/image-example.jpg");
+//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+//        IOUtils.copy(in, response.getOutputStream());
 
-
+//        return new ResponseEntity<>(twitterService.captureTokensByObject(secureTwitter), HttpStatus.OK);
+//                System.out.println("MADE IT TO THE UPLOAD CONTROLLER!");
+//        System.out.println("Original Image Byte Size - " + file.getBytes().length);
+//        ImageModel img = new ImageModel(file.getOriginalFilename(), file.getContentType(),
+//        compressBytes(file.getBytes()));
+//        imageRepository.save(img);
+        }
     }
 
 }
