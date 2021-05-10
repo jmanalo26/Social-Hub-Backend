@@ -55,7 +55,7 @@ public class SpotifyController {
     }
 
     @PostMapping("playlist/create/{name}/{description}")
-    public ResponseEntity<SpotifyPlaylist> addPlaylist(@PathVariable String name, @PathVariable String description) {
+    public ResponseEntity<SpotifyPlaylistSnapshot> addPlaylist(@PathVariable String name, @PathVariable String description) {
 //        log.info("Create Playlist Method Called!");
 //        authorizationCodeRefresh_Sync();
 //        createNewPlaylist(name, description);
@@ -186,13 +186,13 @@ public class SpotifyController {
     }
 
     @PutMapping("/playlist/update/{playlist_id}/{playlist_name}/{playlist_description}")
-    public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name, @PathVariable String playlist_description) {
+    public ResponseEntity<SpotifyPlaylistSnapshot> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name, @PathVariable String playlist_description) {
 //        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, playlist_description), HttpStatus.OK);
     }
 
     @PutMapping("/playlist/update/{playlist_id}/{playlist_name}")
-    public ResponseEntity<SpotifyPlaylist> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name) {
+    public ResponseEntity<SpotifyPlaylistSnapshot> updatePlaylistDetails(@PathVariable String playlist_id, @PathVariable String playlist_name) {
 //        authorizationCodeRefresh_Sync();
         return new ResponseEntity<>(SpotifyService.updatePlaylistDetails(playlist_id, playlist_name, null), HttpStatus.OK);
     }

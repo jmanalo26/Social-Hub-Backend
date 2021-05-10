@@ -22,9 +22,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public final class SpotifyService {
 
@@ -227,7 +224,8 @@ public final class SpotifyService {
         }
     }
 
-    public static SpotifyPlaylist createNewPlaylist(String name, String description) {
+    //TODO: change that shit to a snapshot
+    public static SpotifyPlaylistSnapshot createNewPlaylist(String name, String description) {
         if (description != null) {
             spotifyApi.changePlaylistsDetails("").description("").build();
         }
@@ -237,11 +235,10 @@ public final class SpotifyService {
             var playlist = createPlaylistRequest.execute();
 
             if (description != null && !description.isBlank()) {
-                var modifiedPlaylist = spotifyApi.changePlaylistsDetails(playlist.getId()).description(description).build().execute();
-                return new SpotifyPlaylist(playlist.getName(), null, modifiedPlaylist, playlist.getOwner().getId(), playlist.getOwner().getDisplayName(), playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri());
+                spotifyApi.changePlaylistsDetails(playlist.getId()).description(description).build().execute();
+//                return new SpotifyPlaylistSnapshot(playlist.getId(),playlist.ge, playlist.getOwner().getId(), playlist.getOwner().getDisplayName(), playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri());
             }
-            return new SpotifyPlaylist(playlist.getName(), null, null, playlist.getOwner().getId(), playlist.getOwner().getDisplayName(), playlist.getExternalUrls().getExternalUrls().get("spotify"), playlist.getId(), null, playlist.getUri());
-
+            return getPlaylistSnapshotById(playlist.getId());
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
             return null;
@@ -292,7 +289,7 @@ public final class SpotifyService {
         return getPlaylistById(playlist_id);
     }
 
-    public static SpotifyPlaylist updatePlaylistDetails(String playlist_id, String playlist_name, String playlist_description) {
+    public static SpotifyPlaylistSnapshot updatePlaylistDetails(String playlist_id, String playlist_name, String playlist_description) {
         if (playlist_name != null) {
             var modifyPlaylistNameRequest = spotifyApi.changePlaylistsDetails(playlist_id).name(playlist_name).build();
             try {
@@ -306,7 +303,7 @@ public final class SpotifyService {
                 System.out.println("Error in update playlist!");
             }
         }
-        return getPlaylistById(playlist_id);
+        return getPlaylistSnapshotById(playlist_id);
     }
 
 
