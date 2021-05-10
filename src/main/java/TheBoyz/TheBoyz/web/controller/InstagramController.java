@@ -134,7 +134,7 @@ public class InstagramController {
             user.setInstaId(2);
             user.setUsername("hbb_disposable");
             user.setPassword("yaga186");
-//            instagramService.postImage( user, file, textContent);
+            instagramService.postImage( user, file, textContent);
 
         } catch (Exception e) {
             e.printStackTrace();
